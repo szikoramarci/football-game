@@ -2,80 +2,38 @@
   import * as PIXI from 'pixi.js';
   import { defineHex, Grid, rectangle, Orientation } from 'honeycomb-grid'
   import { onMounted } from 'vue'
+  import Field from '../classes/Field.class';
+  import Player from '../classes/Player.class';
 
   // you may want the origin to be the top left corner of a hex's bounding box
   // instead of its center (which is the default)
   const Hex = defineHex({ 
-    dimensions: 30, 
+    dimensions: 60, 
     origin: 'topLeft',
     orientation: Orientation.FLAT,
-  })
+  });
+  
   class FootballHex extends Hex {
-    graphics;
-    selected = false;
-    hovered = false;
+    field;
+    player;
 
-    createGrapchics(){
-      this.graphics = new PIXI.Graphics().poly(this.corners);
-      this.graphics.eventMode = 'static';
-      this.graphics.cursor = 'pointer';  
-      this.graphics.on('pointerenter', (e) => {    
-        this.hovered = true;
-        this.render();
-      });
-      this.graphics.on('pointerleave', (e) => {    
-        this.hovered = false;
-        this.render();
-      });
-      this.graphics.on('pointerdown', (e) => {    
-        this.selected = !this.selected;
-        this.render();
-      });
+    getGraphics() {
+      const graphics = new PIXI.Container();
+
+      this.field = new Field(this.col, this.row, this.corners);
+      graphics.addChild(this.field.getGraphics());
+
+      const kitNumber = Math.floor(Math.random() * 1000) + 1;
+      if (kitNumber < 100) {
+        this.player = new Player(this.x, this.y, kitNumber);
+        graphics.addChild(this.player.getGraphics());
+      }      
+
+      return graphics;
     }
 
-    getGraphics() {      
-      if (this.graphics === undefined) {
-        this.createGrapchics();
-        this.render();
-      }
-      return this.graphics;
-    }
-
-    render(){
-      if (this.selected) {
-        this.setSelectedDesign();
-      } else if (this.hovered) {
-        this.setVisitedDesign();
-      } else {
-        this.setBaseDesign();
-      }
-    }
-
-    setBaseDesign(){
-      this.graphics.stroke('red');
-      this.graphics.fill('white');
-    }
-
-    setVisitedDesign(){
-      this.graphics.stroke('red');
-      this.graphics.fill('green');
-    }
-
-    setSelectedDesign(){
-      this.graphics.stroke('red');
-      this.graphics.fill('black');
-    }
-
-    /*setPolygon(polygon) {  
-      this.polygon.on('pointerenter', function() {    
-        this.polygon.stroke('blue').fill('black');
-      });
-      this.polygon.on('pointerleave', function() {       
-        this.polygon.stroke('red').fill('white');
-      });      
-    }*/
   }
-  const grid = new Grid(FootballHex, rectangle({ width: 16, height: 6 }))
+  const grid = new Grid(FootballHex, rectangle({ width: 10, height: 4 }))
 
   const app = new PIXI.Application()
   await app.init({ antialias: true, resizeTo: window });
