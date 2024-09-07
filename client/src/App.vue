@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <GameBoard />
+  <Suspense>
+    <GameBoard />
+  </Suspense>
 </template>
 
 <style scoped>

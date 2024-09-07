@@ -10,7 +10,8 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "phaser": "^3.80.1",
+    "honeycomb-grid": "^4.1.5",
+    "pixi.js": "^8.3.4",
     "vue": "^3.4.29"
   },
   "devDependencies": {

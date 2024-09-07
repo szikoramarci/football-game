@@ -1,71 +1,100 @@
 <script setup>
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
-  import Phaser from 'phaser';
+  import * as PIXI from 'pixi.js';
+  import { defineHex, Grid, rectangle, Orientation } from 'honeycomb-grid'
+  import { onMounted } from 'vue'
 
-  // Hivatkozás a játék konténerére
-  const gameContainer = ref(null);
-  let game = null;
+  // you may want the origin to be the top left corner of a hex's bounding box
+  // instead of its center (which is the default)
+  const Hex = defineHex({ 
+    dimensions: 30, 
+    origin: 'topLeft',
+    orientation: Orientation.FLAT,
+  })
+  class FootballHex extends Hex {
+    graphics;
+    selected = false;
+    hovered = false;
 
-  // Preload fázis a játékhoz
-  const preload = function () {
-    this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
-    this.load.image('star', 'https://labs.phaser.io/assets/sprites/star.png');
-    this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
-  };
-
-  // Create fázis a játékhoz
-  const create = function () {
-    this.add.image(400, 300, 'sky');
-
-    const platforms = this.physics.add.staticGroup();
-    platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-    this.player = this.physics.add.sprite(100, 450, 'star');
-    this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
-
-    this.physics.add.collider(this.player, platforms);
-  };
-
-  // Update fázis a játékhoz
-  const update = function () {
-    // Itt helyezheted el a játékmenet logikáját (pl. mozgás, interakciók)
-  };
-
-  // Játék inicializálása a komponens betöltésekor
-  onMounted(() => {
-    const config = {
-      type: Phaser.AUTO,
-      width: 800,
-      height: 600,
-      scene: {
-        preload,
-        create,
-        update
-      },
-      parent: gameContainer.value, // A Phaser játék ezen az elem referencián fut majd
-      physics: {
-        default: 'arcade',
-        arcade: {
-          gravity: { y: 300 },
-          debug: false
-        }
-      }
-    };
-
-    game = new Phaser.Game(config);
-  });
-
-  // Játék megsemmisítése a komponens eltávolításakor
-  onBeforeUnmount(() => {
-    if (game) {
-      game.destroy(true);
+    createGrapchics(){
+      this.graphics = new PIXI.Graphics().poly(this.corners);
+      this.graphics.eventMode = 'static';
+      this.graphics.cursor = 'pointer';  
+      this.graphics.on('pointerenter', (e) => {    
+        this.hovered = true;
+        this.render();
+      });
+      this.graphics.on('pointerleave', (e) => {    
+        this.hovered = false;
+        this.render();
+      });
+      this.graphics.on('pointerdown', (e) => {    
+        this.selected = !this.selected;
+        this.render();
+      });
     }
-  });
+
+    getGraphics() {      
+      if (this.graphics === undefined) {
+        this.createGrapchics();
+        this.render();
+      }
+      return this.graphics;
+    }
+
+    render(){
+      if (this.selected) {
+        this.setSelectedDesign();
+      } else if (this.hovered) {
+        this.setVisitedDesign();
+      } else {
+        this.setBaseDesign();
+      }
+    }
+
+    setBaseDesign(){
+      this.graphics.stroke('red');
+      this.graphics.fill('white');
+    }
+
+    setVisitedDesign(){
+      this.graphics.stroke('red');
+      this.graphics.fill('green');
+    }
+
+    setSelectedDesign(){
+      this.graphics.stroke('red');
+      this.graphics.fill('black');
+    }
+
+    /*setPolygon(polygon) {  
+      this.polygon.on('pointerenter', function() {    
+        this.polygon.stroke('blue').fill('black');
+      });
+      this.polygon.on('pointerleave', function() {       
+        this.polygon.stroke('red').fill('white');
+      });      
+    }*/
+  }
+  const grid = new Grid(FootballHex, rectangle({ width: 16, height: 6 }))
+
+  const app = new PIXI.Application()
+  await app.init({ antialias: true, resizeTo: window });
+
+  onMounted(() => {
+    document.getElementById('game').appendChild(app.canvas);
+
+    // Make sure stage covers the whole scene
+    app.stage.hitArea = app.screen;
+
+    grid.forEach((hex) => {                       
+      app.stage.addChild(hex.getGraphics());
+    })        
+  })    
+
 </script>
 
 <template>
-  <div ref="gameContainer" id="game"></div>
+  <div id="game"></div>
 </template>
 
 <style scoped>
