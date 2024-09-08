@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 
-export default class Field {
+export default class FieldGraphics {
     col;
     row;
     corners;
@@ -9,17 +9,25 @@ export default class Field {
     constructor(col, row, corners) {
         this.col = col;
         this.row = row;
-        this.corners = corners;    
+        this.corners = corners;   
+        
+        return this.getGraphics();
     }
 
-    generateField(){
+    generateGraphics(){
         this.graphics = new PIXI.Graphics().poly(this.corners);     
     }
 
     getGraphics() {              
-        this.generateField();
+        this.generateGraphics();
         this.setBaseDesign();
+        this.setClickable();
         return this.graphics;
+    }
+
+    setClickable() {
+        this.graphics.eventMode = 'static';
+        this.graphics.cursor = 'pointer';
     }
 
     setStroke() {

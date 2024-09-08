@@ -2,8 +2,13 @@
   import * as PIXI from 'pixi.js';
   import { defineHex, Grid, rectangle, Orientation } from 'honeycomb-grid'
   import { onMounted } from 'vue'
-  import Field from '../classes/Field.class';
-  import Player from '../classes/Player.class';
+  import FieldGraphics from '@/classes/graphics/FieldGraphics.class';
+  import Player from '@/classes/Player.class';
+  import PlayerToken from '@/classes/PlayerToken.class';
+  import { fromEvent, filter, throttleTime } from 'rxjs';
+
+  const player = new Player('Messi','10');
+  const playerToken = new PlayerToken(player);
 
   // you may want the origin to be the top left corner of a hex's bounding box
   // instead of its center (which is the default)
@@ -14,21 +19,19 @@
   });
   
   class FootballHex extends Hex {
-    field;
-    player;
+    fieldGraphics;
+    lineGraphics;
 
     getGraphics() {
       const graphics = new PIXI.Container();
 
-      this.field = new Field(this.col, this.row, this.corners);
-      graphics.addChild(this.field.getGraphics());
+      this.fieldGraphics = new FieldGraphics(this.col, this.row, this.corners);
+      graphics.addChild(this.fieldGraphics);
 
-      const kitNumber = Math.floor(Math.random() * 1000) + 1;
-      if (kitNumber < 100) {
-        this.player = new Player(this.x, this.y, kitNumber);
-        graphics.addChild(this.player.getGraphics());
-      }      
-
+      this.fieldGraphics.on('pointerdown', () => {
+        playerToken.setPosition(this.x, this.y);
+      })      
+    
       return graphics;
     }
 
@@ -41,12 +44,38 @@
   onMounted(() => {
     document.getElementById('game').appendChild(app.canvas);
 
+    let grabbed = false;
+
     // Make sure stage covers the whole scene
     app.stage.hitArea = app.screen;
 
     grid.forEach((hex) => {                       
       app.stage.addChild(hex.getGraphics());
-    })        
+    })    
+
+    const tokenGraphics = playerToken.getGraphics();
+    
+    tokenGraphics.on('pointerdown', (e) => {
+        if (grabbed) {  
+            grabbed = false;
+            console.log(e.target)
+        } else {
+            grabbed = true;
+        }
+    });
+    
+    fromEvent(document, 'mousemove')
+        .pipe(
+            filter(() => grabbed),
+            throttleTime(10)
+        )            
+        .subscribe((e) => {
+            console.log('MOST')
+            tokenGraphics.x = e.clientX;
+            tokenGraphics.y = e.clientY;
+        });
+
+    app.stage.addChild(playerToken.getGraphics());
   })    
 
 </script>
