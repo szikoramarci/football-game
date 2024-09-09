@@ -22,6 +22,7 @@
   
   class FootballHex extends Hex {
     field;
+    state; // TODO egy state ami a fielden van rajta (átlátszó, de színes)
     lineGraphics;
 
     getGraphics() {
