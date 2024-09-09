@@ -10,6 +10,8 @@
   const player = new Player('Messi','10');
   const playerToken = new PlayerToken(player);
 
+  let grabbed = null;
+
   // you may want the origin to be the top left corner of a hex's bounding box
   // instead of its center (which is the default)
   const Hex = defineHex({ 
@@ -19,17 +21,35 @@
   });
   
   class FootballHex extends Hex {
-    fieldGraphics;
+    field;
     lineGraphics;
 
     getGraphics() {
       const graphics = new PIXI.Container();
 
-      this.fieldGraphics = new FieldGraphics(this.col, this.row, this.corners);
-      graphics.addChild(this.fieldGraphics);
+      this.field = new FieldGraphics(this.col, this.row, this.corners);
+      graphics.addChild(this.field.getGraphics());
 
-      this.fieldGraphics.on('pointerdown', () => {
-        playerToken.setPosition(this.x, this.y);
+      this.field.getGraphics().on('pointerout', () => {
+        if (grabbed) {
+          this.field.onPointerLeave();
+        }
+      });
+
+      this.field.getGraphics().on('pointerenter', () => {
+        if (grabbed) {
+          this.field.onPointerEnter();
+        }        
+      });
+      
+
+      this.field.getGraphics().on('pointerdown', () => {
+        if (grabbed) {
+          playerToken.setPosition(this.x, this.y);
+          playerToken.getGraphics().eventMode = 'static';
+          this.field.onPointerLeave();
+          grabbed = null;
+        }      
       })      
     
       return graphics;
@@ -44,8 +64,6 @@
   onMounted(() => {
     document.getElementById('game').appendChild(app.canvas);
 
-    let grabbed = false;
-
     // Make sure stage covers the whole scene
     app.stage.hitArea = app.screen;
 
@@ -57,10 +75,9 @@
     
     tokenGraphics.on('pointerdown', (e) => {
         if (grabbed) {  
-            grabbed = false;
-            console.log(e.target)
+            grabbed = null;
         } else {
-            grabbed = true;
+            grabbed = playerToken;
         }
     });
     
@@ -70,9 +87,9 @@
             throttleTime(10)
         )            
         .subscribe((e) => {
-            console.log('MOST')
             tokenGraphics.x = e.clientX;
             tokenGraphics.y = e.clientY;
+            tokenGraphics.eventMode = 'none';
         });
 
     app.stage.addChild(playerToken.getGraphics());

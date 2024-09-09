@@ -11,17 +11,16 @@ export default class FieldGraphics {
         this.row = row;
         this.corners = corners;   
         
-        return this.getGraphics();
+        this.generateGraphics();
+        this.setBaseDesign();
+        this.setClickable();
     }
 
     generateGraphics(){
         this.graphics = new PIXI.Graphics().poly(this.corners);     
     }
 
-    getGraphics() {              
-        this.generateGraphics();
-        this.setBaseDesign();
-        this.setClickable();
+    getGraphics() {                              
         return this.graphics;
     }
 
@@ -53,6 +52,18 @@ export default class FieldGraphics {
         } else {
             this.setLight();
         }
+    }
+
+    onPointerLeave() {
+        this.graphics.clear();
+        this.graphics.poly(this.corners);
+        this.setBaseDesign();
+    }
+
+    onPointerEnter() {
+        this.graphics.clear();
+        this.graphics.poly(this.corners);
+        this.graphics.fill('red');
     }
 
 
