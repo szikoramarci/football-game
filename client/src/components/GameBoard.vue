@@ -6,6 +6,7 @@
   import Player from '@/classes/Player.class';
   import PlayerToken from '@/classes/PlayerToken.class';
   import { fromEvent, filter, throttleTime } from 'rxjs';
+  import FieldContextManager from '@/contexts/field/FieldContextManager';
 
   const player = new Player('Messi','10');
   const playerToken = new PlayerToken(player);
@@ -28,18 +29,18 @@
     getGraphics() {
       const graphics = new PIXI.Container();
 
-      this.field = new FieldGraphics(this.col, this.row, this.corners);
+      this.field = new FieldGraphics(this.col, this.row, this.x, this.y);
       graphics.addChild(this.field.getGraphics());
 
       this.field.getGraphics().on('pointerout', () => {
         if (grabbed) {
-          this.field.onPointerLeave();
+          this.field.setBaseDesign();
         }
       });
 
       this.field.getGraphics().on('pointerenter', () => {
         if (grabbed) {
-          this.field.onPointerEnter();
+          this.field.setHovered();
         }        
       });
       
@@ -48,10 +49,10 @@
         if (grabbed) {
           playerToken.setPosition(this.x, this.y);
           playerToken.getGraphics().eventMode = 'static';
-          this.field.onPointerLeave();
+          this.field.setBaseDesign();
           grabbed = null;
         }      
-      })      
+      })     
     
       return graphics;
     }
@@ -67,6 +68,9 @@
 
     // Make sure stage covers the whole scene
     app.stage.hitArea = app.screen;
+    
+    const firstHex = grid.getHex([0,0]);
+    FieldContextManager.setUpContexts(firstHex.corners);
 
     grid.forEach((hex) => {                       
       app.stage.addChild(hex.getGraphics());

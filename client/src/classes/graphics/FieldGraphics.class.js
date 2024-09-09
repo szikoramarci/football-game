@@ -1,23 +1,28 @@
-import * as PIXI from 'pixi.js';
+import FieldContextManager from '@/contexts/field/FieldContextManager';
+import { Graphics } from 'pixi.js';
 
 export default class FieldGraphics {
     col;
     row;
-    corners;
-    graphics
+    graphics;
 
-    constructor(col, row, corners) {
+    constructor(col, row, x, y) {
         this.col = col;
         this.row = row;
-        this.corners = corners;   
-        
+
         this.generateGraphics();
+        this.setPosition(x, y);
         this.setBaseDesign();
         this.setClickable();
     }
 
+    setPosition(x, y) {
+        this.graphics.x = x;
+        this.graphics.y = y;
+    }
+
     generateGraphics(){
-        this.graphics = new PIXI.Graphics().poly(this.corners);     
+        this.graphics = new Graphics(FieldContextManager.getLightFieldContext());
     }
 
     getGraphics() {                              
@@ -29,16 +34,16 @@ export default class FieldGraphics {
         this.graphics.cursor = 'pointer';
     }
 
-    setStroke() {
-        this.graphics.stroke({ color: '#006400', width: 6 });
+    setHovered() {
+        this.graphics.context = FieldContextManager.getHoveredFieldContext();
     }
 
     setDark() {
-        this.graphics.fill({ color: '#006400' });
+        this.graphics.context = FieldContextManager.getDarkFieldContext();
     }
 
     setLight() {
-        this.graphics.fill({ color: '#7CFC00' });
+        this.graphics.context = FieldContextManager.getLightFieldContext();
     }
 
     isDark() {
@@ -46,25 +51,11 @@ export default class FieldGraphics {
     }
 
     setBaseDesign(){
-        this.setStroke();
         if (this.isDark()) {
             this.setDark();
         } else {
             this.setLight();
         }
     }
-
-    onPointerLeave() {
-        this.graphics.clear();
-        this.graphics.poly(this.corners);
-        this.setBaseDesign();
-    }
-
-    onPointerEnter() {
-        this.graphics.clear();
-        this.graphics.poly(this.corners);
-        this.graphics.fill('red');
-    }
-
 
   }
