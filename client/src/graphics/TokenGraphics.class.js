@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js';
 
 export default class TokenGraphics {
-    x = 0;
-    y = 0;
     kitNumber;
 
     token;
@@ -16,10 +14,6 @@ export default class TokenGraphics {
         return this.getGraphics();
     }
 
-    setPosition(x, y){
-        this.x = x;
-        this.y = y;
-    }
 
     generateText(){
         this.text = new PIXI.Text({
@@ -32,12 +26,12 @@ export default class TokenGraphics {
             }
             
         });
-        this.text.x = this.x - this.text.bounds.maxX / 2;
-        this.text.y = this.y - this.text.bounds.maxY / 2;
+        this.text.x = 0 - this.text.bounds.maxX / 2;
+        this.text.y = 0 - this.text.bounds.maxY / 2;
     }
 
     generateToken(){
-        this.token = new PIXI.Graphics().circle(this.x, this.y, 40);  
+        this.token = new PIXI.Graphics().circle(0, 0, 40);  
         this.token.fill('white');
         this.token.stroke( { color: 'black', width: 3 })
     }
@@ -53,12 +47,6 @@ export default class TokenGraphics {
 
         graphics.eventMode = 'static';
         graphics.cursor = 'pointer';
-
-        graphics.position.x = this.x;
-        graphics.position.y = this.y;
-
-        graphics.pivot.x = this.x;
-        graphics.pivot.y = this.y;
 
         return graphics;
     }

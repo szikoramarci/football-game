@@ -1,4 +1,4 @@
-import TokenGraphics from "./graphics/TokenGraphics.class"
+import TokenGraphics from "@/graphics/TokenGraphics.class";
  
 
 export default class PlayerToken {
@@ -12,6 +12,7 @@ export default class PlayerToken {
     }
 
     setPosition(x, y){
+        console.log(x, y);
         this.tokenGraphics.x = x;
         this.tokenGraphics.y = y;
     }

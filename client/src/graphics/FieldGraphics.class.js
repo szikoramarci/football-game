@@ -1,4 +1,4 @@
-import FieldContextManager from '@/contexts/field/FieldContextManager';
+import FieldContextManager from '@/services/FieldContextManager';
 import { Graphics } from 'pixi.js';
 
 export default class FieldGraphics {

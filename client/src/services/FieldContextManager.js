@@ -1,6 +1,6 @@
-import DarkFieldContext from "./DarkFieldContext";
-import HoveredFieldContext from "./HoveredFieldContext";
-import LightFieldContext from "./LightFieldContext";
+import DarkFieldContext from "../contexts/field/DarkFieldContext";
+import HoveredFieldContext from "../contexts/field/HoveredFieldContext";
+import LightFieldContext from "../contexts/field/LightFieldContext";
 
 class FieldContextManager {
     lightFieldContext = null;
@@ -43,6 +43,5 @@ class FieldContextManager {
     }
 
 }
-
 
 export default new FieldContextManager();
