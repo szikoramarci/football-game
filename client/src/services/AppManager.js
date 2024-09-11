@@ -1,8 +1,9 @@
 import { Application } from 'pixi.js';
-import { defineHex, Grid, Orientation, rectangle } from 'honeycomb-grid';
+import { defineHex, Grid, Orientation, rectangle, spiral } from 'honeycomb-grid';
 import FieldContextManager from '@/services/FieldContextManager';
 import Field from '@/models/Field';
 import Player from '@/models/Player';
+import FieldStatusManager from './FieldStatusManager';
 
 class AppManager {
     app;
@@ -23,7 +24,7 @@ class AppManager {
         this.initGrid();
         this.setUpContexts();
         this.initField();
-        this.initPlayers();
+        this.initPlayers(); 
     }    
 
     async initApp() {

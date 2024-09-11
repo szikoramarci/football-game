@@ -1,8 +1,7 @@
 import FieldContext from "./FieldContext";
 
-export default class HoveredFieldContext extends FieldContext {
+export default class StatusBaseFieldContext extends FieldContext {
     constructor(corners){
         super(corners);
-        this.setFillColor('red');
     }
 }

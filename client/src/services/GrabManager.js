@@ -13,10 +13,13 @@ class GrabManager {
 
     grabElement(element){
         if (this.isGrabbed()) return;
+
+        element.getGraphics().eventMode = 'none';
         this.grabbedElement = element;
     }
 
     looseElement(){
+        this.grabbedElement.getGraphics().eventMode = 'static';
         this.grabbedElement = null;
     }
 

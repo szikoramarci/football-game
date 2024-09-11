@@ -18,7 +18,7 @@
         )            
         .subscribe((e) => {
           const grabbedElement = GrabManager.getGrabbedElement();
-          grabbedElement.setPosition(e.clientX, e.clientY);
+          grabbedElement.move(e.clientX, e.clientY);
         });
   })    
 

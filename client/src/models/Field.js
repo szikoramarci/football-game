@@ -1,5 +1,7 @@
 import { Container } from 'pixi.js';
 import FieldGraphics from '@/graphics/FieldGraphics';
+import GrabManager from '@/services/GrabManager';
+import FieldStatusManager from '@/services/FieldStatusManager';
 
 
 export default class Field {
@@ -13,15 +15,18 @@ export default class Field {
     constructor(hex) {        
         this.hex = hex;
         this.createContainer();
-        this.createField();
+        this.createField();    
+        this.initEvents();
     }
 
     createContainer(){
         this.container = new Container();
+        this.container.eventMode = 'static';
+        this.container.cursor = 'pointer';
     }
 
     createField(){
-        this.field = new FieldGraphics(this.hex.col, this.hex.row, this.getPosition().x, this.getPosition().y);
+        this.field = new FieldGraphics(this.hex.col, this.hex.row, this.getPosition().x, this.getPosition().y);        
         this.container.addChild(this.field.getGraphics());
     }
 
@@ -39,23 +44,29 @@ export default class Field {
         }
     }
 
+    initEvents() {
+      this.container.on('pointerenter', () => { 
+       if (GrabManager.isGrabbed()) {    
+          FieldStatusManager.addFieldStatus(this.hex.col, this.hex.row, 'hovered');      
+          FieldStatusManager.broadcast();
+        }
+      });
+
+      this.container.on('pointerdown', () => { 
+        if (GrabManager.isGrabbed()) {      
+          const { x, y } = this.getCenter();
+          GrabManager.getGrabbedElement().move(x, y);           
+          GrabManager.looseElement();
+        }
+      });
+    }
+
     getGraphics() {
         return this.container;
     }
       
 /*
-      this.field.getGraphics().on('pointerout', () => {
-        if (grabbed) {
-          this.field.setBaseDesign();
-        }
-      });
-
-      this.field.getGraphics().on('pointerenter', () => {
-        if (grabbed) {
-          this.field.setHovered();
-        }        
-      });
-      
+    
 
       this.field.getGraphics().on('pointerdown', () => {
         if (grabbed) {

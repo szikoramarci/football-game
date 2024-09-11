@@ -10,9 +10,9 @@ export default class GrabbableGraphics {
         this.initGrabEvent();
     }
 
-    setPosition(x, y) {
+    move(x, y) {
         this.graphics.x = x;
-        this.graphics.y = y;
+        this.graphics.y = y;        
     }
 
     initGraphics() {
@@ -25,7 +25,7 @@ export default class GrabbableGraphics {
         this.graphics.on('pointerdown', () => {
             if (GrabManager.isAlreadyGrabbed(this)) {
                 GrabManager.looseElement();
-            } else {
+            } else {                
                 GrabManager.grabElement(this);
             }
         });

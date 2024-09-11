@@ -1,11 +1,13 @@
 import DarkFieldContext from "../contexts/field/DarkFieldContext";
-import HoveredFieldContext from "../contexts/field/HoveredFieldContext";
+import StatusBaseFieldContext from "@/contexts/field/StatusBaseFieldContext";
+import StatusHoveredFieldContext from "@/contexts/field/StatusHoveredFieldContext";
 import LightFieldContext from "../contexts/field/LightFieldContext";
 
 class FieldContextManager {
     lightFieldContext = null;
     darkFieldContext = null;
-    hoveredFieldContext = null;
+    statusHoveredFieldContext = null;
+    statusBaseFieldContext = null;
 
     constructor() {
         if (!FieldContextManager.instance) {
@@ -18,7 +20,8 @@ class FieldContextManager {
     setUpContexts(corners){
         this.lightFieldContext = new LightFieldContext(corners);
         this.darkFieldContext = new DarkFieldContext(corners);
-        this.hoveredFieldContext = new HoveredFieldContext(corners);
+        this.statusBaseFieldContext = new StatusBaseFieldContext(corners);
+        this.statusHoveredFieldContext = new StatusHoveredFieldContext(corners);
     }
 
     getLightFieldContext(){
@@ -35,11 +38,18 @@ class FieldContextManager {
         return this.darkFieldContext.getContext();
     }
 
-    getHoveredFieldContext() {
-        if (!this.hoveredFieldContext) {
-            throw new Error('HoveredFieldContext is not set up. Call setUpContexts() first.');
+    getStatusHoveredFieldContext() {
+        if (!this.statusHoveredFieldContext) {
+            throw new Error('StatusHoveredFieldContext is not set up. Call setUpContexts() first.');
         }
-        return this.hoveredFieldContext.getContext();
+        return this.statusHoveredFieldContext.getContext();
+    }
+
+    getStatusBaseFieldContext() {
+        if (!this.statusBaseFieldContext) {
+            throw new Error('StatusBaseFieldContext is not set up. Call setUpContexts() first.');
+        }
+        return this.statusBaseFieldContext.getContext();
     }
 
 }

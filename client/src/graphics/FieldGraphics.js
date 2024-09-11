@@ -1,49 +1,80 @@
 import FieldContextManager from '@/services/FieldContextManager';
-import { Graphics } from 'pixi.js';
+import FieldStatusManager from '@/services/FieldStatusManager';
+import { Graphics, Container } from 'pixi.js';
 
 export default class FieldGraphics {
     col;
     row;
-    graphics;
+    container;
+    field;
+    hover;
+    status = null;
 
     constructor(col, row, x, y) {
         this.col = col;
         this.row = row;
 
-        this.generateGraphics();
+        this.generateContainer();
+        this.generateField();
+        this.generateHover();
         this.setPosition(x, y);
         this.setBaseDesign();
-        this.setClickable();
+        this.initFieldStatusSubscription();
+    }
+
+    initFieldStatusSubscription(){
+        FieldStatusManager.getFieldStatus().subscribe(fieldStatusList => {
+            const newStatus = fieldStatusList.find(fieldStatus => fieldStatus.row == this.row && fieldStatus.col == this.col)?.status || null;
+            if (this.status != newStatus){
+                this.status = newStatus;
+                switch(newStatus) {
+                    case 'hovered':
+                        this.setHover();
+                        break;
+                    default:
+                        this.resetHover();
+                }
+            }
+        });
     }
 
     setPosition(x, y) {
-        this.graphics.x = x;
-        this.graphics.y = y;
+        this.container.x = x;
+        this.container.y = y;
     }
 
-    generateGraphics(){
-        this.graphics = new Graphics(FieldContextManager.getLightFieldContext());
+    generateContainer(){
+        this.container = new Container();
+    }
+
+    generateField(){
+        this.field = new Graphics(FieldContextManager.getLightFieldContext());
+        this.container.addChild(this.field);
+    }
+
+    generateHover(){
+        this.hover = new Graphics(FieldContextManager.getStatusBaseFieldContext());
+        this.container.addChild(this.hover);
     }
 
     getGraphics() {                              
-        return this.graphics;
+        return this.container;
     }
 
-    setClickable() {
-        this.graphics.eventMode = 'static';
-        this.graphics.cursor = 'pointer';
+    setHover() {        
+        this.hover.context = FieldContextManager.getStatusHoveredFieldContext();
     }
 
-    setHovered() {
-        this.graphics.context = FieldContextManager.getHoveredFieldContext();
+    resetHover() {
+        this.hover.context = FieldContextManager.getStatusBaseFieldContext();
     }
 
     setDark() {
-        this.graphics.context = FieldContextManager.getDarkFieldContext();
+        this.field.context = FieldContextManager.getDarkFieldContext();
     }
 
     setLight() {
-        this.graphics.context = FieldContextManager.getLightFieldContext();
+        this.field.context = FieldContextManager.getLightFieldContext();
     }
 
     isDark() {
