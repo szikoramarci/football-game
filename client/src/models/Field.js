@@ -1,5 +1,5 @@
 import { Container } from 'pixi.js';
-import FieldGraphics from '@/graphics/FieldGraphics.class';
+import FieldGraphics from '@/graphics/FieldGraphics';
 
 
 export default class Field {

@@ -1,16 +1,20 @@
+import GrabbableGraphics from '@/graphics/GrabbableGraphics';
 import * as PIXI from 'pixi.js';
 
-export default class TokenGraphics {
+export default class TokenGraphics extends GrabbableGraphics {
     kitNumber;
 
     token;
     text;
 
     constructor(kitNumber){
-        this.kitNumber = kitNumber;
+        super();
 
-        this.generateText();
+        this.kitNumber = kitNumber;
+        
         this.generateToken();
+        this.generateText();
+        
         return this.getGraphics();
     }
 
@@ -28,26 +32,16 @@ export default class TokenGraphics {
         });
         this.text.x = 0 - this.text.bounds.maxX / 2;
         this.text.y = 0 - this.text.bounds.maxY / 2;
+
+        this.graphics.addChild(this.text);
     }
 
     generateToken(){
         this.token = new PIXI.Graphics().circle(0, 0, 40);  
         this.token.fill('white');
-        this.token.stroke( { color: 'black', width: 3 })
+        this.token.stroke( { color: 'black', width: 3 });
+
+        this.graphics.addChild(this.token);
     }
 
-    getGraphics() {     
-        const graphics = new PIXI.Container();
-
-        this.generateToken();
-        this.generateText();
-
-        graphics.addChild(this.token);
-        graphics.addChild(this.text);
-
-        graphics.eventMode = 'static';
-        graphics.cursor = 'pointer';
-
-        return graphics;
-    }
 }

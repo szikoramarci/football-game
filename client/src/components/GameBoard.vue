@@ -1,42 +1,25 @@
 <script setup>
-  import { onMounted } from 'vue'
-  import Player from '@/models/Player.class';
-  import PlayerToken from '@/models/PlayerToken.class';
+  import { onMounted } from 'vue';
   import AppManager from '@/services/AppManager'
+  import GrabManager from '@/services/GrabManager';
+  import { fromEvent, filter, throttleTime } from 'rxjs';
 
-  const player = new Player('Messi','10');
-  const playerToken = new PlayerToken(player);
-
-  let grabbed = null;
 
   await AppManager.init();
 
   onMounted(() => {
     document.getElementById('game').appendChild(AppManager.getCanvas());
-  
 
-    /*const tokenGraphics = playerToken.getGraphics();
-    
-    tokenGraphics.on('pointerdown', (e) => {
-        if (grabbed) {  
-            grabbed = null;
-        } else {
-            grabbed = playerToken;
-        }
-    });
     
     fromEvent(document, 'mousemove')
         .pipe(
-            filter(() => grabbed),
+            filter(() => GrabManager.isGrabbed()),
             throttleTime(10)
         )            
         .subscribe((e) => {
-            tokenGraphics.x = e.clientX;
-            tokenGraphics.y = e.clientY;
-            tokenGraphics.eventMode = 'none';
+          const grabbedElement = GrabManager.getGrabbedElement();
+          grabbedElement.setPosition(e.clientX, e.clientY);
         });
-
-    app.stage.addChild(playerToken.getGraphics());*/
   })    
 
 </script>

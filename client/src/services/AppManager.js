@@ -1,11 +1,13 @@
 import { Application } from 'pixi.js';
 import { defineHex, Grid, Orientation, rectangle } from 'honeycomb-grid';
 import FieldContextManager from '@/services/FieldContextManager';
-import Field from '@/models/Field.class';
+import Field from '@/models/Field';
+import Player from '@/models/Player';
 
 class AppManager {
     app;
     grid;
+    players;
 
     constructor(){
         if (!AppManager.instance) {            
@@ -21,6 +23,7 @@ class AppManager {
         this.initGrid();
         this.setUpContexts();
         this.initField();
+        this.initPlayers();
     }    
 
     async initApp() {
@@ -47,8 +50,17 @@ class AppManager {
 
     initField() {
         this.grid.forEach((hex) => {   
-        const field = new Field(hex);                    
+            const field = new Field(hex);                    
             this.app.stage.addChild(field.getGraphics());
+        });
+    }
+
+    initPlayers() {
+        this.players = [
+            new Player('Messi','10')
+        ]
+        this.players.forEach((player) => {
+            this.app.stage.addChild(player.getGraphics());
         });
     }
 
