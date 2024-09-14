@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Application } from 'pixi.js';
+import { Application, Container } from 'pixi.js';
 import { Graphics } from "pixi.js";
 
 @Injectable({
@@ -14,7 +14,7 @@ export class AppService {
         this.app.stage.hitArea = this.app.screen;
     }
 
-    addChild(graphics: Graphics) {
+    addChild(graphics: Container) {
         this.app.stage.addChild(graphics);
     }
 

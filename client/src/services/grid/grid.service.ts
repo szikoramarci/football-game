@@ -20,7 +20,7 @@ export class GridService {
             orientation: Orientation.FLAT,
         });
           
-        this.grid = new Grid(FootballHex, rectangle({ width: 24, height: 12 }));
+        this.grid = new Grid(FootballHex, rectangle({ width: 10, height: 5 }));
     }    
 
     setUpContexts(){

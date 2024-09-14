@@ -1,0 +1,3 @@
+@for (player of players; track player.id) {
+    <player [player]="player" (onGraphicsChanged)="handleGraphics($event)"></player>
+}
