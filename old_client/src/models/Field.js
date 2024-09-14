@@ -2,6 +2,7 @@ import { Container } from 'pixi.js';
 import FieldGraphics from '@/graphics/FieldGraphics';
 import GrabManager from '@/services/GrabManager';
 import FieldStatusManager from '@/services/FieldStatusManager';
+import PlayerMovementManager from '@/services/PlayerMovementManager';
 
 
 export default class Field {
@@ -55,7 +56,8 @@ export default class Field {
       this.container.on('pointerdown', () => { 
         if (GrabManager.isGrabbed()) {      
           const { x, y } = this.getCenter();
-          GrabManager.getGrabbedElement().move(x, y);           
+          GrabManager.getGrabbedElement().move(x, y);                     
+          PlayerMovementManager.move(GrabManager.getGrabbedElement(),this.hex);
           GrabManager.looseElement();
         }
       });

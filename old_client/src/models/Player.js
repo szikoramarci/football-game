@@ -1,6 +1,7 @@
 import TokenGraphics from "@/graphics/TokenGraphics";
 
 export default class Player {
+    id;
     team;
     kitNumber;
     name;
@@ -9,6 +10,7 @@ export default class Player {
     token;
 
     constructor(name, kitNumber) {
+        this.id = btoa(name);
         this.name = name;
         this.kitNumber = kitNumber;
 

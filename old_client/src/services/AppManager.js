@@ -1,13 +1,11 @@
 import { Application } from 'pixi.js';
-import { defineHex, Grid, Orientation, rectangle, spiral } from 'honeycomb-grid';
-import FieldContextManager from '@/services/FieldContextManager';
 import Field from '@/models/Field';
 import Player from '@/models/Player';
-import FieldStatusManager from './FieldStatusManager';
+import GridManager from './GridManager';
+import { }
 
 class AppManager {
     app;
-    grid;
     players;
 
     constructor(){
@@ -21,8 +19,7 @@ class AppManager {
 
     async init() {
         await this.initApp();
-        this.initGrid();
-        this.setUpContexts();
+        GridManager.initGrid();
         this.initField();
         this.initPlayers(); 
     }    
@@ -34,23 +31,8 @@ class AppManager {
         this.app.stage.hitArea = this.app.screen;
     }
 
-    initGrid() {
-        const Hex = defineHex({ 
-            dimensions: 60, 
-            origin: 'topLeft',
-            orientation: Orientation.FLAT,
-        });
-          
-        this.grid = new Grid(Hex, rectangle({ width: 10, height: 5 }))
-    }
-
-    setUpContexts() {
-        const firstHex = this.grid.getHex([0,0]);
-        FieldContextManager.setUpContexts(firstHex.corners);
-    }
-
     initField() {
-        this.grid.forEach((hex) => {   
+        GridManager.getGrid().forEach((hex) => {   
             const field = new Field(hex);                    
             this.app.stage.addChild(field.getGraphics());
         });
@@ -58,11 +40,17 @@ class AppManager {
 
     initPlayers() {
         this.players = [
-            new Player('Messi','10')
+            new Player('Messi','10'),
+            new Player('Suarez','9'),
+            new Player('Iniesta','7')
         ]
         this.players.forEach((player) => {
             this.app.stage.addChild(player.getGraphics());
         });
+    }
+
+    addChild(graphics: Graphics) {
+        this.app.addChild(graphics);
     }
 
     getCanvas() {
