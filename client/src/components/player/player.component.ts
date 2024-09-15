@@ -1,13 +1,18 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Container, Text, Graphics } from "pixi.js";
 import { Player } from "../../models/player.model";
+import { Store } from "@ngrx/store";
+import { Subscription } from "rxjs";
+import { GridService } from "../../services/grid/grid.service";
+import { HexCoordinates } from "honeycomb-grid";
+import { playerMoveEvent } from "../../stores/player-position/player-position.selector";
 
 @Component({
     selector: 'player',
     standalone: true,
     templateUrl: './player.component.html',
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, OnDestroy {
     
     @Input() player!: Player;
 
@@ -15,12 +20,33 @@ export class PlayerComponent implements OnInit {
     
     graphics: Container = new Container();  
 
-    constructor() {}
+    playerMovementSubscription!: Subscription;
+
+    constructor(
+        private store: Store,
+        private grid: GridService
+    ) {}
 
     ngOnInit(): void {    
         this.generateToken();
         this.generateText();
         this.sendGraphics();
+        this.initPlayerPositionSubscription();       
+    }
+
+    initPlayerPositionSubscription() {
+        this.playerMovementSubscription = this.store.select(playerMoveEvent(this.player.id))
+            .subscribe(position => {
+                this.movePlayer(position);
+            })
+    }
+
+    movePlayer(newCoordinates: HexCoordinates) {
+        const hex = this.grid.getHex(newCoordinates);
+        if (hex) {
+            this.graphics.x = hex.x;
+            this.graphics.y = hex.y;
+        }
     }
 
     generateText(){
@@ -49,9 +75,11 @@ export class PlayerComponent implements OnInit {
     }
 
 
-    sendGraphics() {
-        this.graphics.x = 400;
-        this.graphics.y = 300;
+    sendGraphics() {        
         this.onGraphicsChanged.emit(this.graphics);
+    }
+
+    ngOnDestroy(): void {
+        this.playerMovementSubscription?.unsubscribe();
     }
 }

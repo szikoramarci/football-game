@@ -1,11 +1,15 @@
-export class Player {
-    id: string = "";
-    kitNumber: string = "";
-    name: string = "";
+import { HexCoordinates } from "honeycomb-grid";
 
-    constructor(name: string, kitNumber: string) {
+export class Player {
+    id!: string;
+    kitNumber!: string;
+    name!: string;
+    initialPosition!: HexCoordinates;
+
+    constructor(name: string, kitNumber: string, initialPosition: HexCoordinates) {
         this.id = btoa(name);
         this.name = name;
         this.kitNumber = kitNumber;
+        this.initialPosition = initialPosition;
     }
 }

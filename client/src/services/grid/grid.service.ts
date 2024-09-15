@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, Orientation } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates } from 'honeycomb-grid';
 import { ContextService } from '../context/context.service';
 
 @Injectable({
@@ -30,5 +30,9 @@ export class GridService {
 
     getGrid(): Grid<Hex> {
         return this.grid;
+    }
+
+    getHex(coordinate: HexCoordinates): Hex | undefined {
+        return this.grid.getHex(coordinate);
     }
 }
