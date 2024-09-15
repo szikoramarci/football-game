@@ -4,7 +4,8 @@ import { PlayerComponent } from "../../player/player.component";
 import { AppService } from "../../../services/app/app.service";
 import { Container, Graphics } from "pixi.js";
 import { Store } from "@ngrx/store";
-import { updatePlayerPosition } from "../../../stores/player-position/player-position.actions";
+import { movePlayer } from "../../../stores/player-position/player-position.actions";
+
 @Component({
     selector: 'state-layer',
     standalone: true,
@@ -32,9 +33,9 @@ export class StateLayerComponent implements OnInit {
         this.players.push(new Player("Suarez", "9", { col: 2, row: 1}));
         this.players.push(new Player("Neymar", "11", { col: 4, row: 1}));
         this.players.push(new Player("Busquets", "5", { col: 6, row: 1}));
-        
+
         this.players.forEach((player) => {
-            this.store.dispatch(updatePlayerPosition({ playerID: player.id, position: player.initialPosition}));
+            this.store.dispatch(movePlayer({ playerID: player.id, position: player.initialPosition}));
         });
     }
 

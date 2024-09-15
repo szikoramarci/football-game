@@ -1,12 +1,12 @@
-import { HexCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "honeycomb-grid";
 
 export class Player {
     id!: string;
     kitNumber!: string;
     name!: string;
-    initialPosition!: HexCoordinates;
+    initialPosition!: OffsetCoordinates;
 
-    constructor(name: string, kitNumber: string, initialPosition: HexCoordinates) {
+    constructor(name: string, kitNumber: string, initialPosition: OffsetCoordinates) {
         this.id = btoa(name);
         this.name = name;
         this.kitNumber = kitNumber;

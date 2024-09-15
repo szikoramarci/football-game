@@ -35,4 +35,8 @@ export class GridService {
     getHex(coordinate: HexCoordinates): Hex | undefined {
         return this.grid.getHex(coordinate);
     }
+
+    findHexByPoint(point: Point): Hex | undefined {
+        return this.grid.pointToHex(point, { allowOutside: false });
+    }
 }

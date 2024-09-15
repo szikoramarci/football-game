@@ -3,11 +3,17 @@ import { RouterOutlet } from '@angular/router';
 import { AppService } from '../../services/app/app.service';
 import { BaseLayerComponent } from '../layers/base/base.layer.component';
 import { StateLayerComponent } from '../layers/state/state.layer.component';
+import { ActiveLayerComponent } from '../layers/active/active.layer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,BaseLayerComponent,StateLayerComponent],
+  imports: [
+    RouterOutlet,
+    BaseLayerComponent,
+    StateLayerComponent,
+    ActiveLayerComponent
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

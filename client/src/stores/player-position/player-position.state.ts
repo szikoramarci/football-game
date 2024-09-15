@@ -1,7 +1,7 @@
-import { HexCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "honeycomb-grid";
 
 export interface PlayerPositionState {
-    players: { [playerID: string]: HexCoordinates };
+    players: { [playerID: string]: OffsetCoordinates };
   }
   
   export const initialState: PlayerPositionState = {

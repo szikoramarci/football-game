@@ -1,7 +1,7 @@
 import { createAction, props } from "@ngrx/store";
-import { HexCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "honeycomb-grid";
 
-export const updatePlayerPosition = createAction(
+export const movePlayer = createAction(
     '[Player Position] Update Player Position',
-    props<{ playerID: string; position: HexCoordinates }>()
+    props<{ playerID: string; position: OffsetCoordinates }>()
 );
