@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
-import { fromEvent, map, merge, Subject } from "rxjs";
-import { ClickEvent, ClickEventType } from "./clickEvent.interface";
+import { filter, fromEvent, map, merge, Observable, Subject } from "rxjs";
+import { ClickEvent, ClickEventType } from "./click-event.interface";
 import { HexCoordinates, OffsetCoordinates, Point } from "honeycomb-grid";
 
 @Injectable({
@@ -22,10 +22,12 @@ export class ClickService {
         .subscribe((event) => {
             const eventType: ClickEventType = event.button;
             const hexCoordinates = this.getHexCoordinatesFromEvent(event);
-            this.clickEvents.next({
-                type: eventType,
-                coordinates: hexCoordinates
-            });
+            if (hexCoordinates) {
+                this.clickEvents.next({
+                    type: eventType,
+                    coordinates: hexCoordinates
+                });
+            }            
         })
     }  
     
@@ -33,6 +35,17 @@ export class ClickService {
         const point: Point = { x: event.clientX, y: event.clientY };                        
         const hex = this.grid.findHexByPoint(point) ;
         return hex ? { col: hex.col, row: hex.row } : undefined; 
+    }
+
+    getLeftClicks(): Observable<OffsetCoordinates> {
+        return this.clickEvents.pipe(
+            filter((event) => {
+                return event.type == ClickEventType.LEFT_CLICK
+            }),
+            map((event) => {
+                return event.coordinates
+            })
+        );
     }
 }
     

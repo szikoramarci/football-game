@@ -2,7 +2,7 @@ import { Hex, HexCoordinates, OffsetCoordinates } from "honeycomb-grid";
 
 export interface ClickEvent {
     type: ClickEventType,
-    coordinates: OffsetCoordinates | undefined
+    coordinates: OffsetCoordinates
 }
 
 export enum ClickEventType {

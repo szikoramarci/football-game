@@ -1,9 +1,11 @@
 import { OffsetCoordinates } from "honeycomb-grid";
 
 export interface PlayerPositionState {
-    players: { [playerID: string]: OffsetCoordinates };
+   [playerID: string]: OffsetCoordinates
   }
   
   export const initialState: PlayerPositionState = {
-    players: {}
+    "messi": { col: 4, row: 4 },
+    "suarez": { col: 2, row: 2 },
+    "busquets": { col: 1, row: 4 }
   };

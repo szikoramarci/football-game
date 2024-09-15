@@ -4,12 +4,10 @@ export class Player {
     id!: string;
     kitNumber!: string;
     name!: string;
-    initialPosition!: OffsetCoordinates;
 
-    constructor(name: string, kitNumber: string, initialPosition: OffsetCoordinates) {
-        this.id = btoa(name);
+    constructor(id: string, name: string, kitNumber: string) {
+        this.id = id;
         this.name = name;
         this.kitNumber = kitNumber;
-        this.initialPosition = initialPosition;
     }
 }

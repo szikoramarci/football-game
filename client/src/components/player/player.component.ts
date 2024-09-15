@@ -27,14 +27,14 @@ export class PlayerComponent implements OnInit, OnDestroy {
         private grid: GridService
     ) {}
 
-    ngOnInit(): void {    
+    ngOnInit(): void { 
         this.generateToken();
         this.generateText();
-        this.sendGraphics();
+        this.sendGraphics();        
         this.initPlayerPositionSubscription();       
     }
 
-    initPlayerPositionSubscription() {
+    initPlayerPositionSubscription() {        
         this.playerMovementSubscription = this.store.select(playerMoveEvent(this.player.id))
             .subscribe(position => {
                 this.movePlayer(position);
@@ -80,6 +80,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.graphics.destroy();
         this.playerMovementSubscription?.unsubscribe();
     }
 }

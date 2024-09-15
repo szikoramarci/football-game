@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Hex } from "honeycomb-grid";
 import { Graphics } from "pixi.js";
 import { ContextService } from "../../services/context/context.service";
@@ -8,7 +8,7 @@ import { ContextService } from "../../services/context/context.service";
     standalone: true,
     templateUrl: './field.component.html',
 })
-export class FieldComponent implements OnInit {
+export class FieldComponent implements OnInit, OnDestroy {
 
     @Input() hex!: Hex;
     
@@ -51,5 +51,9 @@ export class FieldComponent implements OnInit {
 
     sendGraphics() {
         this.onGraphicsChanged.emit(this.field);
+    }
+
+    ngOnDestroy(): void {
+        this.field.destroy();
     }
 }

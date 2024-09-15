@@ -6,12 +6,12 @@ import { isEqual } from 'lodash';
 export const playerMovementEvents = createFeatureSelector<PlayerPositionState>('playerPosition');
 
 export const playerMoveEvent = (playerID: string) =>
-  createSelector(playerMovementEvents, (state) => state.players[playerID]);
+  createSelector(playerMovementEvents, (positions) => positions[playerID]);
 
 export const getPlayerByPosition = (coordinatesToFind: OffsetCoordinates) =>
-  createSelector(playerMovementEvents, (state: PlayerPositionState) => {
-    return Object.keys(state.players).find(key => {
-      const coordinates = state.players[key];
+  createSelector(playerMovementEvents, (positions: PlayerPositionState) => {
+    return Object.keys(positions).find(key => {
+      const coordinates = positions[key];
       return isEqual(coordinates, coordinatesToFind);
     });
   });
