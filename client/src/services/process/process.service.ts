@@ -1,7 +1,11 @@
 import { Injectable } from "@angular/core";
-import { ProcessType } from "../../rules/process.type.enum";
-import { ProcessRule } from "../../rules/process.rule.interface";
-import { IsOwnPlayer } from "../../rules/pick-player/is-own-player.rule";
+import { ProcessType } from "../../processes/process.type.enum";
+import { ProcessRule } from "../../processes/process.rule.interface";
+import { IsOwnPlayer } from "../../processes/rules/is-own-player.rule";
+import { IsPlayer } from "../../processes/rules/is-player.rule";
+import { IsAlreadyPicked } from "../../processes/rules/is-already-picked.rule";
+import { IsEmpty } from "../../processes/rules/is-empty.rule";
+import { IsNotPicked } from "../../processes/rules/is-not-picked.rule";
 
 @Injectable({
     providedIn: 'root'
@@ -12,10 +16,18 @@ export class ProcessService {
 
     constructor() {
         this.initPickPlayerProcess();
+        this.initMovePlayerProcess();
     }
 
     initPickPlayerProcess(){
-        this.addRule(ProcessType.PickPlayer, new IsOwnPlayer())
+        this.addRule(ProcessType.PickPlayer, new IsPlayer());
+        this.addRule(ProcessType.PickPlayer, new IsOwnPlayer());
+        this.addRule(ProcessType.PickPlayer, new IsAlreadyPicked());
+    }
+
+    initMovePlayerProcess(){
+        this.addRule(ProcessType.MovePlayer, new IsEmpty());
+        this.addRule(ProcessType.MovePlayer, new IsNotPicked());
     }
 
     addRule(type: ProcessType, rule: ProcessRule): void {
