@@ -4,6 +4,7 @@ import { AppService } from '../../services/app/app.service';
 import { BaseLayerComponent } from '../layers/base/base.layer.component';
 import { StateLayerComponent } from '../layers/state/state.layer.component';
 import { ActiveLayerComponent } from '../layers/active/active.layer.component';
+import { IndicatorLayerComponent } from '../layers/indicator/indicator.layer.component';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { ActiveLayerComponent } from '../layers/active/active.layer.component';
     RouterOutlet,
     BaseLayerComponent,
     StateLayerComponent,
+    IndicatorLayerComponent,
     ActiveLayerComponent
   ],
   templateUrl: './app.component.html',

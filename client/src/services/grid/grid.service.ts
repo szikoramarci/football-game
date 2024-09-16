@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates, spiral } from 'honeycomb-grid';
 import { ContextService } from '../context/context.service';
 
 @Injectable({
@@ -39,4 +39,9 @@ export class GridService {
     findHexByPoint(point: Point): Hex | undefined {
         return this.grid.pointToHex(point, { allowOutside: false });
     }
+
+    getReachableArea(coordinate: HexCoordinates, distance: number) {
+        const spiralTraverser = spiral({ start: coordinate, radius: distance });
+        return this.grid.traverse(spiralTraverser);
+    }    
 }

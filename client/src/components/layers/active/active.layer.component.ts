@@ -3,17 +3,16 @@ import { ClickService } from "../../../services/click/click.service";
 import { Store } from "@ngrx/store";
 import { getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
 import { filter, forkJoin, map, Observable, of, switchMap, take } from "rxjs";
-import { ProcessService } from "../../../services/process/process.service";
-import { ProcessType } from "../../../processes/process.type.enum";
 import { Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
-import { ProcessContext } from "../../../processes/process.context.interface";
-import { startProcess, stopProcess } from "../../../stores/process/process.actions";
-import { Process } from "../../../processes/process.interface";
-import { getActiveProcess } from "../../../stores/process/process.selector";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
+import { ActionService } from "../../../services/action/action.service";
+import { terminateAction, triggerAction } from "../../../stores/action/action.actions";
+import { ActionContext } from "../../../actions/action.context.interface";
+import { ActionType } from "../../../actions/action.type.enum";
+import { getActiveAction } from "../../../stores/action/action.selector";
 
 @Component({
     selector: 'active-layer',
@@ -26,7 +25,7 @@ export class ActiveLayerComponent implements OnInit {
     constructor(
         private click: ClickService,
         private store: Store,
-        private process: ProcessService,
+        private action: ActionService,
         private grid: GridService
     ) {}
 
@@ -44,18 +43,18 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
-    getActiveProcessType(): Observable<ProcessType | undefined> {
-        return this.store.select(getActiveProcess())
+    getActiveActionType(): Observable<ActionType | undefined> {
+        return this.store.select(getActiveAction())
             .pipe(
-                map(process => process ? process.processType : undefined),
+                map(action => action ? action.actionType : undefined),
                 take(1)
             )
     }
 
-    getActiveProcessContext(): Observable<ProcessContext | undefined> {
-        return this.store.select(getActiveProcess())
+    getActiveActionContext(): Observable<ActionContext | undefined> {
+        return this.store.select(getActiveAction())
             .pipe(
-                map(process => process ? process.context : undefined),
+                map(action => action ? action.context : undefined),
                 take(1)
             )
     }
@@ -70,35 +69,36 @@ export class ActiveLayerComponent implements OnInit {
         this.click.getLeftClicks().subscribe(coordinates => {            
             forkJoin({
                 player: this.getClickedPlayer(coordinates),
-                activeProcessType: this.getActiveProcessType(),
-                hex: this.getClickedHex(coordinates)
-            }).subscribe((context: ProcessContext) => {
+                activeActionType: this.getActiveActionType(),
+                hex: this.getClickedHex(coordinates),
+                coordinates: of(coordinates)
+            }).subscribe((context: ActionContext) => {
                 this.handlePickPlayer(context);
                 this.handleMovePlayer(context, coordinates);                            
             });
         });
     }
 
-    handlePickPlayer(context: ProcessContext){
-        if (this.process.validate(ProcessType.PickPlayer, context)) {
-            this.store.dispatch(startProcess({
-                processType: ProcessType.PickPlayer,
+    handlePickPlayer(context: ActionContext){
+        if (this.action.validate(ActionType.PickPlayer, context)) {
+            this.store.dispatch(triggerAction({
+                actionType: ActionType.PickPlayer,
                 context: context
             }));
         }
     }
 
-    handleMovePlayer(context: ProcessContext, coordinates: OffsetCoordinates){
-        if (this.process.validate(ProcessType.MovePlayer, context)) {
-            this.getActiveProcessContext()
+    handleMovePlayer(context: ActionContext, coordinates: OffsetCoordinates){
+        if (this.action.validate(ActionType.MovePlayer, context)) {
+            this.getActiveActionContext()
             .pipe(
-                filter((context): context is ProcessContext => !!context),
+                filter((context): context is ActionContext => !!context),
                 map(context => context.player),
                 filter((player): player is Player => !!player)
             )
             .subscribe(player => {
                 this.store.dispatch(movePlayer( { playerID: player.id, position: coordinates})); 
-                this.store.dispatch(stopProcess());                
+                this.store.dispatch(terminateAction());                
             })                    
         }
     }

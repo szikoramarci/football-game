@@ -1,4 +1,4 @@
-export enum ProcessType {
+export enum ActionType {
     PickPlayer,
     MovePlayer
 }

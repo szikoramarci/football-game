@@ -4,6 +4,7 @@ export class Player {
     id!: string;
     kitNumber!: string;
     name!: string;
+    speed: number = 2;
 
     constructor(id: string, name: string, kitNumber: string) {
         this.id = id;

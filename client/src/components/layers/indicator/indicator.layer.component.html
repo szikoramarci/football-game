@@ -1,0 +1,3 @@
+@for (indicator of indicators; track indicator.center) {
+    <indicator [hex]="indicator" (onGraphicsChanged)="handleGraphics($event)"></indicator>
+}

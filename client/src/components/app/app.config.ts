@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { playerPositionReducer } from '../../stores/player-position/player-position.reducer';
 import { playerReducer } from '../../stores/player/player.reducer';
-import { processReducer } from '../../stores/process/process.reducer';
+import { actionReducer } from '../../stores/action/action.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       playerPosition: playerPositionReducer,
       player: playerReducer,
-      process: processReducer
+      action: actionReducer
     })
   ]
 };
