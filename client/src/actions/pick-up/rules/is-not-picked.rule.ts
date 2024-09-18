@@ -1,6 +1,6 @@
-import { ActionContext } from "../action.context.interface";
-import { ActionRule } from "../action.rule.interface";
-import { ActionType } from "../action.type.enum";
+import { ActionContext } from "../../action-context/action.context.interface";
+import { ActionRule } from "../../action-rule/action.rule.interface";
+import { ActionType } from "../../action.type.enum";
 
 export class IsNotPicked implements ActionRule {
     isValid(context: ActionContext): boolean {

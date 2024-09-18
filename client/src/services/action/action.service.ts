@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { IsOwnPlayer } from "../../actions/rules/is-own-player.rule";
-import { IsAlreadyPicked } from "../../actions/rules/is-already-picked.rule";
-import { IsEmpty } from "../../actions/rules/is-empty.rule";
-import { IsNotPicked } from "../../actions/rules/is-not-picked.rule";
-import { IsPlayerSelected } from "../../actions/rules/is-player-selected.rule";
+import { IsOwnPlayer } from "../../actions/pick-up/rules/is-own-player.rule";
+import { IsAlreadyPicked } from "../../actions/pick-up/rules/is-already-picked.rule";
+import { IsEmpty } from "../../actions/pick-up/rules/is-empty.rule";
+import { IsNotPicked } from "../../actions/pick-up/rules/is-not-picked.rule";
+import { IsPlayerSelected } from "../../actions/pick-up/rules/is-player-selected.rule";
 import { ActionType } from "../../actions/action.type.enum";
-import { ActionRule } from "../../actions/action.rule.interface";
+import { ActionRule } from "../../actions/action-rule/action.rule.interface";
 
 @Injectable({
     providedIn: 'root'

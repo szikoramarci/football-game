@@ -10,7 +10,7 @@ import { GridService } from "../../../services/grid/grid.service";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { ActionService } from "../../../services/action/action.service";
 import { terminateAction, triggerAction } from "../../../stores/action/action.actions";
-import { ActionContext } from "../../../actions/action.context.interface";
+import { ActionContext } from "../../../actions/action-context/action.context.interface";
 import { ActionType } from "../../../actions/action.type.enum";
 import { getActiveAction } from "../../../stores/action/action.selector";
 
