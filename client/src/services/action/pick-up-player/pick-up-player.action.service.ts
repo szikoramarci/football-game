@@ -3,6 +3,10 @@ import { ActionContext } from "../../../actions/interfaces/action.context.interf
 import { ActionStrategy } from "../../../actions/interfaces/action.strategy.interface";
 import { ActionRuleSet } from "../../../actions/interfaces/action.rule.interface";
 import { IsOwnPlayer } from "../../../actions/rules/pick-up-player/is-own-player.rule";
+import { Store } from "@ngrx/store";
+import { triggerAction } from "../../../stores/action/action.actions";
+import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
+import { SetMovingPathAction } from "../set-moving-path/set-moving-path.action.service";
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +14,7 @@ import { IsOwnPlayer } from "../../../actions/rules/pick-up-player/is-own-player
 export class PickUpPlayerAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
   
-    constructor() {
+    constructor(private store: Store) {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsOwnPlayer());
     }
@@ -28,6 +32,11 @@ export class PickUpPlayerAction implements ActionStrategy {
     }
   
     updateState(context: ActionContext): void {
-      console.log("ActionState frissítve: SET_PATH");
+      const pickUpPlayerActionMeta: PickUpPlayerActionMeta = {
+        timestamp: new Date(),
+        availableNextActions: [SetMovingPathAction],
+        movableHexes: []
+      }
+      this.store.dispatch(triggerAction(pickUpPlayerActionMeta));
     }
   }

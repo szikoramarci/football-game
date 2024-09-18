@@ -32,7 +32,7 @@ export class ActionService {
       action.triggerVisual(context);
       action.updateState(context);
     } else {
-      console.log("Nem érvényes akció.");
+      console.log("Invalid action.");
     }
   }
 

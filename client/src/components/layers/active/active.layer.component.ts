@@ -10,8 +10,9 @@ import { GridService } from "../../../services/grid/grid.service";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { terminateAction, triggerAction } from "../../../stores/action/action.actions";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
-import { getActiveAction } from "../../../stores/action/action.selector";
+import { getActionMeta, getActiveAction } from "../../../stores/action/action.selector";
 import { ActionService } from "../../../services/action/action.service";
+import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 
 @Component({
     selector: 'active-layer',
@@ -42,18 +43,9 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
-    getActiveActionType(): Observable<ActionType | undefined> {
-        return this.store.select(getActiveAction())
+    getActionMeta(): Observable<ActionMeta | undefined> {
+        return this.store.select(getActionMeta())
             .pipe(
-                map(action => action ? action.actionType : undefined),
-                take(1)
-            )
-    }
-
-    getActiveActionContext(): Observable<ActionContext | undefined> {
-        return this.store.select(getActiveAction())
-            .pipe(
-                map(action => action ? action.context : undefined),
                 take(1)
             )
     }
@@ -70,7 +62,7 @@ export class ActiveLayerComponent implements OnInit {
                 coordinates: of(coordinates),
                 hex: this.getClickedHex(coordinates),              
                 player: this.getClickedPlayer(coordinates),
-                actionState: this.getActionState(),                  
+                actionMeta: this.getActionMeta(),                  
             }).subscribe((context: ActionContext) => {
                 const availableAction = this.action.resolveAction(context);                       
                 if (availableAction) {

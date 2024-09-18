@@ -1,7 +1,9 @@
 import { OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../models/player.model";
+import { ActionMeta } from "./action.meta.interface";
 
 export interface ActionContext {
-    player: Player | undefined,
-    coordinates: OffsetCoordinates
+    coordinates: OffsetCoordinates,
+    player: Player | undefined,    
+    actionMeta: ActionMeta | undefined
 }

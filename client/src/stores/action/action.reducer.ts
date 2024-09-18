@@ -4,12 +4,12 @@ import { terminateAction, triggerAction } from "./action.actions";
 
 export const actionReducer = createReducer(
     initialState,
-    on(triggerAction, (state, action) => ({      
+    on(triggerAction, (state, actionMeta) => ({      
       ...state,
-      currentAction: action
+      actionMeta: actionMeta
     }),),
     on(terminateAction, (state) => ({      
       ...state,
-      currentAction: null
+      actionMeta: null
     }),)
   );

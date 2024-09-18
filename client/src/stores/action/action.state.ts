@@ -1,10 +1,10 @@
-import { Action } from "../../actions/action.interface";
+import { ActionMeta } from "../../actions/interfaces/action.meta.interface";
 
 export interface ActionState {
-  lastAction: Action | null,
+  actionMeta: ActionMeta | undefined,
   
 }
 
 export const initialState: ActionState = {
-  currentAction: null
+  actionMeta: undefined
 };
