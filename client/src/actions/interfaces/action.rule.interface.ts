@@ -1,7 +1,11 @@
-import { ActionContext } from "../action-context/action.context.interface";
-import { ActionRule } from "./action.rule.interface";
+import { ActionContext } from "../interfaces/action.context.interface";
 
-export class RuleSet {
+export interface ActionRule {
+    validate(context: ActionContext): boolean;
+    errorMessage: string;
+}
+
+export class ActionRuleSet {
     private rules: ActionRule[] = [];
   
     addRule(rule: ActionRule): void {

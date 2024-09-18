@@ -1,7 +1,8 @@
 import { Action } from "../../actions/action.interface";
 
 export interface ActionState {
-  currentAction: Action | null
+  lastAction: Action | null,
+  
 }
 
 export const initialState: ActionState = {

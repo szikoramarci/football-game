@@ -1,7 +1,8 @@
-import { ActionContext } from "../action-context/action.context.interface";
+import { ActionContext } from "../interfaces/action.context.interface";
+import { ActionRuleSet } from "./action.rule.interface";
 
 export interface ActionStrategy {
-    ruleSet: RuleSet;
+    ruleSet: ActionRuleSet;
     identify(context: ActionContext): boolean;
     calculation(context: ActionContext): void;
     triggerVisual(context: ActionContext): void;

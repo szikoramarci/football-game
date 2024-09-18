@@ -8,11 +8,10 @@ import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
-import { ActionService } from "../../../services/action/action.service";
 import { terminateAction, triggerAction } from "../../../stores/action/action.actions";
-import { ActionContext } from "../../../actions/action-context/action.context.interface";
-import { ActionType } from "../../../actions/action.type.enum";
+import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { getActiveAction } from "../../../stores/action/action.selector";
+import { ActionService } from "../../../services/action/action.service";
 
 @Component({
     selector: 'active-layer',
@@ -25,8 +24,8 @@ export class ActiveLayerComponent implements OnInit {
     constructor(
         private click: ClickService,
         private store: Store,
-        private action: ActionService,
-        private grid: GridService
+        private grid: GridService,
+        private action: ActionService
     ) {}
 
     ngOnInit(): void {
@@ -68,18 +67,22 @@ export class ActiveLayerComponent implements OnInit {
     initClickSubscriptions() {
         this.click.getLeftClicks().subscribe(coordinates => {            
             forkJoin({
+                coordinates: of(coordinates),
+                hex: this.getClickedHex(coordinates),              
                 player: this.getClickedPlayer(coordinates),
-                activeActionType: this.getActiveActionType(),
-                hex: this.getClickedHex(coordinates),
-                coordinates: of(coordinates)
+                actionState: this.getActionState(),                  
             }).subscribe((context: ActionContext) => {
-                this.handlePickPlayer(context);
-                this.handleMovePlayer(context, coordinates);                            
+                const availableAction = this.action.resolveAction(context);                       
+                if (availableAction) {
+                    this.action.executeAction(availableAction, context);
+                }
             });
+
+            
         });
     }
 
-    handlePickPlayer(context: ActionContext){
+    /*handlePickPlayer(context: ActionContext){
         if (this.action.validate(ActionType.PickPlayer, context)) {
             this.store.dispatch(triggerAction({
                 actionType: ActionType.PickPlayer,
@@ -101,6 +104,6 @@ export class ActiveLayerComponent implements OnInit {
                 this.store.dispatch(terminateAction());                
             })                    
         }
-    }
+    }*/
 
 }

@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Application, Container } from 'pixi.js';
-import { Graphics } from "pixi.js";
 
 @Injectable({
     providedIn: 'root'

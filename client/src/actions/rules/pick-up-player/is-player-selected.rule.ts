@@ -1,5 +1,4 @@
-import { ActionContext } from "../../action-context/action.context.interface";
-import { ActionRule } from "../../action-rule/action.rule.interface";
+import { ActionContext } from "../../interfaces/action.context.interface";
 
 export class IsPlayerSelected implements ActionRule {
     isValid(context: ActionContext): boolean {
