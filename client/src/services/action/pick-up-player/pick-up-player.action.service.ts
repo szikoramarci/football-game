@@ -10,7 +10,8 @@ import { IsAvailableNextActionsEmpty } from "../../../actions/rules/is-available
 import { IsPlayerSelected } from "../../../actions/rules/pick-up-player/is-player-selected.rule";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { getFreeCoordinatesInGrid, getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
 
 @Injectable({
   providedIn: 'root',
@@ -36,9 +37,12 @@ export class PickUpPlayerAction implements ActionStrategy {
     calculation(context: ActionContext): void {
       const centralPoint = context.coordinates;
       const distance = context.player?.speed || 0;
-      this.reachableHexes = this.grid.getHexesInDistance(centralPoint, distance);      
+      const hexesInDistance = this.grid.getHexesInDistance(centralPoint, distance);
+      this.store.select(getFreeCoordinatesInGrid(hexesInDistance)).subscribe(reachableHexes => {
+        this.reachableHexes = reachableHexes;
+      })
     }
-  í
+  
     triggerVisual(context: ActionContext): void {
       console.log("Vizuális réteg frissítése: útvonal megjelenítése.");
     }
@@ -46,6 +50,7 @@ export class PickUpPlayerAction implements ActionStrategy {
     updateState(context: ActionContext): void {
       const pickUpPlayerActionMeta: PickUpPlayerActionMeta = {
         timestamp: new Date(),
+        clickedCoordinates: context.coordinates,
         availableNextActions: [SetMovingPathAction],
         reachableHexes: this.reachableHexes
       }

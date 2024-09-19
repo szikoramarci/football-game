@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates, spiral } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates, spiral, line } from 'honeycomb-grid';
 import { ContextService } from '../context/context.service';
 
 @Injectable({
@@ -43,5 +43,10 @@ export class GridService {
     getHexesInDistance(centralPoint: HexCoordinates, distance: number) {
         const spiralTraverser = spiral({ start: centralPoint, radius: distance });
         return this.grid.traverse(spiralTraverser);
-    }    
+    }   
+    
+    getHexesInPath(startPoint: HexCoordinates, endPoint: HexCoordinates) {
+        const lineTraverser = line({ start: startPoint, stop: endPoint })
+        return this.grid.traverse(lineTraverser);
+    }  
 }
