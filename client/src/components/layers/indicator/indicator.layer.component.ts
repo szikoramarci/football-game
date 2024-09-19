@@ -1,13 +1,12 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { getActiveAction } from "../../../stores/action/action.selector";
-import { ActionType } from "../../../actions/action.type.enum";
 import { filter, map } from "rxjs";
-import { GridService } from "../../../services/grid/grid.service";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
+import { getLastActionMeta } from "../../../stores/action/action.selector";
+import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 
 @Component({
     selector: 'indicator-layer',
@@ -22,20 +21,16 @@ export class IndicatorLayerComponent implements OnInit {
 
     constructor(
         private store: Store,
-        private grid: GridService,
         private app: AppService
     ) {}
     
     ngOnInit(): void {
         this.app.addChild(this.container);
-        this.store.select(getActiveAction()).pipe(
-            filter(action => !!action),
-            filter(action => action.actionType == ActionType.PickPlayer),
-            map(action => action.context),
-        ).subscribe(context => {
-            const coordinates: OffsetCoordinates = context.coordinates;
-            const distance: number = context.player?.speed || 0;
-            this.indicators = this.grid.getReachableArea(coordinates, distance);
+        this.store.select(getLastActionMeta()).pipe(
+            filter((actionMeta): actionMeta is PickUpPlayerActionMeta => !!actionMeta),
+            map(actionMeta => actionMeta.reachableHexes),
+        ).subscribe(reachableHexes => {
+            this.indicators = reachableHexes;
         });
     }
 

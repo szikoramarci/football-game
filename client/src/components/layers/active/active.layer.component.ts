@@ -2,15 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { ClickService } from "../../../services/click/click.service";
 import { Store } from "@ngrx/store";
 import { getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
-import { filter, forkJoin, map, Observable, of, switchMap, take } from "rxjs";
+import { forkJoin, Observable, of, switchMap, take } from "rxjs";
 import { Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
-import { movePlayer } from "../../../stores/player-position/player-position.actions";
-import { terminateAction, triggerAction } from "../../../stores/action/action.actions";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
-import { getActionMeta, getActiveAction } from "../../../stores/action/action.selector";
+import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { ActionService } from "../../../services/action/action.service";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 
@@ -43,8 +41,8 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
-    getActionMeta(): Observable<ActionMeta | undefined> {
-        return this.store.select(getActionMeta())
+    getLastActionMeta(): Observable<ActionMeta | undefined> {
+        return this.store.select(getLastActionMeta())
             .pipe(
                 take(1)
             )
@@ -62,7 +60,7 @@ export class ActiveLayerComponent implements OnInit {
                 coordinates: of(coordinates),
                 hex: this.getClickedHex(coordinates),              
                 player: this.getClickedPlayer(coordinates),
-                actionMeta: this.getActionMeta(),                  
+                lastActionMeta: this.getLastActionMeta(),                  
             }).subscribe((context: ActionContext) => {
                 const availableAction = this.action.resolveAction(context);                       
                 if (availableAction) {

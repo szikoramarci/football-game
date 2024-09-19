@@ -40,8 +40,8 @@ export class GridService {
         return this.grid.pointToHex(point, { allowOutside: false });
     }
 
-    getReachableArea(coordinate: HexCoordinates, distance: number) {
-        const spiralTraverser = spiral({ start: coordinate, radius: distance });
+    getHexesInDistance(centralPoint: HexCoordinates, distance: number) {
+        const spiralTraverser = spiral({ start: centralPoint, radius: distance });
         return this.grid.traverse(spiralTraverser);
     }    
 }

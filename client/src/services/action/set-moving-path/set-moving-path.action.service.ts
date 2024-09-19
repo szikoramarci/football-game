@@ -27,6 +27,6 @@ export class SetMovingPathAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
-        this.store.dispatch(triggerAction(pickUpPlayerActionMeta));
+        //this.store.dispatch(triggerAction(pickUpPlayerActionMeta));
     }
 }

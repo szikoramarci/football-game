@@ -1,7 +1,8 @@
 import { ActionContext } from "../../interfaces/action.context.interface";
+import { ActionRule } from "../../interfaces/action.rule.interface";
 
 export class IsPlayerSelected implements ActionRule {
-    isValid(context: ActionContext): boolean {
+    validate(context: ActionContext): boolean {
         return !!context.player;
     }
     errorMessage = "pick a player";

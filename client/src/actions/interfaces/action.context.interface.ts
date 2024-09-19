@@ -5,5 +5,5 @@ import { ActionMeta } from "./action.meta.interface";
 export interface ActionContext {
     coordinates: OffsetCoordinates,
     player: Player | undefined,    
-    actionMeta: ActionMeta | undefined
+    lastActionMeta: ActionMeta | undefined
 }
