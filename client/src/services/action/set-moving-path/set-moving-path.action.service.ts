@@ -7,8 +7,9 @@ import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule"
 import { IsReachableHexClicked } from "../../../actions/rules/set-moving-path/is-reachable-hex-clicked.rule";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 import { saveActionMeta } from "../../../stores/action/action.actions";
+import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
+import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +17,7 @@ import { saveActionMeta } from "../../../stores/action/action.actions";
 export class SetMovingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     movingPath!: Grid<Hex>;
+    reachableHexes!: Grid<Hex>;
 
     constructor(
         private store: Store,
@@ -35,6 +37,7 @@ export class SetMovingPathAction implements ActionStrategy {
         const startPoint: OffsetCoordinates = lastActionMeta.clickedCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;
         this.movingPath = this.grid.getHexesInPath(startPoint, endPoint);
+        this.reachableHexes = lastActionMeta.reachableHexes;
     }
 
     triggerVisual(context: ActionContext): void {
@@ -42,12 +45,13 @@ export class SetMovingPathAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
-        const pickUpPlayerActionMeta: PickUpPlayerActionMeta = {
+        const setMovingPathActionMeta: SetMovingPathActionMeta = {
             timestamp: new Date(),
             clickedCoordinates: context.coordinates,
             availableNextActions: [SetMovingPathAction],
-            reachableHexes: this.movingPath
+            reachableHexes: this.reachableHexes,
+            movingPath: this.movingPath
           }
-          this.store.dispatch(saveActionMeta(pickUpPlayerActionMeta));
+          this.store.dispatch(saveActionMeta(setMovingPathActionMeta));
     }
 }

@@ -7,15 +7,18 @@ import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
+import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
+import { ArrowPathComponent } from "../../arrow-path/arrow-path.component";
 
 @Component({
     selector: 'indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent],
+    imports: [IndicatorComponent, ArrowPathComponent],
     templateUrl: './indicator.layer.component.html',
 })
 export class IndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>;
+    movingPath!: Grid<Hex>
 
     container: Container = new Container(); 
 
@@ -26,11 +29,19 @@ export class IndicatorLayerComponent implements OnInit {
     
     ngOnInit(): void {
         this.app.addChild(this.container);
+        
         this.store.select(getLastActionMeta()).pipe(
             filter((actionMeta): actionMeta is PickUpPlayerActionMeta => !!actionMeta),
             map(actionMeta => actionMeta.reachableHexes),
         ).subscribe(reachableHexes => {
             this.indicators = reachableHexes;
+        });
+
+        this.store.select(getLastActionMeta()).pipe(
+            filter((actionMeta): actionMeta is SetMovingPathActionMeta => !!actionMeta),
+        ).subscribe(actionMeta => {
+            this.indicators = actionMeta.reachableHexes;
+            this.movingPath = actionMeta.movingPath;
         });
     }
 
