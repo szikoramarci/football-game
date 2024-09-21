@@ -9,6 +9,8 @@ import { IsPickedPlayerClicked } from "../../../actions/rules/cancel-moving-play
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { IsRightClick } from "../../../actions/rules/is-right-click.rule";
 import { AtLeastOneRule } from "../../../actions/rules/at-least-one.rule";
+import { AllOfThemRule } from "../../../actions/rules/all-of-them.rule";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -20,7 +22,10 @@ export class CancelMovingPlayerAction implements ActionStrategy {
     constructor(private store: Store) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsTheNextAction(CancelMovingPlayerAction));    
-        this.ruleSet.addRule(new AtLeastOneRule(new IsPickedPlayerClicked(), new IsRightClick())); 
+        this.ruleSet.addRule(new AtLeastOneRule(
+            new AllOfThemRule(new IsPickedPlayerClicked(), new IsLeftClick()), 
+            new IsRightClick()
+        )); 
     }
 
     identify(context: ActionContext): boolean {
@@ -32,6 +37,6 @@ export class CancelMovingPlayerAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
-     //   this.store.dispatch(clearActionMeta());
+        this.store.dispatch(clearActionMeta());
     }    
 }
