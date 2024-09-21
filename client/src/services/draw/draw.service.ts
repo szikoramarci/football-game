@@ -59,8 +59,21 @@ export class DrawService {
         const [startPoint, endPoint] = line;
         const totalLength = Math.hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y); // Calculate the total length of the line
         const angle = this.calculateAngle([startPoint, endPoint]); // Calculate the angle of the line
-        let currentLength = 0;                
+        const cycleLength = dashLength + gapLength;
+        const numFullCycles = Math.floor(totalLength / cycleLength);
+        const remainingLength = totalLength - numFullCycles * cycleLength;
+        
+        if (remainingLength > 0) {
+            const dashRatio = cycleLength / dashLength;
+            const gapRatio = cycleLength / gapLength;            
+            const adjustedDashLength = dashLength + remainingLength / numFullCycles * dashRatio;
+            const adjustedGapLength = gapLength + remainingLength / numFullCycles * gapRatio;
     
+            dashLength = adjustedDashLength;
+            gapLength = adjustedGapLength;
+        }
+
+        let currentLength = 0;                
         while (currentLength < totalLength) {
             // Calculate start point of the dash
             const dashStartX = startPoint.x + Math.cos(angle) * currentLength;

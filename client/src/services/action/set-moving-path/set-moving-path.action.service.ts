@@ -10,6 +10,9 @@ import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
+import { MovePlayerAction } from "../move-player/move-player.action.service";
+import { IsNotTargetHexClicked } from "../../../actions/rules/set-moving-path/is-not-target-hex-clicked.rule";
+import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
 
 @Injectable({
     providedIn: 'root',
@@ -26,6 +29,7 @@ export class SetMovingPathAction implements ActionStrategy {
         this.ruleSet = new ActionRuleSet();    
         this.ruleSet.addRule(new IsTheNextAction(SetMovingPathAction));    
         this.ruleSet.addRule(new IsReachableHexClicked());
+        this.ruleSet.addRule(new IsNotTargetHexClicked());
     }
 
     identify(context: ActionContext): boolean {
@@ -42,9 +46,11 @@ export class SetMovingPathAction implements ActionStrategy {
     updateState(context: ActionContext): void {
         const setMovingPathActionMeta: SetMovingPathActionMeta = {... this.lastActionMeta,
             timestamp: new Date(),
+            availableNextActions: [SetMovingPathAction, MovePlayerAction, CancelMovingPlayerAction],
             clickedCoordinates: context.coordinates, 
-            movingPath: this.movingPath
-          }          
-          this.store.dispatch(saveActionMeta(setMovingPathActionMeta));
+            movingPath: this.movingPath,
+            targetHex: context.coordinates
+        }          
+        this.store.dispatch(saveActionMeta(setMovingPathActionMeta));
     }
 }

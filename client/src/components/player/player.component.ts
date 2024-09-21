@@ -36,16 +36,16 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     initPlayerPositionSubscription() {        
         this.playerMovementSubscription = this.store.select(playerMoveEvent(this.player.id))
-            .subscribe(position => {
+            .subscribe(position => {                
                 this.movePlayer(position);
             })
     }
 
     movePlayer(newCoordinates: HexCoordinates) {
-        const hex = this.grid.getHex(newCoordinates);
+        const hex = this.grid.getHex(newCoordinates);                
         if (hex) {
             this.graphics.x = hex.x;
-            this.graphics.y = hex.y;
+            this.graphics.y = hex.y;            
         }
     }
 

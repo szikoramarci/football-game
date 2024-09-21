@@ -12,6 +12,7 @@ import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { getFreeCoordinatesInGrid, getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
+import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +49,8 @@ export class PickUpPlayerAction implements ActionStrategy {
         timestamp: new Date(),
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
-        availableNextActions: [SetMovingPathAction],
+        playerID: context.player?.id,
+        availableNextActions: [SetMovingPathAction, CancelMovingPlayerAction],
         reachableHexes: this.reachableHexes
       }
       this.store.dispatch(saveActionMeta(pickUpPlayerActionMeta));

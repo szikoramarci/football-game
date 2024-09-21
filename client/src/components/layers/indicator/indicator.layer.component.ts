@@ -18,14 +18,13 @@ import { MovementPathComponent } from "../../movement-path/movement-path.compone
 })
 export class IndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>;
-    movingPath!: Grid<Hex>
+    movingPath!: Grid<Hex>;
 
     container: Container = new Container(); 
 
     constructor(
         private store: Store,
         private app: AppService,
-        private cdRef: ChangeDetectorRef
     ) {}
     
     ngOnInit(): void {
@@ -36,7 +35,6 @@ export class IndicatorLayerComponent implements OnInit {
             map(actionMeta => actionMeta.reachableHexes),
         ).subscribe(reachableHexes => {
             this.indicators = reachableHexes;
-            this.cdRef.detectChanges();
         });
 
         this.store.select(getLastActionMeta()).pipe(
@@ -44,7 +42,13 @@ export class IndicatorLayerComponent implements OnInit {
         ).subscribe(actionMeta => {            
             this.indicators = actionMeta.reachableHexes;
             this.movingPath = actionMeta.movingPath;
-            this.cdRef.detectChanges();
+        });
+
+        this.store.select(getLastActionMeta()).pipe(
+            filter(actionMeta => !actionMeta)
+        ).subscribe(actionMeta => {
+            this.indicators = new Grid<Hex>(Hex);
+            this.movingPath = new Grid<Hex>(Hex);
         });
     }
 

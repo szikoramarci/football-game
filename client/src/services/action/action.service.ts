@@ -3,6 +3,8 @@ import { ActionContext } from "../../actions/interfaces/action.context.interface
 import { ActionStrategy } from "../../actions/interfaces/action.strategy.interface";
 import { PickUpPlayerAction } from "./pick-up-player/pick-up-player.action.service";
 import { SetMovingPathAction } from "./set-moving-path/set-moving-path.action.service";
+import { MovePlayerAction } from "./move-player/move-player.action.service";
+import { CancelMovingPlayerAction } from "./cancel-moving-player/cancel-moving-player.service";
 
 @Injectable({
     providedIn: 'root',
@@ -13,11 +15,15 @@ export class ActionService {
 
   constructor(
     private pickUpPlayer: PickUpPlayerAction,
-    private setMovingPath: SetMovingPathAction
+    private setMovingPath: SetMovingPathAction,
+    private movePlayer: MovePlayerAction,
+    private cancelMovingPlayer: CancelMovingPlayerAction
   ) {
     this.actionList = [
       this.pickUpPlayer,
-      this.setMovingPath
+      this.setMovingPath,
+      this.movePlayer,
+      this.cancelMovingPlayer
     ]
   }
 
