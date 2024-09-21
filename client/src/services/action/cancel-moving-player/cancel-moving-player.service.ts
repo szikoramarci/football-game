@@ -7,6 +7,8 @@ import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule"
 import { Store } from "@ngrx/store";
 import { IsPickedPlayerClicked } from "../../../actions/rules/cancel-moving-player/is-picked-player-clicked.rule";
 import { clearActionMeta } from "../../../stores/action/action.actions";
+import { IsRightClick } from "../../../actions/rules/is-right-click.rule";
+import { AtLeastOneRule } from "../../../actions/rules/at-least-one.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -18,7 +20,7 @@ export class CancelMovingPlayerAction implements ActionStrategy {
     constructor(private store: Store) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsTheNextAction(CancelMovingPlayerAction));    
-        this.ruleSet.addRule(new IsPickedPlayerClicked()); 
+        this.ruleSet.addRule(new AtLeastOneRule(new IsPickedPlayerClicked(), new IsRightClick())); 
     }
 
     identify(context: ActionContext): boolean {

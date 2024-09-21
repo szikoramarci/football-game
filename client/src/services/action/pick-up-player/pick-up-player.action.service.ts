@@ -13,6 +13,7 @@ import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { getFreeCoordinatesInGrid, getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
 import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,7 @@ export class PickUpPlayerAction implements ActionStrategy {
       private grid: GridService
     ) {
       this.ruleSet = new ActionRuleSet();
+      this.ruleSet.addRule(new IsLeftClick());
       this.ruleSet.addRule(new IsAvailableNextActionsEmpty());
       this.ruleSet.addRule(new IsOwnPlayer());
       this.ruleSet.addRule(new IsPlayerSelected());

@@ -11,6 +11,7 @@ import { ActionContext } from "../../../actions/interfaces/action.context.interf
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { ActionService } from "../../../services/action/action.service";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
+import { ClickEventType } from "../../../services/click/click-event.interface";
 
 @Component({
     selector: 'active-layer',
@@ -54,46 +55,31 @@ export class ActiveLayerComponent implements OnInit {
         return of(this.grid.getHex(coordinates));
     }
 
+    getContext(clickEvent: ClickEventType, coordinates: OffsetCoordinates): Observable<ActionContext> {
+        return forkJoin({
+            clickEventType: of(clickEvent),
+            coordinates: of(coordinates),
+            hex: this.getClickedHex(coordinates),              
+            player: this.getClickedPlayer(coordinates),
+            lastActionMeta: this.getLastActionMeta(),                  
+        });
+    }
+
+
+
     initClickSubscriptions() {
-        this.click.getLeftClicks().subscribe(coordinates => {            
-            forkJoin({
-                coordinates: of(coordinates),
-                hex: this.getClickedHex(coordinates),              
-                player: this.getClickedPlayer(coordinates),
-                lastActionMeta: this.getLastActionMeta(),                  
-            }).subscribe((context: ActionContext) => {
+        this.click.getClickEvents().subscribe(clickEvent => {
+            const clickEventType: ClickEventType = clickEvent.type;
+            const coordinates: OffsetCoordinates = clickEvent.coordinates;
+            this.getContext(clickEventType, coordinates).subscribe((context: ActionContext) => {
                 const availableAction = this.action.resolveAction(context);                       
                 if (availableAction) {
                     this.action.executeAction(availableAction, context);
                 }
-            });
-
-            
+            });        
         });
-    }
 
-    /*handlePickPlayer(context: ActionContext){
-        if (this.action.validate(ActionType.PickPlayer, context)) {
-            this.store.dispatch(triggerAction({
-                actionType: ActionType.PickPlayer,
-                context: context
-            }));
-        }
-    }
 
-    handleMovePlayer(context: ActionContext, coordinates: OffsetCoordinates){
-        if (this.action.validate(ActionType.MovePlayer, context)) {
-            this.getActiveActionContext()
-            .pipe(
-                filter((context): context is ActionContext => !!context),
-                map(context => context.player),
-                filter((player): player is Player => !!player)
-            )
-            .subscribe(player => {
-                this.store.dispatch(movePlayer( { playerID: player.id, position: coordinates})); 
-                this.store.dispatch(terminateAction());                
-            })                    
-        }
-    }*/
+    }   
 
 }

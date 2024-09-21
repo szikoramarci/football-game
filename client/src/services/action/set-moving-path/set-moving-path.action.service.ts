@@ -13,6 +13,7 @@ import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.ac
 import { MovePlayerAction } from "../move-player/move-player.action.service";
 import { IsNotTargetHexClicked } from "../../../actions/rules/set-moving-path/is-not-target-hex-clicked.rule";
 import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -26,8 +27,9 @@ export class SetMovingPathAction implements ActionStrategy {
         private store: Store,
         private grid: GridService
     ) {
-        this.ruleSet = new ActionRuleSet();    
-        this.ruleSet.addRule(new IsTheNextAction(SetMovingPathAction));    
+        this.ruleSet = new ActionRuleSet();   
+        this.ruleSet.addRule(new IsLeftClick());  
+        this.ruleSet.addRule(new IsTheNextAction(SetMovingPathAction));           
         this.ruleSet.addRule(new IsReachableHexClicked());
         this.ruleSet.addRule(new IsNotTargetHexClicked());
     }

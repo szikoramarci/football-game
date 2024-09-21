@@ -9,6 +9,7 @@ import { Store } from "@ngrx/store";
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { OffsetCoordinates } from "honeycomb-grid";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -21,6 +22,7 @@ export class MovePlayerAction implements ActionStrategy {
 
     constructor(private store: Store) {
         this.ruleSet = new ActionRuleSet();   
+        this.ruleSet.addRule(new IsLeftClick());
         this.ruleSet.addRule(new IsTheNextAction(MovePlayerAction));    
         this.ruleSet.addRule(new IsTargetHexClicked()); 
     }
