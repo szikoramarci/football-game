@@ -17,7 +17,7 @@ import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.ac
 export class SetMovingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     movingPath!: Grid<Hex>;
-    reachableHexes!: Grid<Hex>;
+    lastActionMeta!: PickUpPlayerActionMeta;
 
     constructor(
         private store: Store,
@@ -33,25 +33,18 @@ export class SetMovingPathAction implements ActionStrategy {
     }
 
     calculation(context: ActionContext): void {
-        const lastActionMeta = context.lastActionMeta as PickUpPlayerActionMeta;
-        const startPoint: OffsetCoordinates = lastActionMeta.clickedCoordinates;
+        this.lastActionMeta = context.lastActionMeta as PickUpPlayerActionMeta;
+        const startPoint: OffsetCoordinates = this.lastActionMeta.playerCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;
-        this.movingPath = this.grid.getHexesInPath(startPoint, endPoint);
-        this.reachableHexes = lastActionMeta.reachableHexes;
-    }
-
-    triggerVisual(context: ActionContext): void {
-        console.log("Vizuális réteg frissítése: útvonal megjelenítése.");
+        this.movingPath = this.grid.getPathHexes(startPoint, endPoint);
     }
 
     updateState(context: ActionContext): void {
-        const setMovingPathActionMeta: SetMovingPathActionMeta = {
+        const setMovingPathActionMeta: SetMovingPathActionMeta = {... this.lastActionMeta,
             timestamp: new Date(),
-            clickedCoordinates: context.coordinates,
-            availableNextActions: [SetMovingPathAction],
-            reachableHexes: this.reachableHexes,
+            clickedCoordinates: context.coordinates, 
             movingPath: this.movingPath
-          }
+          }          
           this.store.dispatch(saveActionMeta(setMovingPathActionMeta));
     }
 }

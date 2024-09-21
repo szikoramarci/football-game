@@ -45,7 +45,7 @@ export class GridService {
         return this.grid.traverse(spiralTraverser);
     }   
     
-    getHexesInPath(startPoint: HexCoordinates, endPoint: HexCoordinates) {
+    getPathHexes(startPoint: HexCoordinates, endPoint: HexCoordinates) {
         const lineTraverser = line({ start: startPoint, stop: endPoint })
         return this.grid.traverse(lineTraverser);
     }  

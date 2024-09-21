@@ -34,7 +34,6 @@ export class ActionService {
   executeAction(action: ActionStrategy, context: ActionContext): void {    
     if (action) {
       action.calculation(context);
-      action.triggerVisual(context);
       action.updateState(context);
     } else {
       console.log("Invalid action.");

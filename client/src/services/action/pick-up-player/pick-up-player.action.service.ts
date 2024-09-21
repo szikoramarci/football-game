@@ -43,14 +43,11 @@ export class PickUpPlayerAction implements ActionStrategy {
       })
     }
   
-    triggerVisual(context: ActionContext): void {
-      console.log("Vizuális réteg frissítése: útvonal megjelenítése.");
-    }
-  
     updateState(context: ActionContext): void {
       const pickUpPlayerActionMeta: PickUpPlayerActionMeta = {
         timestamp: new Date(),
         clickedCoordinates: context.coordinates,
+        playerCoordinates: context.coordinates,
         availableNextActions: [SetMovingPathAction],
         reachableHexes: this.reachableHexes
       }

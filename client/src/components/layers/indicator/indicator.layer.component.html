@@ -2,5 +2,5 @@
     <indicator [hex]="indicator" (onGraphicsChanged)="handleGraphics($event)"></indicator>
 }
 @if (movingPath) {
-    <arrow-path [grid]="movingPath" (onGraphicsChanged)="handleGraphics($event)"></arrow-path>
+    <movement-path [grid]="movingPath" (onGraphicsChanged)="handleGraphics($event)"></movement-path>
 }
