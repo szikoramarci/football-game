@@ -2,9 +2,9 @@ import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.in
 import { ActionContext } from "../interfaces/action.context.interface";
 import { ActionRule } from "../interfaces/action.rule.interface";
 
-export class IsLeftClick implements ActionRule {
+export class IsMouseOver implements ActionRule {
     validate(context: ActionContext): boolean {
-        return context.mouseEventType == MouseTriggerEventType.LEFT_CLICK;
+        return context.mouseEventType == MouseTriggerEventType.MOUSE_MOVE;
     }
-    errorMessage = "it wasn't a left click";
+    errorMessage = "it wasn't a mouse over";
 }

@@ -29,8 +29,8 @@ export class PickUpPlayerAction implements ActionStrategy {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
       this.ruleSet.addRule(new IsAvailableNextActionsEmpty());
-      this.ruleSet.addRule(new IsOwnPlayer());
       this.ruleSet.addRule(new IsPlayerSelected());
+      this.ruleSet.addRule(new IsOwnPlayer());
     }
   
     identify(context: ActionContext): boolean {

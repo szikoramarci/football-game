@@ -32,6 +32,6 @@ export class CancelMovingPlayerAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
-        this.store.dispatch(clearActionMeta());
+     //   this.store.dispatch(clearActionMeta());
     }    
 }
