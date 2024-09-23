@@ -9,6 +9,7 @@ import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
+import { GridService } from "../../../services/grid/grid.service";
 
 @Component({
     selector: 'indicator-layer',
@@ -25,6 +26,7 @@ export class IndicatorLayerComponent implements OnInit {
     constructor(
         private store: Store,
         private app: AppService,
+        private grid: GridService
     ) {}
     
     ngOnInit(): void {
@@ -47,8 +49,8 @@ export class IndicatorLayerComponent implements OnInit {
         this.store.select(getLastActionMeta()).pipe(
             filter(actionMeta => !actionMeta)
         ).subscribe(actionMeta => {
-            this.indicators = new Grid<Hex>(Hex);
-            this.movingPath = new Grid<Hex>(Hex);
+            this.indicators = this.grid.createGrid();
+            this.movingPath = this.grid.createGrid();
         });
     }
 

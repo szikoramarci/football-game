@@ -11,9 +11,10 @@ import { IsPlayerSelected } from "../../../actions/rules/pick-up-player/is-playe
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { getFreeCoordinatesInGrid, getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
+import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
 import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { take } from "rxjs";
 
 @Injectable({
   providedIn: 'root',
@@ -39,10 +40,12 @@ export class PickUpPlayerAction implements ActionStrategy {
   
     calculation(context: ActionContext): void {
       const centralPoint = context.coordinates;
-      const distance = context.player?.speed || 0;
-      const hexesInDistance = this.grid.getHexesInDistance(centralPoint, distance);
-      this.store.select(getFreeCoordinatesInGrid(hexesInDistance)).subscribe(reachableHexes => {
-        this.reachableHexes = reachableHexes;
+      const distance = context.player?.speed || 0;      
+      this.store.select(playerMovementEvents).pipe(take(1))
+      .subscribe((occupiedCoordinates) => {
+        const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
+        const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());
+        this.reachableHexes = this.grid.getReachableHexes(centralPoint, distance, occupiedHexes);
       })
     }
   
