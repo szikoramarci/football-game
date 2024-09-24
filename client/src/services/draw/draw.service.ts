@@ -45,14 +45,14 @@ export class DrawService {
         graphics.lineTo(p2.x, p2.y);
         graphics.lineTo(p3.x, p3.y);
         graphics.lineTo(p1.x, p1.y);
-        graphics.fill(0x000000);
+        graphics.fill('white');
         
     }
 
     drawDashedLine(
         graphics: Graphics, 
         line: Point[], 
-        strokeStyle: StrokeStyle = { width: 4, color: 0x000000 }, 
+        strokeStyle: StrokeStyle = { width: 4, color: 'white' }, 
         dashLength: number = 5, 
         gapLength: number = 5
     ): void {

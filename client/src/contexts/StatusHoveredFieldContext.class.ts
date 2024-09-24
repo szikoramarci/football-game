@@ -5,7 +5,7 @@ export default class StatusHoveredFieldContext extends FieldContext {
     constructor(corners: Point[]){
         super(corners);
         this.setFillColor({
-            color: 'white',
+            color: 'black',
             alpha: 0.4,
         });
     }

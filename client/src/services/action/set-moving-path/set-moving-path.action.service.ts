@@ -15,6 +15,8 @@ import { IsNotTargetHexClicked } from "../../../actions/rules/set-moving-path/is
 import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
+import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
+import { take } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -42,8 +44,13 @@ export class SetMovingPathAction implements ActionStrategy {
     calculation(context: ActionContext): void {
         this.lastActionMeta = context.lastActionMeta as PickUpPlayerActionMeta;
         const startPoint: OffsetCoordinates = this.lastActionMeta.playerCoordinates;
-        const endPoint: OffsetCoordinates = context.coordinates;
-        this.movingPath = this.grid.getPathHexes(startPoint, endPoint);
+        const endPoint: OffsetCoordinates = context.coordinates;        
+        this.store.select(playerMovementEvents).pipe(take(1))
+        .subscribe((occupiedCoordinates) => {
+            const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
+            const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());         
+            this.movingPath = this.grid.getPathHexes(startPoint, endPoint, occupiedHexes);
+        })
     }
 
     updateState(context: ActionContext): void {

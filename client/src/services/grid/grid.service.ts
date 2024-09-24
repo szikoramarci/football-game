@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, Orientation, Point, HexCoordinates, line, reachable, Traverser, Direction, neighborOf } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, pathFind, Orientation, Point, HexCoordinates, line, reachable, Traverser, Direction, neighborOf } from 'honeycomb-grid';
 import { ContextService } from '../context/context.service';
 
 const FootballHex = defineHex({ 
@@ -74,8 +74,8 @@ export class GridService {
         return this.grid.traverse(reachableTraverser);
     }   
     
-    getPathHexes(startPoint: HexCoordinates, endPoint: HexCoordinates) {
-        const lineTraverser = line({ start: startPoint, stop: endPoint })
+    getPathHexes(startPoint: HexCoordinates, endPoint: HexCoordinates, obstacles: Grid<Hex>) {
+        const lineTraverser = pathFind(startPoint, endPoint, obstacles)
         return this.grid.traverse(lineTraverser);
     }      
 }
