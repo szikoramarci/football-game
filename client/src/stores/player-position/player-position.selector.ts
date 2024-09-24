@@ -1,7 +1,6 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { PlayerPositionState } from './player-position.state';
-import { Grid, Hex, OffsetCoordinates } from 'honeycomb-grid';
-import { isEqual } from 'lodash';
+import { equals, Grid, Hex, OffsetCoordinates } from 'honeycomb-grid';
 
 export const playerMovementEvents = createFeatureSelector<PlayerPositionState>('playerPosition');
 
@@ -11,7 +10,7 @@ export const playerMoveEvent = (playerID: string) =>
 const searchPlayerByPosition = (coordinatesToFind: OffsetCoordinates, positions: PlayerPositionState) => {
   return Object.keys(positions).find(key => {
     const coordinates = positions[key];
-    return isEqual(coordinates, coordinatesToFind);
+    return equals(coordinates, coordinatesToFind);
   });
 }
 

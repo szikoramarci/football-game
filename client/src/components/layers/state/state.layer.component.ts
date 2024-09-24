@@ -2,14 +2,15 @@ import { Component, OnInit } from "@angular/core";
 import { Player } from "../../../models/player.model";
 import { PlayerComponent } from "../../player/player.component";
 import { AppService } from "../../../services/app/app.service";
-import { Container, Graphics } from "pixi.js";
+import { Container } from "pixi.js";
 import { Store } from "@ngrx/store";
 import { getAllPlayers } from "../../../stores/player/player.selector";
+import { BallComponent } from "../../ball/ball.component";
 
 @Component({
     selector: 'state-layer',
     standalone: true,
-    imports: [PlayerComponent],
+    imports: [PlayerComponent, BallComponent],
     templateUrl: './state.layer.component.html',
 })
 export class StateLayerComponent implements OnInit {
@@ -34,7 +35,8 @@ export class StateLayerComponent implements OnInit {
         })
     }
 
-    handleGraphics(fieldGraphics: Container) {
+    handleGraphics(fieldGraphics: Container, zIndex: number) {
+        fieldGraphics.zIndex = zIndex;
         this.container.addChild(fieldGraphics);
     }
 }
