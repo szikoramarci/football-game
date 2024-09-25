@@ -1,0 +1,32 @@
+:host {
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: white;
+
+    > div {
+        width: 200px;
+        height: 50px;
+        line-height: 50px;;
+        text-align: center;
+        border: 1px solid grey;
+        font-weight: bold;
+        font-size: 20px;
+        cursor: pointer;
+
+        &:hover {
+            background: #ddd;
+        }
+
+        &.disabled {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        &.selected {
+            background: grey;
+            color: white;
+        }
+        
+    }
+}

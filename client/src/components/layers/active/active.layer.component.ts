@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Type } from "@angular/core";
 import { MouseEventService } from "../../../services/mouse-event/mouse-event.service";
 import { Store } from "@ngrx/store";
 import { getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
@@ -8,15 +8,17 @@ import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
-import { getLastActionMeta } from "../../../stores/action/action.selector";
+import { getActionMode, getLastActionMeta } from "../../../stores/action/action.selector";
 import { ActionService } from "../../../services/action/action.service";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
+import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
+import { ActionStrategy } from "../../../actions/interfaces/action.strategy.interface";
 
 @Component({
     selector: 'active-layer',
     standalone: true,
-    imports: [],
+    imports: [ActionSelectorComponent],
     templateUrl: './active.layer.component.html',
 })
 export class ActiveLayerComponent implements OnInit {
@@ -30,6 +32,7 @@ export class ActiveLayerComponent implements OnInit {
 
     ngOnInit(): void {
         this.initMouseEventSubscriptions();
+        this.initActionModeChangeSubscription();
     }
 
     getRelatedPlayer(coordinates: OffsetCoordinates): Observable<Player | undefined> {
@@ -76,8 +79,12 @@ export class ActiveLayerComponent implements OnInit {
                 }
             });        
         });
-
-
     }   
+
+    initActionModeChangeSubscription() {
+        this.store.select(getActionMode()).subscribe(actionMode => {
+            console.log(actionMode)
+        })
+    }
 
 }

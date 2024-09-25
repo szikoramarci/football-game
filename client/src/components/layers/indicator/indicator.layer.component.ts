@@ -10,6 +10,7 @@ import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.ac
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
+import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 
 @Component({
     selector: 'indicator-layer',
@@ -33,7 +34,7 @@ export class IndicatorLayerComponent implements OnInit {
         this.app.addChild(this.container);
         
         this.store.select(getLastActionMeta()).pipe(
-            filter((actionMeta): actionMeta is PickUpPlayerActionMeta => !!actionMeta),
+            filter((actionMeta): actionMeta is InitMovingActionMeta => !!actionMeta),
             map(actionMeta => actionMeta.reachableHexes),
         ).subscribe(reachableHexes => {
             this.indicators = reachableHexes;

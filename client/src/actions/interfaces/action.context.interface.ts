@@ -4,7 +4,7 @@ import { ActionMeta } from "./action.meta.interface";
 import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.interface";
 
 export interface ActionContext {
-    mouseEventType: MouseTriggerEventType,
+    mouseEventType: MouseTriggerEventType | undefined,
     coordinates: OffsetCoordinates,
     player: Player | undefined,    
     lastActionMeta: ActionMeta | undefined

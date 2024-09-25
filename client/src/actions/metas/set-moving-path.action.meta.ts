@@ -1,7 +1,7 @@
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { PickUpPlayerActionMeta } from "./pick-up-player.action.meta";
+import { InitMovingActionMeta } from "./init-moving.action.meta";
 
-export interface SetMovingPathActionMeta extends PickUpPlayerActionMeta {
+export interface SetMovingPathActionMeta extends InitMovingActionMeta {
     movingPath: Grid<Hex>,
     targetHex: OffsetCoordinates
 }

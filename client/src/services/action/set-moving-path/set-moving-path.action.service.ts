@@ -9,14 +9,13 @@ import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
-import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 import { MovePlayerAction } from "../move-player/move-player.action.service";
 import { IsNotTargetHexClicked } from "../../../actions/rules/set-moving-path/is-not-target-hex-clicked.rule";
 import { CancelMovingPlayerAction } from "../cancel-moving-player/cancel-moving-player.service";
-import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
+import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +23,7 @@ import { take } from "rxjs";
 export class SetMovingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     movingPath!: Grid<Hex>;
-    lastActionMeta!: PickUpPlayerActionMeta;
+    lastActionMeta!: InitMovingActionMeta;
 
     constructor(
         private store: Store,
@@ -42,7 +41,7 @@ export class SetMovingPathAction implements ActionStrategy {
     }
 
     calculation(context: ActionContext): void {
-        this.lastActionMeta = context.lastActionMeta as PickUpPlayerActionMeta;
+       this.lastActionMeta = context.lastActionMeta as InitMovingActionMeta;
         const startPoint: OffsetCoordinates = this.lastActionMeta.playerCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;        
         this.store.select(playerMovementEvents).pipe(take(1))

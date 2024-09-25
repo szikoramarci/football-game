@@ -4,7 +4,7 @@ import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
-import { ballPosition } from "../../stores/ball-position/ball-position.selector";
+import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
 
 @Component({
     selector: 'ball',
@@ -31,9 +31,9 @@ export class BallComponent implements OnInit, OnDestroy {
     }
 
     initPlayerPositionSubscription() {        
-        this.ballMovementSubscription = this.store.select(ballPosition)
-            .subscribe(position => {                
-                this.moveBall(position.ballPosition);
+        this.ballMovementSubscription = this.store.select(getBallPosition())
+            .subscribe(position => {                               
+                this.moveBall(position);
             })
     }
 

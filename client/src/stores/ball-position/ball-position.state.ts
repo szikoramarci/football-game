@@ -5,5 +5,5 @@ export interface BallPositionState {
 }
 
 export const initialState: BallPositionState = {
-  ballPosition: { col: 4, row: 4}
-};
+  ballPosition: { col: 4, row: 4 }
+}
