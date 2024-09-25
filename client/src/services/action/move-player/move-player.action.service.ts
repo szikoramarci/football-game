@@ -8,8 +8,9 @@ import { IsTargetHexClicked } from "../../../actions/rules/move-player/is-target
 import { Store } from "@ngrx/store";
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { concatMap, delay, from, of } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -18,7 +19,7 @@ export class MovePlayerAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     lastActionMeta!: SetMovingPathActionMeta;
     playerID!: string;
-    newPosition!: OffsetCoordinates;
+    movingPath!: Grid<Hex>;
 
     constructor(private store: Store) {
         this.ruleSet = new ActionRuleSet();   
@@ -33,7 +34,7 @@ export class MovePlayerAction implements ActionStrategy {
 
     calculation(context: ActionContext): void {
         this.lastActionMeta = context.lastActionMeta as SetMovingPathActionMeta;
-        this.newPosition = context.coordinates;
+        this.movingPath = this.lastActionMeta.movingPath;
         if (this.lastActionMeta.playerID) {
             this.playerID = this.lastActionMeta.playerID
         } else {
@@ -42,10 +43,20 @@ export class MovePlayerAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
-        this.store.dispatch(clearActionMeta());
-        this.store.dispatch(movePlayer({
-            playerID: this.playerID, 
-            position: this.newPosition
-        }));
+        from(this.movingPath.toArray())
+            .pipe(
+                concatMap((position, index) => 
+                    index === 0 
+                        ? of(position)  // No delay for the first action
+                        : of(position).pipe(delay(250)) // Delay for the rest
+                )
+            )
+            .subscribe(newPosition => {
+                this.store.dispatch(movePlayer({
+                    playerID: this.playerID, 
+                    position: newPosition
+                }));
+            })
+        this.store.dispatch(clearActionMeta());                
     }    
 }
