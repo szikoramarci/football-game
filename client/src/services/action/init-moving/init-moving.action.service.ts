@@ -57,12 +57,10 @@ export class InitMovingAction implements ActionStrategy {
     }
 
     generateAvailableNextActions(context: ActionContext) {
-      this.availableNextActions = [SetMovingPathAction];
+      this.availableNextActions = [SetMovingPathAction, CancelAction];
      
       if (context.playerHasBall){
         this.availableNextActions.push(InitPassingAction);
-      } else {
-        this.availableNextActions.push(CancelAction)
       }
     }
   

@@ -61,13 +61,11 @@ export class SetMovingPathAction implements ActionStrategy {
     }
 
     generateAvailableNextActions(context: ActionContext) {        
-        this.availableNextActions = [SetMovingPathAction, MovePlayerAction];
+        this.availableNextActions = [SetMovingPathAction, MovePlayerAction, CancelAction];
 
         if (this.lastActionMeta.playerHasBall){
             this.availableNextActions.push(InitPassingAction);
-        } else {
-            this.availableNextActions.push(CancelAction);
-        }
+        } 
     }
 
     updateState(context: ActionContext): void {
