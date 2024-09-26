@@ -5,6 +5,3 @@ export const getAction = createFeatureSelector<ActionState>('action');
 
 export const getLastActionMeta = () =>
     createSelector(getAction, (state) => state.lastActionMeta);
-
-export const getActionMode = () =>
-    createSelector(getAction, (state) => state.actionMode);

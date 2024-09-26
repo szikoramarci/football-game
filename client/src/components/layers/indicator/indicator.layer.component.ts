@@ -6,7 +6,6 @@ import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { PickUpPlayerActionMeta } from "../../../actions/metas/pick-up-player.action.meta";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";

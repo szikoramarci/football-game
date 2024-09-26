@@ -11,22 +11,6 @@
         text-align: center;
         border: 1px solid grey;
         font-weight: bold;
-        font-size: 20px;
-        cursor: pointer;
-
-        &:hover {
-            background: #ddd;
-        }
-
-        &.disabled {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        &.selected {
-            background: grey;
-            color: white;
-        }
-        
+        font-size: 20px;        
     }
 }

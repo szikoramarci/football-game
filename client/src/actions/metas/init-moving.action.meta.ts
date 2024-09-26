@@ -4,5 +4,6 @@ import { ActionMeta } from "../interfaces/action.meta.interface";
 export interface InitMovingActionMeta extends ActionMeta {
     reachableHexes: Grid<Hex>,
     playerCoordinates: OffsetCoordinates,
-    playerID: string | undefined
+    playerID: string | undefined,
+    playerHasBall: boolean
 }

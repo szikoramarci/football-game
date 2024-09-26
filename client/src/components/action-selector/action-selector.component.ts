@@ -1,13 +1,12 @@
-import { Component, OnInit, output, Output, Type } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActionMenuItem } from "../../actions/interfaces/action.menu.item.interface";
 import { Store } from "@ngrx/store";
-import { getLastActionMeta } from "../../stores/action/action.selector";
 import { filter, tap } from "rxjs";
-import { InitPassingAction } from "../../services/action/init-passing/init-passing.action.service";
+import { getLastActionMeta } from "../../stores/action/action.selector";
+import { InitMovingActionMeta } from "../../actions/metas/init-moving.action.meta";
 import { InitMovingAction } from "../../services/action/init-moving/init-moving.action.service";
-import { ActionStrategy } from "../../actions/interfaces/action.strategy.interface";
-import { EventEmitter } from "pixi.js";
-import { setActionMode } from "../../stores/action/action.actions";
+import { SetMovingPathAction } from "../../services/action/set-moving-path/set-moving-path.action.service";
+import { InitPassingAction } from "../../services/action/init-passing/init-passing.action.service";
 
 @Component({
     selector: 'action-selector',
@@ -17,14 +16,16 @@ import { setActionMode } from "../../stores/action/action.actions";
 })
 export class ActionSelectorComponent implements OnInit {
 
+    actionLabel!: string | null;    
+
     actionMenuItems: ActionMenuItem[] = [
         {
             label: 'Move',
-            relatedAction: InitMovingAction,
+            relatedActions: [InitMovingAction, SetMovingPathAction],
         },
         {
             label: 'Pass',
-            relatedAction: InitPassingAction,
+            relatedActions: [InitPassingAction],
         }
     ]
 
@@ -34,25 +35,16 @@ export class ActionSelectorComponent implements OnInit {
         this.store.select(getLastActionMeta())
         .pipe(
             tap(() => {
-                this.disableAllItems();
+                this.actionLabel = null;
             }),
             filter(actionMeta => !!actionMeta),
         )
         .subscribe(lastActionMeta => {  
-            lastActionMeta.availableNextActions.forEach(action => {
-                const item = this.actionMenuItems.find(item => item.relatedAction == action);
-                if (item) {
-                    item.available = true;
-                }
-            })
+            const actionMenuItem = this.actionMenuItems.find(item => item.relatedActions.includes(lastActionMeta.actionType))
+            if (actionMenuItem) {
+                this.actionLabel = actionMenuItem.label;
+            }
         })
     }
 
-    disableAllItems() {
-        this.actionMenuItems.forEach(item => item.available = false);
-    }
-
-    triggerAction(action: Type<ActionStrategy>) {
-        this.store.dispatch(setActionMode({ mode: action }));
-    }
 }

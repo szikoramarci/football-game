@@ -5,6 +5,7 @@ import { Subscription } from "rxjs";
 import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
 import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
+import { AnimateService } from "../../services/animate/animate.service";
 
 @Component({
     selector: 'ball',
@@ -21,7 +22,8 @@ export class BallComponent implements OnInit, OnDestroy {
 
     constructor(
         private store: Store,
-        private grid: GridService
+        private grid: GridService,
+        private animate: AnimateService
     ) {}
 
     ngOnInit(): void { 
@@ -40,8 +42,7 @@ export class BallComponent implements OnInit, OnDestroy {
     moveBall(newCoordinates: HexCoordinates) {
         const hex = this.grid.getHex(newCoordinates);                
         if (hex) {            
-            this.graphics.x = hex.x + 20;
-            this.graphics.y = hex.y + 32;            
+            this.animate.move(this.graphics, hex)      
         }
     }
 

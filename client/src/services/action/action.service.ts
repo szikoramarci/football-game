@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { ActionContext } from "../../actions/interfaces/action.context.interface";
 import { ActionStrategy } from "../../actions/interfaces/action.strategy.interface";
-import { PickUpPlayerAction } from "./pick-up-player/pick-up-player.action.service";
+import { InitMovingAction } from "./init-moving/init-moving.action.service";
 import { SetMovingPathAction } from "./set-moving-path/set-moving-path.action.service";
 import { MovePlayerAction } from "./move-player/move-player.action.service";
-import { CancelMovingPlayerAction } from "./cancel-moving-player/cancel-moving-player.service";
+import { CancelAction } from "./cancel/cancel.service";
+import { InitPassingAction } from "./init-passing/init-passing.action.service";
 
 @Injectable({
     providedIn: 'root',
@@ -14,15 +15,22 @@ export class ActionService {
   actionList: ActionStrategy[] = [];
 
   constructor(
-    private pickUpPlayer: PickUpPlayerAction,
+
+    private initMoving: InitMovingAction,
     private setMovingPath: SetMovingPathAction,
     private movePlayer: MovePlayerAction,
-    private cancelMovingPlayer: CancelMovingPlayerAction
+
+    private initPassing: InitPassingAction,
+
+    private cancelMovingPlayer: CancelAction
   ) {
     this.actionList = [
-      this.pickUpPlayer,
+      this.initMoving,
       this.setMovingPath,
       this.movePlayer,
+
+      this.initPassing,
+
       this.cancelMovingPlayer
     ]
   }

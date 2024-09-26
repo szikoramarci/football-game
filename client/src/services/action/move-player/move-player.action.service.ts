@@ -8,9 +8,11 @@ import { IsTargetHexClicked } from "../../../actions/rules/move-player/is-target
 import { Store } from "@ngrx/store";
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { concatMap, delay, from, of } from "rxjs";
+import { IsTargetHexNotThePlayerHex } from "../../../actions/rules/move-player/is-target-hex-not-the-player-hex.rule";
+import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 
 @Injectable({
     providedIn: 'root',
@@ -26,6 +28,7 @@ export class MovePlayerAction implements ActionStrategy {
         this.ruleSet.addRule(new IsLeftClick());
         this.ruleSet.addRule(new IsTheNextAction(MovePlayerAction));    
         this.ruleSet.addRule(new IsTargetHexClicked()); 
+        this.ruleSet.addRule(new IsTargetHexNotThePlayerHex()); 
     }
 
     identify(context: ActionContext): boolean {
@@ -52,10 +55,12 @@ export class MovePlayerAction implements ActionStrategy {
                 )
             )
             .subscribe(newPosition => {
+                const newCoordinates = hexToOffset(newPosition)
                 this.store.dispatch(movePlayer({
                     playerID: this.playerID, 
-                    position: newPosition
-                }));
+                    position: newCoordinates
+                }));                
+                this.store.dispatch(moveBall(newCoordinates));
             })
         this.store.dispatch(clearActionMeta());                
     }    

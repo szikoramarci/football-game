@@ -5,7 +5,7 @@ import { ActionContext } from "../../../actions/interfaces/action.context.interf
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { Store } from "@ngrx/store";
-import { IsPickedPlayerClicked } from "../../../actions/rules/cancel-moving-player/is-picked-player-clicked.rule";
+import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { IsRightClick } from "../../../actions/rules/is-right-click.rule";
 import { AtLeastOneRule } from "../../../actions/rules/at-least-one.rule";
@@ -15,13 +15,13 @@ import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 @Injectable({
     providedIn: 'root',
 })
-export class CancelMovingPlayerAction implements ActionStrategy {
+export class CancelAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     lastActionMeta!: SetMovingPathActionMeta;
 
     constructor(private store: Store) {
-        this.ruleSet = new ActionRuleSet();   
-        this.ruleSet.addRule(new IsTheNextAction(CancelMovingPlayerAction));    
+        this.ruleSet = new ActionRuleSet();           
+        this.ruleSet.addRule(new IsTheNextAction(CancelAction));    
         this.ruleSet.addRule(new AtLeastOneRule(
             new AllOfThemRule(new IsPickedPlayerClicked(), new IsLeftClick()), 
             new IsRightClick()

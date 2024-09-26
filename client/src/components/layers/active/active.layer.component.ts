@@ -1,19 +1,19 @@
-import { Component, OnInit, Type } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MouseEventService } from "../../../services/mouse-event/mouse-event.service";
 import { Store } from "@ngrx/store";
 import { getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
-import { forkJoin, Observable, of, switchMap, take } from "rxjs";
+import { forkJoin, map, Observable, of, switchMap, take } from "rxjs";
 import { Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
-import { getActionMode, getLastActionMeta } from "../../../stores/action/action.selector";
+import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { ActionService } from "../../../services/action/action.service";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
-import { ActionStrategy } from "../../../actions/interfaces/action.strategy.interface";
+import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
 
 @Component({
     selector: 'active-layer',
@@ -32,7 +32,6 @@ export class ActiveLayerComponent implements OnInit {
 
     ngOnInit(): void {
         this.initMouseEventSubscriptions();
-        this.initActionModeChangeSubscription();
     }
 
     getRelatedPlayer(coordinates: OffsetCoordinates): Observable<Player | undefined> {
@@ -52,6 +51,14 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
+    isPlayerHasBall(coordinates: OffsetCoordinates): Observable<boolean> {
+        return this.store.select(IsBallInPosition(coordinates))
+            .pipe(                
+                take(1),
+                map(IsBallInPosition => !!IsBallInPosition)    
+            )
+    }
+
     getRelatedHex(coordinates: OffsetCoordinates): Observable<Hex | undefined> {
         // TODO valójában itt arra vagyunk kíváncsiak, hogy ezen a hexen mik a szabályok
         // külön HEX RULES bevezetése kellene
@@ -64,6 +71,7 @@ export class ActiveLayerComponent implements OnInit {
             coordinates: of(coordinates),
             hex: this.getRelatedHex(coordinates),              
             player: this.getRelatedPlayer(coordinates),
+            playerHasBall: this.isPlayerHasBall(coordinates),
             lastActionMeta: this.getLastActionMeta(),                  
         });
     }
@@ -80,11 +88,5 @@ export class ActiveLayerComponent implements OnInit {
             });        
         });
     }   
-
-    initActionModeChangeSubscription() {
-        this.store.select(getActionMode()).subscribe(actionMode => {
-            console.log(actionMode)
-        })
-    }
 
 }

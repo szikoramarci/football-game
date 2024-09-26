@@ -7,5 +7,6 @@ export interface ActionContext {
     mouseEventType: MouseTriggerEventType | undefined,
     coordinates: OffsetCoordinates,
     player: Player | undefined,    
+    playerHasBall: boolean,
     lastActionMeta: ActionMeta | undefined
 }

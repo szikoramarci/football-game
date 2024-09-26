@@ -1,8 +1,8 @@
 import { Type } from "@angular/core";
+import { ActionMeta } from "./action.meta.interface";
 import { ActionStrategy } from "./action.strategy.interface";
 
 export interface ActionMenuItem {
     label: string,
-    available?: boolean,
-    relatedAction: Type<ActionStrategy>
+    relatedActions: Type<ActionStrategy>[]
 }

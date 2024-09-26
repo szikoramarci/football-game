@@ -1,4 +1,3 @@
-
-@for (actionMenuItem of actionMenuItems; track actionMenuItem.relatedAction) {
-    <div [class.disabled]="!actionMenuItem.available" (click)="triggerAction(actionMenuItem.relatedAction)">{{ actionMenuItem.label }}</div>
+@if (actionLabel) {
+    <div>{{ actionLabel }}</div>
 }
