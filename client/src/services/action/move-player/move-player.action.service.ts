@@ -52,7 +52,7 @@ export class MovePlayerAction implements ActionStrategy {
                 concatMap((position, index) => 
                     index === 0 
                         ? of(position)  // No delay for the first action
-                        : of(position).pipe(delay(250)) // Delay for the rest
+                        : of(position).pipe(delay(350)) // Delay for the rest
                 )
             )
             .subscribe(newPosition => {

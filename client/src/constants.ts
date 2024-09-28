@@ -1,7 +1,7 @@
 export const PITCH_LENGTH = 37; // ORIGINAL: 37
 export const PITCH_WIDTH = Math.round(PITCH_LENGTH * 0.67567567567); // ORIGINAL: 25 
 
-export const HEXA_RADIUS = 30;
+export const HEXA_RADIUS = 60;
 export const HEXA_WIDTH = HEXA_RADIUS * 0.86602540378 * 2;
 
 export const PLAYER_TOKEN_RADIUS = HEXA_RADIUS * 0.7;
