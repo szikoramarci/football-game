@@ -50,7 +50,7 @@ export class GridService {
         return this.grid.distance(from, to);
     }
 
-    getDistanceInPixels(from: OffsetCoordinates, to: OffsetCoordinates): number | null {
+    getDistanceInPixels(from: HexCoordinates, to: HexCoordinates): number | null {
         const formHex = this.grid.getHex(from);
         const toHex = this.grid.getHex(to);
         if (formHex && toHex) {

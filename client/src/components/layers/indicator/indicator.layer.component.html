@@ -7,3 +7,6 @@
 @if (passerCoordinates) {
     <passing-range [passerCoordinates]="passerCoordinates" (onGraphicsChanged)="handleGraphics($event)"></passing-range>
 }
+@if (passingPath) {
+    <passing-path [passingPath]="passingPath" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
+}

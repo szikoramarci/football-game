@@ -1,9 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { filter, map } from "rxjs";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Point } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
@@ -13,17 +12,20 @@ import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 import { PassingRangeComponent } from "../../passing-range/passing-range.components";
+import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
+import { PassingPathComponent } from "../../passing-path/passing-path.component";
 
 @Component({
     selector: 'indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent, MovementPathComponent, PassingRangeComponent],
+    imports: [IndicatorComponent, MovementPathComponent, PassingRangeComponent, PassingPathComponent],
     templateUrl: './indicator.layer.component.html',
 })
 export class IndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>;
     movingPath!: Grid<Hex>;
     passerCoordinates!: OffsetCoordinates | null;
+    passingPath!: Point[] | null
 
     container: Container = new Container({
         interactiveChildren: false,
@@ -42,7 +44,8 @@ export class IndicatorLayerComponent implements OnInit {
         this.store.select(getLastActionMeta()).subscribe(actionMeta => {     
             this.resetElements();
 
-            this.handleAvailableTargets(actionMeta)
+            this.handleAvailableTargets(actionMeta);
+            this.handlePassingPath(actionMeta);
             this.handleReachableHexes(actionMeta);
             this.handleMovingPath(actionMeta);          
         });
@@ -53,6 +56,7 @@ export class IndicatorLayerComponent implements OnInit {
         this.indicators = this.grid.createGrid();
         this.movingPath = this.grid.createGrid();
         this.passerCoordinates = null;
+        this.passingPath = null;
     }
 
     handleAvailableTargets(actionMeta: ActionMeta | undefined) {
@@ -62,6 +66,17 @@ export class IndicatorLayerComponent implements OnInit {
         if (initPassingActionMeta.availableTargets) {
             this.indicators = initPassingActionMeta.availableTargets   
             this.passerCoordinates = initPassingActionMeta.playerCoordinates  
+        }
+    }
+
+    handlePassingPath(actionMeta: ActionMeta | undefined) {
+        if (!actionMeta) return;
+
+        const setPassingPathActionMeta = actionMeta as SetPassingPathActionMeta;
+        if (setPassingPathActionMeta.availableTargets && setPassingPathActionMeta.passingPath) {
+            this.indicators = setPassingPathActionMeta.availableTargets
+            this.passerCoordinates = setPassingPathActionMeta.playerCoordinates  
+            this.passingPath = setPassingPathActionMeta.passingPath 
         }
     }
 
