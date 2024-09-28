@@ -1,13 +1,17 @@
-export const PITCH_LENGTH = 37; // ORIGINAL: 37
+export const PITCH_LENGTH = 20; // ORIGINAL: 37
 export const PITCH_WIDTH = Math.round(PITCH_LENGTH * 0.67567567567); // ORIGINAL: 25 
 
-export const HEXA_RADIUS = 60;
+export const HEXA_RADIUS = 30;
 export const HEXA_WIDTH = HEXA_RADIUS * 0.86602540378 * 2;
 
 export const PLAYER_TOKEN_RADIUS = HEXA_RADIUS * 0.7;
 export const PLAYER_KIT_FONT_SIZE = HEXA_RADIUS * 0.9;
 
 export const BALL_TOKEN_RADIUS = HEXA_RADIUS * 0.5;
+
+export const MOVEMENT_PATH_WIDTH = HEXA_RADIUS * 0.11;
+
+
 
 export const HEADER_HEX_DISTANCE = Math.round(PITCH_LENGTH * 0.16216216216); // ORIGINAL: 6
 export const HEADER_PIXEL_DISTANCE = HEXA_WIDTH * (HEADER_HEX_DISTANCE - 0.5);

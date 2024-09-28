@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Graphics, Point, StrokeStyle } from "pixi.js";
+import { MOVEMENT_PATH_WIDTH } from "../../constants";
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,7 @@ export class DrawService {
         this.drawArrowHeadForLine(graphics, lastLine);
     }
     
-    drawArrowHeadForLine(graphics: Graphics, line: Point[], size: number = 30) {
+    drawArrowHeadForLine(graphics: Graphics, line: Point[], size: number = MOVEMENT_PATH_WIDTH * 7) {
         const halfBase = size / 2;
 
         const endPoint: Point = line[1];
@@ -52,9 +53,9 @@ export class DrawService {
     drawDashedLine(
         graphics: Graphics, 
         line: Point[], 
-        strokeStyle: StrokeStyle = { width: 4, color: 'white' }, 
-        dashLength: number = 5, 
-        gapLength: number = 5
+        strokeStyle: StrokeStyle = { width: MOVEMENT_PATH_WIDTH, color: 'white' }, 
+        dashLength: number = MOVEMENT_PATH_WIDTH, 
+        gapLength: number = MOVEMENT_PATH_WIDTH
     ): void {
         const [startPoint, endPoint] = line;
         const totalLength = Math.hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y); // Calculate the total length of the line

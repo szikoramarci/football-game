@@ -14,9 +14,12 @@ import { CancelAction } from "../cancel/cancel.service";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { HasThePlayerTheBall } from "../../../actions/rules/init-passing/has-the-player-the-ball.rule";
-import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
-import { filter, take } from "rxjs";
+import { getPositionsByPlayerIDs, playerMovementEvents } from "../../../stores/player-position/player-position.selector";
+import { filter, map, Observable, of, switchMap, take } from "rxjs";
 import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
+import { getActiveTeam } from "../../../stores/gameplay/gameplay.selector";
+import { getPlayersFromOppositeTeam, getPlayersFromTeam } from "../../../stores/player/player.selector";
+import { Player } from "../../../models/player.model";
 
 @Injectable({
   providedIn: 'root',
@@ -41,21 +44,76 @@ export class InitPassingAction implements ActionStrategy {
     identify(context: ActionContext): boolean {
       return this.ruleSet.validate(context);
     }
+
+    getActiveTeam(): Observable<string> {
+      return this.store.select(getActiveTeam()).pipe(take(1));
+    }
+
+    getPlayersFromActiveTeam(): Observable<Player[]> {
+      return this.getActiveTeam().pipe(switchMap(team => this.store.select(getPlayersFromTeam(team)).pipe(take(1))))
+    }
+
+    getPlayersFromOppositeTeam(): Observable<Player[]> {
+      return this.getActiveTeam().pipe(switchMap(team => this.store.select(getPlayersFromOppositeTeam(team)).pipe(take(1))))
+    }
+
+    getPositionsOfPlayers(playerIDs: string[]) {
+      return this.store.select(getPositionsByPlayerIDs(playerIDs)).pipe(take(1))
+    }
+
+    getPositionsOfActiveTeamPlayersWithoutSelectedPlayer(selectedPlayerId: string) {
+      return this.getPlayersFromActiveTeam().pipe(switchMap(players => {
+        const playerIDs = players
+            .map(player => player.id)
+            .filter(playerID => playerID != selectedPlayerId) // REMOVE PASSER
+        return this.getPositionsOfPlayers(playerIDs);
+      }))
+    }
+
+    getPositionsOfOppositeTeamPlayers() {
+      return this.getPlayersFromOppositeTeam().pipe(switchMap(players => {
+        const playerIDs = players.map(player => player.id)        
+        return this.getPositionsOfPlayers(playerIDs);
+      }))
+    }
   
-    calculation(context: ActionContext): void {
-      const passingDistance = 3;      
-      this.store.select(playerMovementEvents).pipe(
-          take(1),        
-        )        
-        .subscribe((occupiedCoordinates) => {          
-          const offsetCoordinates: OffsetCoordinates[] =
-          Object.values(occupiedCoordinates)                            
-            .filter(coordinate => !equals(coordinate, context.coordinates)) // REMOVE THE PASSER
+    calculation(context: ActionContext): void {  
+      const selectedPlayerId: string = context.player?.id || "none";
+      this.getPositionsOfActiveTeamPlayersWithoutSelectedPlayer(selectedPlayerId).pipe(       
+        switchMap(teamMateCoordinates => {
+          return of(Object.values(teamMateCoordinates)                                       
             .filter(coordinate => {
               const distanceInPixels = this.grid.getDistanceInPixels(coordinate, context.coordinates)
               return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE
-            });
-          this.availableTargets = this.grid.createGrid().setHexes(offsetCoordinates);        
+            })
+            .map(coordinate => {
+              return {
+                targetCoordinate: coordinate,
+                directLine: this.grid.getDirectLine(coordinate, context.coordinates)
+              }
+            }))       
+        }),
+        switchMap(possibleTargets => {
+          return this.getPositionsOfOppositeTeamPlayers().pipe(
+            switchMap(playerPositions => {
+              return of(possibleTargets
+                .filter(({ targetCoordinate, directLine }) => {                  
+                  let valid = true;
+                  Object.values(playerPositions).forEach(playerPosition => {
+                    if (directLine.getHex(playerPosition)) {
+                      valid = false;
+                      return
+                    }
+                  })                  
+
+                  return valid;
+                })
+                .map(({ targetCoordinate }) => targetCoordinate))         
+            })
+          )         
+        })
+      ).subscribe(targetCoordinates => {
+        this.availableTargets = this.grid.createGrid().setHexes(targetCoordinates);
       })
     }
   

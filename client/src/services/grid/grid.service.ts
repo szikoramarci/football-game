@@ -90,7 +90,12 @@ export class GridService {
     }   
     
     getPathHexes(startPoint: HexCoordinates, endPoint: HexCoordinates, obstacles: Grid<Hex>) {
-        const lineTraverser = pathFind(startPoint, endPoint, obstacles)
+        const pathTraverser = pathFind(startPoint, endPoint, obstacles)
+        return this.grid.traverse(pathTraverser);
+    }   
+    
+    getDirectLine(startPoint: HexCoordinates, endPoint: HexCoordinates) {
+        const lineTraverser = line({ start: startPoint, stop: endPoint })
         return this.grid.traverse(lineTraverser);
-    }      
+    }
 }

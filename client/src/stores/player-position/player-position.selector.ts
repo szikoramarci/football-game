@@ -19,6 +19,13 @@ export const getPlayerByPosition = (coordinatesToFind: OffsetCoordinates) =>
     return searchPlayerByPosition(coordinatesToFind, positions);
 });
 
+export const getPositionsByPlayerIDs = (playerIDs: string[]) =>
+  createSelector(playerMovementEvents, (positions: PlayerPositionState) => {
+    return Object.fromEntries(
+      Object.entries(positions).filter(([playerID]) => playerIDs.includes(playerID))
+    );
+});
+
 export const getFreeCoordinatesInGrid = (grid: Grid<Hex>) =>
   createSelector(playerMovementEvents, (positions: PlayerPositionState) => {
     return grid.filter(hex => {

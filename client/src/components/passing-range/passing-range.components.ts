@@ -28,8 +28,8 @@ export class PassingRangeComponent implements OnInit {
 
     setDesign(){
         this.range.circle(0, 0, STANDARD_PASS_PIXEL_DISTANCE);  
-        this.range.stroke({ color: 'black', width: 3 })
-        this.range.fill({ color: 'black', 'alpha': 0.4})
+        this.range.stroke({ color: 'black', width: 3, alpha: 0.5 })
+        this.range.fill({ color: 'black', alpha: 0.2})
         console.log(this.range.x, this.range.y)
     }
 
