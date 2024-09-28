@@ -46,6 +46,7 @@ export class MovePlayerAction implements ActionStrategy {
     }
 
     updateState(context: ActionContext): void {
+        const lastActionMeta = context.lastActionMeta as SetMovingPathActionMeta;                
         from(this.movingPath.toArray())
             .pipe(
                 concatMap((position, index) => 
@@ -59,8 +60,10 @@ export class MovePlayerAction implements ActionStrategy {
                 this.store.dispatch(movePlayer({
                     playerID: this.playerID, 
                     position: newCoordinates
-                }));                
-                this.store.dispatch(moveBall(newCoordinates));
+                }));        
+                if (lastActionMeta.playerHasBall) {
+                    this.store.dispatch(moveBall(newCoordinates));
+                }
             })
         this.store.dispatch(clearActionMeta());                
     }    

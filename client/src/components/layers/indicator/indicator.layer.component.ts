@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { filter, map } from "rxjs";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
@@ -10,18 +10,25 @@ import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
+import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
+import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
+import { PassingRangeComponent } from "../../passing-range/passing-range.components";
 
 @Component({
     selector: 'indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent, MovementPathComponent],
+    imports: [IndicatorComponent, MovementPathComponent, PassingRangeComponent],
     templateUrl: './indicator.layer.component.html',
 })
 export class IndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>;
     movingPath!: Grid<Hex>;
+    passerCoordinates!: OffsetCoordinates | null;
 
-    container: Container = new Container(); 
+    container: Container = new Container({
+        interactiveChildren: false,
+        isRenderGroup: true
+    }); 
 
     constructor(
         private store: Store,
@@ -31,27 +38,49 @@ export class IndicatorLayerComponent implements OnInit {
     
     ngOnInit(): void {
         this.app.addChild(this.container);
-        
-        this.store.select(getLastActionMeta()).pipe(
-            filter((actionMeta): actionMeta is InitMovingActionMeta => !!actionMeta),
-            map(actionMeta => actionMeta.reachableHexes),
-        ).subscribe(reachableHexes => {
-            this.indicators = reachableHexes;
+                
+        this.store.select(getLastActionMeta()).subscribe(actionMeta => {     
+            this.resetElements();
+
+            this.handleAvailableTargets(actionMeta)
+            this.handleReachableHexes(actionMeta);
+            this.handleMovingPath(actionMeta);          
         });
 
-        this.store.select(getLastActionMeta()).pipe(
-            filter((actionMeta): actionMeta is SetMovingPathActionMeta => !!actionMeta),
-        ).subscribe(actionMeta => {            
-            this.indicators = actionMeta.reachableHexes;
-            this.movingPath = actionMeta.movingPath;
-        });
+    }
 
-        this.store.select(getLastActionMeta()).pipe(
-            filter(actionMeta => !actionMeta)
-        ).subscribe(actionMeta => {
-            this.indicators = this.grid.createGrid();
-            this.movingPath = this.grid.createGrid();
-        });
+    resetElements() {
+        this.indicators = this.grid.createGrid();
+        this.movingPath = this.grid.createGrid();
+        this.passerCoordinates = null;
+    }
+
+    handleAvailableTargets(actionMeta: ActionMeta | undefined) {
+        if (!actionMeta) return;
+
+        const initPassingActionMeta = actionMeta as InitPassingActionMeta;
+        if (initPassingActionMeta.availableTargets) {
+            this.indicators = initPassingActionMeta.availableTargets   
+            this.passerCoordinates = initPassingActionMeta.playerCoordinates  
+        }
+    }
+
+    handleMovingPath(actionMeta: ActionMeta | undefined) {
+        if (!actionMeta) return;
+
+        const initMovingActionMeta = actionMeta as InitMovingActionMeta;
+        if (initMovingActionMeta.reachableHexes) {
+            this.indicators = initMovingActionMeta.reachableHexes
+        }
+    }
+
+    handleReachableHexes(actionMeta: ActionMeta | undefined) {
+        if (!actionMeta) return;
+
+        const setMovingPathActionMeta = actionMeta as SetMovingPathActionMeta;
+        if (setMovingPathActionMeta.movingPath) {
+            this.movingPath = setMovingPathActionMeta.movingPath
+        }
     }
 
     handleGraphics(indicatorGraphics: Graphics) {

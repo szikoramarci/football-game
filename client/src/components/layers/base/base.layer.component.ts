@@ -12,9 +12,12 @@ import { FieldComponent } from "../../field/field.component";
     templateUrl: './base.layer.component.html',
 })
 export class BaseLayerComponent implements OnInit {
-    fields!: Grid<Hex>;
+    fields!: Hex[];
 
-    container: Container = new Container(); 
+    container: Container = new Container({
+        interactiveChildren: false,
+        isRenderGroup:true
+    }); 
 
     constructor(
         private grid: GridService,
@@ -22,7 +25,7 @@ export class BaseLayerComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.fields = this.grid.getGrid();
+        this.fields = this.grid.getGrid().toArray();
         this.app.addChild(this.container);
     }
 

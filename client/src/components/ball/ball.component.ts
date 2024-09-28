@@ -6,6 +6,7 @@ import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
 import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
+import { BALL_TOKEN_RADIUS } from "../../constants";
 
 @Component({
     selector: 'ball',
@@ -48,17 +49,17 @@ export class BallComponent implements OnInit, OnDestroy {
 
     async generateBall(){        
 
-        const token = new Graphics().circle(0, 0, 16);  
-        token.fill('white');
-        this.graphics.addChild(token);
+        const ballBase = new Graphics().circle(0, 0, BALL_TOKEN_RADIUS);  
+        ballBase.fill('white');
+        this.graphics.addChild(ballBase);
 
         const texture = await Assets.load('http://localhost:4200/football.png');
-        const ball = new Sprite(texture);
-        ball.width = 32;
-        ball.height = 32;
-        ball.x = -16;
-        ball.y = -16
-        this.graphics.addChild(ball);
+        const ballTexture = new Sprite(texture);
+        ballTexture.width = BALL_TOKEN_RADIUS * 2;
+        ballTexture.height = BALL_TOKEN_RADIUS * 2;
+        ballTexture.x = BALL_TOKEN_RADIUS * -1;
+        ballTexture.y = BALL_TOKEN_RADIUS * -1;
+        this.graphics.addChild(ballTexture);
     }
 
 

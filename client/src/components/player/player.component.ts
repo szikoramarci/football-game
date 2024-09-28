@@ -7,6 +7,7 @@ import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
 import { playerMoveEvent } from "../../stores/player-position/player-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
+import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
 
 @Component({
     selector: 'player',
@@ -23,6 +24,11 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     playerMovementSubscription!: Subscription;
 
+    mainColor!: string;
+    outlineColor!: string;
+    numberColor!: string;
+    numberOutlineColor!: string;
+
     constructor(
         private store: Store,
         private grid: GridService,
@@ -30,10 +36,28 @@ export class PlayerComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void { 
+        this.defineKitColors();
         this.generateToken();
         this.generateText();
         this.sendGraphics();        
         this.initPlayerPositionSubscription();       
+    }
+
+    defineKitColors(){
+        switch(this.player.team) {
+            case 'barca':
+                this.mainColor = "#a50044";
+                this.outlineColor = "black"
+                this.numberColor = "#ffed02";
+                this.numberOutlineColor = "#a50044"
+                break;
+            case 'real':
+                this.mainColor = "white";
+                this.outlineColor = "black"
+                this.numberColor = "white";
+                this.numberOutlineColor = "black"
+                break;
+        }
     }
 
     initPlayerPositionSubscription() {        
@@ -55,10 +79,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
         const text = new Text({
             text: this.player.kitNumber,
             style: {
-                fill: 'white',
+                fill: this.numberColor,
                 fontWeight: 'bold',
-                fontSize: 40,
-                stroke: { color: 'black', width: 7, join: 'round' },
+                fontSize: PLAYER_KIT_FONT_SIZE,
+                stroke: { color: this.numberOutlineColor, width: PLAYER_TOKEN_RADIUS/6, join: 'round' },
             }
             
         });
@@ -69,9 +93,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
     }
 
     generateToken(){
-        const token = new Graphics().circle(0, 0, 40);  
-        token.fill('white');
-        token.stroke( { color: 'black', width: 3 });
+        const token = new Graphics().circle(0, 0, PLAYER_TOKEN_RADIUS);  
+        token.fill(this.mainColor);
+        token.stroke( { color: this.outlineColor, width: PLAYER_TOKEN_RADIUS/17 });
 
         this.graphics.addChild(token);
     }

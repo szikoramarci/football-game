@@ -14,7 +14,7 @@ export default class FieldContext {
     }
 
     enableStroke() {
-        this.context.stroke({ color: '#006400', width: 6 })
+        this.context.stroke({ color: '#006400', width: 4 })
     }
 
     getContext() {

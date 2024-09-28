@@ -17,7 +17,10 @@ export class StateLayerComponent implements OnInit {
 
     players: Player[] = [];    
 
-    container: Container = new Container(); 
+    container: Container = new Container({
+        interactiveChildren: false,
+        isRenderGroup: true
+    }); 
 
     constructor(
         private app: AppService,

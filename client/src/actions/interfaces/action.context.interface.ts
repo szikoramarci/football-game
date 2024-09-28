@@ -9,4 +9,5 @@ export interface ActionContext {
     player: Player | undefined,    
     playerHasBall: boolean,
     lastActionMeta: ActionMeta | undefined
+    activeTeam: string
 }

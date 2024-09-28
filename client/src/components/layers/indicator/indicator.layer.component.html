@@ -4,3 +4,6 @@
 @if (movingPath) {
     <movement-path [grid]="movingPath" (onGraphicsChanged)="handleGraphics($event)"></movement-path>
 }
+@if (passerCoordinates) {
+    <passing-range [passerCoordinates]="passerCoordinates" (onGraphicsChanged)="handleGraphics($event)"></passing-range>
+}

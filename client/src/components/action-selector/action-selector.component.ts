@@ -24,7 +24,7 @@ export class ActionSelectorComponent implements OnInit {
             relatedActions: [InitMovingAction, SetMovingPathAction],
         },
         {
-            label: 'Pass',
+            label: 'Standard Pass',
             relatedActions: [InitPassingAction],
         }
     ]

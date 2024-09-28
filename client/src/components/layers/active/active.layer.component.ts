@@ -14,6 +14,7 @@ import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
 import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
+import { getActiveTeam } from "../../../stores/gameplay/gameplay.selector";
 
 @Component({
     selector: 'active-layer',
@@ -51,6 +52,13 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
+    getActiveTeam(): Observable<string> {
+        return this.store.select(getActiveTeam())
+            .pipe(
+                take(1)
+            )
+    }
+
     isPlayerHasBall(coordinates: OffsetCoordinates): Observable<boolean> {
         return this.store.select(IsBallInPosition(coordinates))
             .pipe(                
@@ -72,7 +80,8 @@ export class ActiveLayerComponent implements OnInit {
             hex: this.getRelatedHex(coordinates),              
             player: this.getRelatedPlayer(coordinates),
             playerHasBall: this.isPlayerHasBall(coordinates),
-            lastActionMeta: this.getLastActionMeta(),                  
+            lastActionMeta: this.getLastActionMeta(),      
+            activeTeam: this.getActiveTeam()            
         });
     }
 

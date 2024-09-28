@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Point } from "honeycomb-grid";
-import { Application, Container, Graphics } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +17,7 @@ export class AnimateService {
                 await this.delay(animationDelay);
             }
             graphics.x += movingVectorX/frameCount;
-            graphics.y += movincVectorY/frameCount;       
+            graphics.y += movincVectorY/frameCount;                   
         }        
     }
 

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, pathFind, Orientation, Point, HexCoordinates, line, reachable, Traverser, Direction, neighborOf } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, pathFind, Orientation, Point, HexCoordinates, line, reachable, Traverser, Direction, neighborOf, OffsetCoordinates, distance } from 'honeycomb-grid';
 import { ContextService } from '../context/context.service';
+import { HEXA_RADIUS, PITCH_LENGTH, PITCH_WIDTH } from '../../constants';
 
 const FootballHex = defineHex({ 
-    dimensions: 60, 
+    dimensions: HEXA_RADIUS, 
     origin: 'topLeft',
     orientation: Orientation.FLAT,
 });
@@ -13,8 +14,8 @@ const FootballHex = defineHex({
 })
 export class GridService {
 
-    private width: number = 10
-    private height: number = 5
+    private width: number = PITCH_LENGTH
+    private height: number = PITCH_WIDTH
 
     grid!: Grid<Hex>;
     frame!: Grid<Hex>
@@ -43,6 +44,20 @@ export class GridService {
             return new Grid<Hex>(FootballHex, traverser);
         }
         return new Grid<Hex>(FootballHex)
+    }
+
+    getDistance(from: OffsetCoordinates, to: OffsetCoordinates): number {
+        return this.grid.distance(from, to);
+    }
+
+    getDistanceInPixels(from: OffsetCoordinates, to: OffsetCoordinates): number | null {
+        const formHex = this.grid.getHex(from);
+        const toHex = this.grid.getHex(to);
+        if (formHex && toHex) {
+            return Math.sqrt(Math.pow(toHex.x - formHex.x, 2) + Math.pow(toHex.y - formHex.y, 2))
+        }
+
+        return null;
     }
 
     getFirstHex(): Hex {

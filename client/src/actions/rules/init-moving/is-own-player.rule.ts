@@ -3,7 +3,7 @@ import { ActionRule } from "../../interfaces/action.rule.interface";
 
 export class IsOwnPlayer implements ActionRule {
     validate(context: ActionContext): boolean {
-        return true; // TODO implementálni ezt a logikát
+        return context.player?.team == context.activeTeam || false;
     }
     errorMessage = "pick from your own players";
 }

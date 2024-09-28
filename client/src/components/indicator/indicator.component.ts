@@ -26,6 +26,7 @@ export class IndicatorComponent implements OnInit, OnDestroy {
 
     setDesign(){
         this.indicator.context = this.context.getStatusHoveredFieldContext();
+        this.indicator.zIndex = -1
     }
 
     setPosition(){        
