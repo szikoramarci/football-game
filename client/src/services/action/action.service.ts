@@ -7,6 +7,7 @@ import { MovePlayerAction } from "./move-player/move-player.action.service";
 import { CancelAction } from "./cancel/cancel.service";
 import { InitPassingAction } from "./init-passing/init-passing.action.service";
 import { SetPassingPathAction } from "./set-passing-path/set-passing-path.action.service";
+import { PassBallAction } from "./pass-ball/pass-ball.action.service";
 
 @Injectable({
     providedIn: 'root',
@@ -23,6 +24,7 @@ export class ActionService {
 
     private initPassing: InitPassingAction,
     private setPassingPath: SetPassingPathAction,
+    private passBall: PassBallAction,
 
     private cancelMovingPlayer: CancelAction
   ) {
@@ -33,6 +35,7 @@ export class ActionService {
 
       this.initPassing,
       this.setPassingPath,
+      this.passBall,
 
       this.cancelMovingPlayer
     ]

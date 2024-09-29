@@ -4,13 +4,13 @@ import { ActionStrategy } from "../../../actions/interfaces/action.strategy.inte
 import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
-import { IsReachableHexClicked } from "../../../actions/rules/set-moving-path/is-reachable-hex-clicked.rule";
+import { IsReachableHexClicked } from "../../../actions/rules/move/is-reachable-hex-clicked.rule";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovePlayerAction } from "../move-player/move-player.action.service";
-import { IsNotTargetHexClicked } from "../../../actions/rules/set-moving-path/is-not-target-hex-clicked.rule";
+import { IsNotTargetHexClicked } from "../../../actions/rules/move/is-not-target-hex-clicked.rule";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
@@ -33,23 +33,31 @@ export class SetMovingPathAction implements ActionStrategy {
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
-        this.ruleSet.addRule(new IsTheNextAction(SetMovingPathAction));           
-        this.ruleSet.addRule(new IsReachableHexClicked());
+        this.ruleSet.addRule(new IsTheNextAction(SetMovingPathAction));       
         this.ruleSet.addRule(new IsNotTargetHexClicked());
     }
 
     identify(context: ActionContext): boolean {
         return this.ruleSet.validate(context);
-    }
+    }    
 
     calculation(context: ActionContext): void {
         this.lastActionMeta = context.lastActionMeta as InitMovingActionMeta;
 
-        this.generateMovingPath(context);
+        if (this.isSelectedHexReachable(context)) {
+            this.generateMovingPath(context);
+        } else {
+            this.resetMovingPath();
+        }
         this.generateAvailableNextActions(context);
     }
 
-    generateMovingPath(context: ActionContext) {        
+    isSelectedHexReachable(context: ActionContext) {
+        const selectedPoint: OffsetCoordinates = context.coordinates;
+        return this.lastActionMeta.reachableHexes.getHex(selectedPoint) || false
+    }
+
+    generateMovingPath(context: ActionContext) { 
         const startPoint: OffsetCoordinates = this.lastActionMeta.playerCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;        
         this.store.select(playerMovementEvents).pipe(take(1))
@@ -60,12 +68,20 @@ export class SetMovingPathAction implements ActionStrategy {
         })
     }
 
+    resetMovingPath() {
+        this.movingPath = this.grid.createGrid();
+    }
+
     generateAvailableNextActions(context: ActionContext) {        
-        this.availableNextActions = [SetMovingPathAction, MovePlayerAction, CancelAction];
+        this.availableNextActions = [SetMovingPathAction, CancelAction];
 
         if (this.lastActionMeta.playerHasBall){
             this.availableNextActions.push(InitPassingAction);
         } 
+
+        if (this.isSelectedHexReachable(context)) {
+            this.availableNextActions.push(MovePlayerAction)
+        }
     }
 
     updateState(context: ActionContext): void {

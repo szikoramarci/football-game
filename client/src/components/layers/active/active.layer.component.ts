@@ -15,6 +15,7 @@ import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
 import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
 import { getActiveTeam } from "../../../stores/gameplay/gameplay.selector";
+import { Point } from "pixi.js";
 
 @Component({
     selector: 'active-layer',
@@ -73,10 +74,11 @@ export class ActiveLayerComponent implements OnInit {
         return of(this.grid.getHex(coordinates));
     }
 
-    generateContext(mouseEventType: MouseTriggerEventType, coordinates: OffsetCoordinates): Observable<ActionContext> {
+    generateContext(mouseEventType: MouseTriggerEventType, coordinates: OffsetCoordinates, mousePosition: Point): Observable<ActionContext> {
         return forkJoin({
             mouseEventType: of(mouseEventType),
             coordinates: of(coordinates),
+            mousePosition: of(mousePosition),
             hex: this.getRelatedHex(coordinates),              
             player: this.getRelatedPlayer(coordinates),
             playerHasBall: this.isPlayerHasBall(coordinates),
@@ -89,7 +91,8 @@ export class ActiveLayerComponent implements OnInit {
         this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {
             const mouseEventType: MouseTriggerEventType = mouseEvent.type;
             const coordinates: OffsetCoordinates = mouseEvent.coordinates;
-            this.generateContext(mouseEventType, coordinates).subscribe((context: ActionContext) => {
+            const mousePosition: Point = mouseEvent.position;
+            this.generateContext(mouseEventType, coordinates, mousePosition).subscribe((context: ActionContext) => {
                 const availableAction = this.action.resolveAction(context);                       
                 if (availableAction) {
                     this.action.executeAction(availableAction, context);

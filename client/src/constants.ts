@@ -11,6 +11,8 @@ export const BALL_TOKEN_RADIUS = HEXA_RADIUS * 0.5;
 
 export const MOVEMENT_PATH_WIDTH = HEXA_RADIUS * 0.11;
 
+export const PASSING_PATH_WITH = HEXA_RADIUS * 0.05;
+
 
 
 export const HEADER_HEX_DISTANCE = Math.round(PITCH_LENGTH * 0.16216216216); // ORIGINAL: 6

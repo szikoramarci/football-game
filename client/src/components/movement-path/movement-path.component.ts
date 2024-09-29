@@ -55,7 +55,7 @@ export class MovementPathComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     drawLines(){
-        this.draw.drawPathArrowLine(this.path, this.lines)
+        this.draw.drawMovingPathArrowLine(this.path, this.lines)
     }
 
     sendGraphics() {

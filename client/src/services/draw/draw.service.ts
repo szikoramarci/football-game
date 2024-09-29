@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Graphics, Point, StrokeStyle } from "pixi.js";
-import { MOVEMENT_PATH_WIDTH } from "../../constants";
+import { MOVEMENT_PATH_WIDTH, PASSING_PATH_WITH } from "../../constants";
 
 @Injectable({
     providedIn: 'root'
@@ -13,7 +13,15 @@ export class DrawService {
         return Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
     }
 
-    drawPathArrowLine(graphics: Graphics, lines: Point[][]) {
+    drawPassingPathArrowLine(graphics: Graphics, line: Point[], darkMode: boolean){
+        const color = darkMode ? "black" : "white";
+        const style = { width: PASSING_PATH_WITH, color: color };
+
+        this.drawLine(graphics, line, style);  
+        this.drawArrowHeadForLine(graphics, line, color, PASSING_PATH_WITH * 10);   
+    }    
+
+    drawMovingPathArrowLine(graphics: Graphics, lines: Point[][]) {
         if (lines.length == 0) return;
 
         const lastLine = lines[lines.length - 1]
@@ -23,7 +31,7 @@ export class DrawService {
         this.drawArrowHeadForLine(graphics, lastLine);
     }
     
-    drawArrowHeadForLine(graphics: Graphics, line: Point[], size: number = MOVEMENT_PATH_WIDTH * 7) {
+    drawArrowHeadForLine(graphics: Graphics, line: Point[], fillColor: string = 'white', size: number = MOVEMENT_PATH_WIDTH * 7) {
         const halfBase = size / 2;
 
         const endPoint: Point = line[1];
@@ -46,8 +54,17 @@ export class DrawService {
         graphics.lineTo(p2.x, p2.y);
         graphics.lineTo(p3.x, p3.y);
         graphics.lineTo(p1.x, p1.y);
-        graphics.fill('white');
+        graphics.fill(fillColor);
         
+    }
+
+    drawLine(graphics: Graphics, line: Point[], strokeStyle: StrokeStyle = { width: MOVEMENT_PATH_WIDTH, color: 'white' }) {
+        const [startPoint, endPoint] = line;
+
+        graphics.moveTo(startPoint.x, startPoint.y);
+        graphics.lineTo(endPoint.x, endPoint.y);
+
+        graphics.stroke(strokeStyle);
     }
 
     drawDashedLine(
@@ -95,6 +112,12 @@ export class DrawService {
             currentLength += gapLength;
         }
 
-        graphics.stroke( strokeStyle); // Set line style (width, color, etc.)
+        graphics.stroke(strokeStyle); // Set line style (width, color, etc.)
+    }
+
+    calculatePointDistance(point1: Point, point2: Point): number {
+        const dx = point2.x - point1.x;
+        const dy = point2.y - point1.y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }

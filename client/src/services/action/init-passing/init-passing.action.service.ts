@@ -2,9 +2,9 @@ import { Injectable } from "@angular/core";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { ActionStrategy } from "../../../actions/interfaces/action.strategy.interface";
 import { ActionRuleSet } from "../../../actions/interfaces/action.rule.interface";
-import { IsOwnPlayer } from "../../../actions/rules/init-moving/is-own-player.rule";
+import { IsOwnPlayer } from "../../../actions/rules/move/is-own-player.rule";
 import { Store } from "@ngrx/store";
-import { IsPlayerSelected } from "../../../actions/rules/init-moving/is-player-selected.rule";
+import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, HexCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
@@ -13,7 +13,7 @@ import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-p
 import { CancelAction } from "../cancel/cancel.service";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
-import { HasThePlayerTheBall } from "../../../actions/rules/init-passing/has-the-player-the-ball.rule";
+import { HasThePlayerTheBall } from "../../../actions/rules/pass/has-the-player-the-ball.rule";
 import { filter, forkJoin, of, switchMap, take } from "rxjs";
 import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { selectActiveTeamPlayersWithPositions, selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
@@ -44,7 +44,7 @@ export class InitPassingAction implements ActionStrategy {
     }
 
     filterOutPlayersByRange(passerPosition: HexCoordinates, targetPosition: HexCoordinates): boolean {
-      const distanceInPixels = this.grid.getDistanceInPixels(passerPosition, targetPosition)
+      const distanceInPixels = this.grid.getHexCenterDistanceInPixels(passerPosition, targetPosition)
       return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
     }
 

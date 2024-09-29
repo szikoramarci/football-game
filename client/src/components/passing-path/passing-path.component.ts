@@ -10,12 +10,12 @@ import { DrawService } from "../../services/draw/draw.service";
 export class PassingPathComponent implements OnInit, OnDestroy, OnChanges {
 
     @Input() passingPath!: Point[]
+
+    @Input() isPassingPathValid!: boolean;
     
     @Output() onGraphicsChanged = new EventEmitter<Graphics>()
     
     path: Graphics = new Graphics();  
-
-    lines: Point[][] = [];
 
     constructor(private draw: DrawService) {}
 
@@ -32,21 +32,15 @@ export class PassingPathComponent implements OnInit, OnDestroy, OnChanges {
 
     renderPath(){
         this.resetGraphics();  
-        this.calculateLines();
-        this.drawLines();        
+        this.drawLine();        
     }
 
     resetGraphics() {
         this.path.clear();
-        this.path.zIndex = 100
     }
 
-    calculateLines() {
-        this.lines = [this.passingPath];
-    }
-
-    drawLines(){
-        this.draw.drawPathArrowLine(this.path, this.lines)
+    drawLine(){
+        this.draw.drawPassingPathArrowLine(this.path, this.passingPath, this.isPassingPathValid)
     }
 
     sendGraphics() {

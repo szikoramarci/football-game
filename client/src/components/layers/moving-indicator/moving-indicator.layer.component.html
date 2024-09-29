@@ -1,0 +1,6 @@
+@for (indicator of indicators; track indicator.center) {
+    <indicator [hex]="indicator" (onGraphicsChanged)="handleGraphics($event)"></indicator>
+}
+@if (movingPath) {
+    <movement-path [grid]="movingPath" (onGraphicsChanged)="handleGraphics($event)"></movement-path>
+}

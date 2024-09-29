@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
 import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throttleTime } from "rxjs";
-import { isMouseTriggerEventsEqual, MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
-import { OffsetCoordinates, Point } from "honeycomb-grid";
+import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
+import { OffsetCoordinates } from "honeycomb-grid";
+import { Point } from "pixi.js";
+import { DrawService } from "../draw/draw.service";
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +13,10 @@ export class MouseEventService {
 
     mouseEvents: Subject<MouseTriggerEvent> = new Subject();
 
-    constructor(private grid: GridService) {
+    constructor(
+        private grid: GridService,
+        private draw: DrawService
+    ) {
         this.initClickListener();
     }
 
@@ -29,18 +34,19 @@ export class MouseEventService {
         )
         .subscribe((event) => {
             const eventType: MouseTriggerEventType = event.type as MouseTriggerEventType;
-            const hexCoordinates = this.getHexCoordinatesFromEvent(event);
+            const position: Point = new Point(event.clientX, event.clientY)
+            const hexCoordinates = this.getHexCoordinatesFromEvent(position);
             if (hexCoordinates) {
                 this.mouseEvents.next({
                     type: eventType,
-                    coordinates: hexCoordinates
+                    coordinates: hexCoordinates,
+                    position: position
                 });
             }            
         })
     }  
     
-    getHexCoordinatesFromEvent(event: MouseEvent): OffsetCoordinates | undefined {
-        const point: Point = { x: event.clientX, y: event.clientY };                        
+    getHexCoordinatesFromEvent(point: Point): OffsetCoordinates | undefined {                      
         const hex = this.grid.findHexByPoint(point) ;
         return hex ? { col: hex.col, row: hex.row } : undefined; 
     }
@@ -49,12 +55,17 @@ export class MouseEventService {
         return this.mouseEvents.pipe(
             distinctUntilChanged((prev, curr) => {
                 if (curr.type == MouseTriggerEventType.MOUSE_MOVE) {
-                  return isMouseTriggerEventsEqual(prev, curr);
+                  return this.isMouseTriggerEventsEqual(prev, curr);
                 }
                 return false;
             })
         );
     }
+
+    isMouseTriggerEventsEqual(a: MouseTriggerEvent, b: MouseTriggerEvent) {
+        return a.type == b.type && this.draw.calculatePointDistance(a.position, b.position) < 2;
+    }
+    
 
 }
     

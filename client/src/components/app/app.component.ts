@@ -4,7 +4,8 @@ import { AppService } from '../../services/app/app.service';
 import { BaseLayerComponent } from '../layers/base/base.layer.component';
 import { StateLayerComponent } from '../layers/state/state.layer.component';
 import { ActiveLayerComponent } from '../layers/active/active.layer.component';
-import { IndicatorLayerComponent } from '../layers/indicator/indicator.layer.component';
+import { PasingIndicatorLayerComponent } from '../layers/pasing-indicator/passing-indicator.layer.component';
+import { MovingIndicatorLayerComponent } from '../layers/moving-indicator/moving-indicator.layer.component';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ import { IndicatorLayerComponent } from '../layers/indicator/indicator.layer.com
     RouterOutlet,
     BaseLayerComponent,
     StateLayerComponent,
-    IndicatorLayerComponent,
+    MovingIndicatorLayerComponent,
+    PasingIndicatorLayerComponent,
     ActiveLayerComponent
   ],
   templateUrl: './app.component.html',

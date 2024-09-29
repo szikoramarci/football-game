@@ -4,5 +4,6 @@ import { Point } from "pixi.js";
 
 export interface SetPassingPathActionMeta extends InitPassingActionMeta {
     passingPath: Point[],
+    isPassingPathValid: boolean,
     targetHex: OffsetCoordinates
 }

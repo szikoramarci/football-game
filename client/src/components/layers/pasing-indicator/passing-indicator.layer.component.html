@@ -1,0 +1,6 @@
+@if (passerPosition) {
+    <passing-range [passerPosition]="passerPosition" (onGraphicsChanged)="handleGraphics($event)"></passing-range>
+}
+@if (passingPath) {
+    <passing-path [passingPath]="passingPath" [isPassingPathValid]="isPassingPathValid" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
+}

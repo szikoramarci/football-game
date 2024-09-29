@@ -12,7 +12,7 @@ import { OffsetCoordinates } from "honeycomb-grid";
 })
 export class PassingRangeComponent implements OnInit {
 
-    @Input() passerCoordinates!: OffsetCoordinates;
+    @Input() passerPosition!: OffsetCoordinates;
     
     @Output() onGraphicsChanged = new EventEmitter<Graphics>()
     
@@ -34,7 +34,7 @@ export class PassingRangeComponent implements OnInit {
     }
 
     setPosition(){        
-        const hex = this.grid.getHex(this.passerCoordinates);
+        const hex = this.grid.getHex(this.passerPosition);
         if (hex) {
             this.range.x = hex.x;
             this.range.y = hex.y;
