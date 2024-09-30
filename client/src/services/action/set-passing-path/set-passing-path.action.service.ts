@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { GridService } from "../../grid/grid.service";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { HexCoordinates, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
@@ -15,6 +15,8 @@ import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-pat
 import { Point } from "pixi.js";
 import { DrawService } from "../../draw/draw.service";
 import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
+import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
+import { of, switchMap, take } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
@@ -33,18 +35,42 @@ export class SetPassingPathAction implements ActionStrategy {
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
-        this.ruleSet.addRule(new IsTheNextAction(SetPassingPathAction));           
+        this.ruleSet.addRule(new IsTheNextAction(SetPassingPathAction));                   
     }
 
     identify(context: ActionContext): boolean {
         return this.ruleSet.validate(context);
     }
 
+    filterOutPlayersByRange(passerPosition: HexCoordinates, targetPosition: HexCoordinates): boolean {
+        const distanceInPixels = this.grid.getHexCenterDistanceInPixels(passerPosition, targetPosition)
+        return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
+    }
+
+    getPossiblyObstacleOppositeTeamPlayers(context: ActionContext) {
+        return this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
+            take(1),
+            switchMap(players => {
+            return of(players            
+                .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position))) // FILTER FOR RANGE    
+            })
+        )
+    }
+
     calculation(context: ActionContext): void {
         this.lastActionMeta = context.lastActionMeta as InitPassingActionMeta;
 
+        this.isPassingPathValid = false;
+        if (this.lastActionMeta.availableTargets.getHex(context.coordinates)) {
+            this.getPossiblyObstacleOppositeTeamPlayers(context).subscribe(oppositionTeamPlayers => {
+                const passingPathInHexes = this.grid.getDirectLine(this.lastActionMeta.playerCoordinates, context.coordinates, context.mousePosition)
+                if (oppositionTeamPlayers.every(oppositionTeamPlayer => !passingPathInHexes.getHex(oppositionTeamPlayer.position))) {
+                    this.isPassingPathValid = true;
+                }
+            });
+        }
+
         this.generatePassingPath(context);
-        this.setPassingPathValidation(context);
         this.generateAvailableNextActions(context);
     }
 
@@ -65,11 +91,6 @@ export class SetPassingPathAction implements ActionStrategy {
     isPositionInRange(startPoint: Point, endPoint: Point): boolean {
         const distanceInPixels = this.draw.calculatePointDistance(startPoint, endPoint)
         return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
-      }
-
-    setPassingPathValidation(context: ActionContext) {
-        const targetHex = this.grid.findHexByPoint(context.mousePosition)
-        this.isPassingPathValid = (targetHex && this.lastActionMeta.availableTargets.getHex(targetHex) !== undefined) || false;
     }
 
     generateAvailableNextActions(context: ActionContext) {        

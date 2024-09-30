@@ -4,3 +4,6 @@
 @if (passingPath) {
     <passing-path [passingPath]="passingPath" [isPassingPathValid]="isPassingPathValid" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
 }
+@for (availableTarget of availableTargets; track availableTarget.center) {
+    <player-stroke [hex]="availableTarget" (onGraphicsChanged)="handleGraphics($event)"></player-stroke>
+}

@@ -18,6 +18,7 @@ import { filter, forkJoin, of, switchMap, take } from "rxjs";
 import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { selectActiveTeamPlayersWithPositions, selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
+import { Point } from "pixi.js";
 
 @Injectable({
   providedIn: 'root',
@@ -48,13 +49,6 @@ export class InitPassingAction implements ActionStrategy {
       return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
     }
 
-    generateDirectLinePathForTarget(passerPosition: HexCoordinates, targetPosition: HexCoordinates) {
-      return {
-        targetCoordinate: targetPosition,
-        directLine: this.grid.getDirectLine(passerPosition, targetPosition)
-      }
-    }
-
     getPotentialTargetsOfPass(context: ActionContext) {
       return this.store.select(selectActiveTeamPlayersWithPositions).pipe(    
         take(1),           
@@ -62,35 +56,15 @@ export class InitPassingAction implements ActionStrategy {
           return of(players
             .filter(player => player.id != context.player?.id) // REMOVING THE PASSER
             .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position)) // FILTER FOR RANGE
-            .map(targetPlayer => this.generateDirectLinePathForTarget(context.coordinates, targetPlayer.position)))
+            .map(targetPlayer => targetPlayer.position))
         }),
       )
-    }
-
-    getPossiblyObstacleOppositeTeamPlayers(context: ActionContext) {
-      return this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
-        take(1),
-        switchMap(players => {
-          return of(players            
-            .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position))) // FILTER FOR RANGE    
-        })
-      )
-    }
+    }    
   
     calculation(context: ActionContext): void {  
-      forkJoin([
-        this.getPotentialTargetsOfPass(context),
-        this.getPossiblyObstacleOppositeTeamPlayers(context)
-      ]).subscribe(([potentialTargets, oppositionTeamPlayers]) => {
-        const targetCoordinates = potentialTargets
-          .filter(potenitalTarget => {
-            return oppositionTeamPlayers.every(oppositionTeamPlayer => !potenitalTarget.directLine.getHex(oppositionTeamPlayer.position))
-          })
-          .map(potentialTargets => potentialTargets.targetCoordinate)
-
+      this.getPotentialTargetsOfPass(context).subscribe(targetCoordinates => {
         this.availableTargets = this.grid.createGrid().setHexes(targetCoordinates);
-      })
-             
+      })      
     }
   
     updateState(context: ActionContext): void {
