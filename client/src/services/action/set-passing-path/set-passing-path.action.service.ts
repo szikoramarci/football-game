@@ -17,6 +17,7 @@ import { DrawService } from "../../draw/draw.service";
 import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { of, switchMap, take } from "rxjs";
+import { TraverserService } from "../../traverser/traverser.service";
 
 @Injectable({
     providedIn: 'root',
@@ -31,7 +32,8 @@ export class SetPassingPathAction implements ActionStrategy {
     constructor(
         private store: Store,
         private grid: GridService,
-        private draw: DrawService
+        private draw: DrawService,
+        private traverser: TraverserService
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
@@ -43,7 +45,7 @@ export class SetPassingPathAction implements ActionStrategy {
     }
 
     filterOutPlayersByRange(passerPosition: HexCoordinates, targetPosition: HexCoordinates): boolean {
-        const distanceInPixels = this.grid.getHexCenterDistanceInPixels(passerPosition, targetPosition)
+        const distanceInPixels = this.traverser.getHexCenterDistanceInPixelsByCoordinates(passerPosition, targetPosition)
         return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
     }
 
@@ -63,14 +65,14 @@ export class SetPassingPathAction implements ActionStrategy {
         this.isPassingPathValid = false;
         if (this.lastActionMeta.availableTargets.getHex(context.coordinates)) {
             this.getPossiblyObstacleOppositeTeamPlayers(context).subscribe(oppositionTeamPlayers => {
-                const passingPathInHexes = this.grid.getDirectLine(this.lastActionMeta.playerCoordinates, context.coordinates, context.mousePosition)
+                const passingPathInHexes = this.traverser.getDirectLine(this.lastActionMeta.playerCoordinates, context.coordinates, context.mousePosition)
                 if (oppositionTeamPlayers.every(oppositionTeamPlayer => !passingPathInHexes.getHex(oppositionTeamPlayer.position))) {
                     this.isPassingPathValid = true;
                 }
             });
         }
 
-        this.generatePassingPath(context);
+       /// this.generatePassingPath(context);
         this.generateAvailableNextActions(context);
     }
 
@@ -80,18 +82,18 @@ export class SetPassingPathAction implements ActionStrategy {
         if (startHex) {
             const startPoint = new Point(startHex.x, startHex.y)
             const endPoint = context.mousePosition
-            if (this.isPositionInRange(startPoint, endPoint)) {
+          /*  if (this.isPositionInRange(startPoint, endPoint)) {
                 this.passingPath = [startPoint, endPoint];
             } else {
                 this.passingPath = [];
-            }
+            }*/
         }          
     }
 
-    isPositionInRange(startPoint: Point, endPoint: Point): boolean {
+  /*  isPositionInRange(startPoint: Point, endPoint: Point): boolean {
         const distanceInPixels = this.draw.calculatePointDistance(startPoint, endPoint)
         return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
-    }
+    }*/
 
     generateAvailableNextActions(context: ActionContext) {        
         this.availableNextActions = [SetPassingPathAction, CancelAction];

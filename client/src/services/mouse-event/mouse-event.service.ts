@@ -4,7 +4,7 @@ import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throt
 import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
 import { OffsetCoordinates } from "honeycomb-grid";
 import { Point } from "pixi.js";
-import { DrawService } from "../draw/draw.service";
+import { CoordinateService } from "../coordinate/coordinate.service";
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +15,7 @@ export class MouseEventService {
 
     constructor(
         private grid: GridService,
-        private draw: DrawService
+        private coordinate: CoordinateService
     ) {
         this.initClickListener();
     }
@@ -63,7 +63,7 @@ export class MouseEventService {
     }
 
     isMouseTriggerEventsEqual(a: MouseTriggerEvent, b: MouseTriggerEvent) {
-        return a.type == b.type && this.draw.calculatePointDistance(a.position, b.position) < 2;
+        return a.type == b.type && this.coordinate.calculatePointDistance(a.position, b.position) < 2;
     }
     
 

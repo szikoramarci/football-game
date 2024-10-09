@@ -17,6 +17,7 @@ import { playerMovementEvents } from "../../../stores/player-position/player-pos
 import { take } from "rxjs";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 import { InitPassingAction } from "../init-passing/init-passing.action.service";
+import { TraverserService } from "../../traverser/traverser.service";
 
 @Injectable({
     providedIn: 'root',
@@ -29,7 +30,8 @@ export class SetMovingPathAction implements ActionStrategy {
 
     constructor(
         private store: Store,
-        private grid: GridService
+        private grid: GridService,
+        private traverser: TraverserService
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
@@ -64,7 +66,7 @@ export class SetMovingPathAction implements ActionStrategy {
         .subscribe((occupiedCoordinates) => {
             const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
             const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());         
-            this.movingPath = this.grid.getPathHexes(startPoint, endPoint, occupiedHexes);
+            this.movingPath = this.traverser.getPathHexes(startPoint, endPoint, occupiedHexes);
         })
     }
 

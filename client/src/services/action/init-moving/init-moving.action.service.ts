@@ -16,6 +16,7 @@ import { InitPassingAction } from "../init-passing/init-passing.action.service";
 import { SetMovingPathAction } from "../set-moving-path/set-moving-path.action.service";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 import { CancelAction } from "../cancel/cancel.service";
+import { TraverserService } from "../../traverser/traverser.service";
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,8 @@ export class InitMovingAction implements ActionStrategy {
   
     constructor(
       private store: Store,
-      private grid: GridService
+      private grid: GridService,
+      private traverser: TraverserService
     ) {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
@@ -52,7 +54,7 @@ export class InitMovingAction implements ActionStrategy {
         .subscribe((occupiedCoordinates) => {
           const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
           const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());
-          this.reachableHexes = this.grid.getReachableHexes(centralPoint, distance, occupiedHexes)
+          this.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
         })
     }
 
