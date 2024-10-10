@@ -9,14 +9,9 @@ import { HexCoordinates, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
-import { IsPassTargetHexClicked } from "../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
-import { Point } from "pixi.js";
 import { DrawService } from "../../draw/draw.service";
-import { STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
-import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
-import { of, switchMap, take } from "rxjs";
 import { TraverserService } from "../../traverser/traverser.service";
 
 @Injectable({
@@ -24,7 +19,7 @@ import { TraverserService } from "../../traverser/traverser.service";
 })
 export class SetPassingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
-    passingPath!: Point[];
+    passingPath!: HexCoordinates[];
     isPassingPathValid!: boolean;
     lastActionMeta!: InitPassingActionMeta;
     availableNextActions: Type<ActionStrategy>[] = [];
@@ -44,56 +39,17 @@ export class SetPassingPathAction implements ActionStrategy {
         return this.ruleSet.validate(context);
     }
 
-    filterOutPlayersByRange(passerPosition: HexCoordinates, targetPosition: HexCoordinates): boolean {
-        const distanceInPixels = this.traverser.getHexCenterDistanceInPixelsByCoordinates(passerPosition, targetPosition)
-        return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
-    }
-
-    getPossiblyObstacleOppositeTeamPlayers(context: ActionContext) {
-        return this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
-            take(1),
-            switchMap(players => {
-            return of(players            
-                .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position))) // FILTER FOR RANGE    
-            })
-        )
-    }
-
     calculation(context: ActionContext): void {
         this.lastActionMeta = context.lastActionMeta as InitPassingActionMeta;
 
-        this.isPassingPathValid = false;
-        if (this.lastActionMeta.availableTargets.getHex(context.coordinates)) {
-            this.getPossiblyObstacleOppositeTeamPlayers(context).subscribe(oppositionTeamPlayers => {
-                const passingPathInHexes = this.traverser.getDirectLine(this.lastActionMeta.playerCoordinates, context.coordinates, context.mousePosition)
-                if (oppositionTeamPlayers.every(oppositionTeamPlayer => !passingPathInHexes.getHex(oppositionTeamPlayer.position))) {
-                    this.isPassingPathValid = true;
-                }
-            });
-        }
-
-       /// this.generatePassingPath(context);
+        this.generatePassingPath(context);
         this.generateAvailableNextActions(context);
     }
 
     generatePassingPath(context: ActionContext) {        
         const startCoordinate: OffsetCoordinates = this.lastActionMeta.playerCoordinates;
-        const startHex = this.grid.getHex(startCoordinate);         
-        if (startHex) {
-            const startPoint = new Point(startHex.x, startHex.y)
-            const endPoint = context.mousePosition
-          /*  if (this.isPositionInRange(startPoint, endPoint)) {
-                this.passingPath = [startPoint, endPoint];
-            } else {
-                this.passingPath = [];
-            }*/
-        }          
+        this.passingPath = [startCoordinate, context.coordinates];       
     }
-
-  /*  isPositionInRange(startPoint: Point, endPoint: Point): boolean {
-        const distanceInPixels = this.draw.calculatePointDistance(startPoint, endPoint)
-        return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
-    }*/
 
     generateAvailableNextActions(context: ActionContext) {        
         this.availableNextActions = [SetPassingPathAction, CancelAction];

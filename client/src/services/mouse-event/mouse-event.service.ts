@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
 import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throttleTime } from "rxjs";
 import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { equals, OffsetCoordinates } from "honeycomb-grid";
 import { Point } from "pixi.js";
 import { CoordinateService } from "../coordinate/coordinate.service";
 
@@ -55,15 +55,15 @@ export class MouseEventService {
         return this.mouseEvents.pipe(
             distinctUntilChanged((prev, curr) => {
                 if (curr.type == MouseTriggerEventType.MOUSE_MOVE) {
-                  return this.isMouseTriggerEventsEqual(prev, curr);
+                  return this.isTheSameEvent(prev, curr);
                 }
                 return false;
             })
         );
     }
 
-    isMouseTriggerEventsEqual(a: MouseTriggerEvent, b: MouseTriggerEvent) {
-        return a.type == b.type && this.coordinate.calculatePointDistance(a.position, b.position) < 2;
+    isTheSameEvent(a: MouseTriggerEvent, b: MouseTriggerEvent) {
+        return a.type == b.type && equals(a.coordinates, b.coordinates);
     }
     
 
