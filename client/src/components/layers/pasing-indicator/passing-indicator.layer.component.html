@@ -1,8 +1,5 @@
-@if (passerPosition) {
-    <passing-range [passerPosition]="passerPosition" (onGraphicsChanged)="handleGraphics($event)"></passing-range>
-}
-@if (passingPath) {
-    <passing-path [passingPath]="passingPath" [isPassingPathValid]="isPassingPathValid" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
+@if (passingPath && passingPath.length > 0) {
+    <passing-path [passingPath]="passingPath" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
 }
 @for (availableTarget of availableTargets; track availableTarget.center) {
     <indicator [hex]="availableTarget" (onGraphicsChanged)="handleGraphics($event)"></indicator>

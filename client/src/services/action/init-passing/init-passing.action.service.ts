@@ -45,49 +45,12 @@ export class InitPassingAction implements ActionStrategy {
       return this.ruleSet.validate(context);
     }
 
-    filterOutPlayersByRange(passerPosition: HexCoordinates, targetPosition: HexCoordinates): boolean {
-      const distanceInPixels = this.traverser.getHexCenterDistanceInPixelsByCoordinates(passerPosition, targetPosition)
-      return distanceInPixels && distanceInPixels < STANDARD_PASS_PIXEL_DISTANCE || false
-    }
-
-    getPotentialTargetsOfPass(context: ActionContext) {
-      return this.store.select(selectActiveTeamPlayersWithPositions).pipe(    
-        take(1),           
-        switchMap(players => {
-          return of(players
-            .filter(player => player.id != context.player?.id) // REMOVING THE PASSER
-            .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position)) // FILTER FOR RANGE
-            .map(targetPlayer => targetPlayer.position))
-        }),
-      )
-    }    
-
-    getPossiblyObstacleOppositeTeamPlayers(context: ActionContext) {
-      return this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
-          take(1),
-          switchMap(players => {
-          return of(players            
-              .filter(targetPlayer => this.filterOutPlayersByRange(context.coordinates, targetPlayer.position)) // FILTER FOR RANGE    
-              .map(targetPlayer => targetPlayer.position))
-          })
-      )
-  }
-  
     calculation(context: ActionContext): void {  
-    /*  this.getPotentialTargetsOfPass(context).subscribe(targetCoordinates => {
-        this.availableTargets = this.grid.createGrid().setHexes(targetCoordinates);
-      })   */
-      /*  this.getPossiblyObstacleOppositeTeamPlayers(context).subscribe(obstacleCoordinates => {
-          const fieldOfViewTraverser = this.grid.fieldOfView(context.lastActionMeta?.clickedCoordinates!, obstacleCoordinates);
-          this.availableTargets = this.grid.createGrid(fieldOfViewTraverser);      
-        })*/
-
         this.availableTargets = this.traverser.getAreaByDistance(
           context.lastActionMeta?.clickedCoordinates!, 
           STANDARD_PASS_HEX_DISTANCE,
           STANDARD_PASS_PIXEL_DISTANCE
         )
-        
     }
   
     updateState(context: ActionContext): void {

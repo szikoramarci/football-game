@@ -13,8 +13,8 @@ export class DrawService {
         return Math.atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x);
     }
 
-    drawPassingPathArrowLine(graphics: Graphics, line: Point[], darkMode: boolean){
-        const color = darkMode ? "black" : "white";
+    drawPassingPathArrowLine(graphics: Graphics, line: Point[]){
+        const color = "white";
         const style = { width: PASSING_PATH_WITH, color: color };
 
         this.drawLine(graphics, line, style);  

@@ -10,9 +10,7 @@ import { Hex, HexCoordinates } from "honeycomb-grid";
 })
 export class PassingPathComponent implements OnInit, OnDestroy, OnChanges {
 
-    @Input() passingPath!: HexCoordinates[]    
-
-    @Input() isPassingPathValid!: boolean;
+    @Input() passingPath!: Hex[]    
     
     @Output() onGraphicsChanged = new EventEmitter<Graphics>()
 
@@ -22,29 +20,29 @@ export class PassingPathComponent implements OnInit, OnDestroy, OnChanges {
 
     constructor(private draw: DrawService) {}
 
-    ngOnInit(): void {      
-        this.generatePoints()
+    ngOnInit(): void {              
         this.renderPath();
         this.sendGraphics();   
     }
 
     ngOnChanges(changes: SimpleChanges) { 
-        if (changes['passingPath']){
+        if (changes['passingPath']){            
             this.renderPath();  
         }         
     }
 
     generatePoints(){
-        const startHex = new Hex(this.passingPath[0])
-        const endHex = new Hex(this.passingPath[1])
+        const startHex = this.passingPath[0]
+        const endHex = this.passingPath[1]
         const startPoint = new Point(startHex.x, startHex.y)
         const endPoint = new Point(endHex.x, endHex.y)
 
-        this.passingPathPoints = [startPoint, endPoint];
+        this.passingPathPoints = [startPoint, endPoint];      
     }
 
     renderPath(){
         this.resetGraphics();  
+        this.generatePoints()
         this.drawLine();        
     }
 
@@ -53,7 +51,7 @@ export class PassingPathComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     drawLine(){        
-        this.draw.drawPassingPathArrowLine(this.path, this.passingPathPoints, this.isPassingPathValid)
+        this.draw.drawPassingPathArrowLine(this.path, this.passingPathPoints)
     }
 
     sendGraphics() {
