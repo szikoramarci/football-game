@@ -6,7 +6,7 @@ import { IsOwnPlayer } from "../../../actions/rules/move/is-own-player.rule";
 import { Store } from "@ngrx/store";
 import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
 import { GridService } from "../../grid/grid.service";
-import { equals, Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
@@ -20,6 +20,7 @@ import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { CoordinateService } from "../../coordinate/coordinate.service";
+import { Sector } from "../../../interfaces/sector.interface";
 import { Point } from "honeycomb-grid";
 
 @Injectable({
@@ -29,6 +30,7 @@ export class InitPassingAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     availableTargets!: Grid<Hex>;
     oppositonPlayerPositions!: Grid<Hex>;
+    edgePoints: Point[][] = [];
   
     constructor(
       private store: Store,
@@ -52,7 +54,6 @@ export class InitPassingAction implements ActionStrategy {
     calculation(context: ActionContext): void {  
         this.generateBaseAreaOfDistance(context);
         this.getOppositionPlayersInBaseArea();
-        this.removeOppositionPlayersFromTargets();
         this.removeUnsightTargets(context);
     }
 
@@ -76,25 +77,40 @@ export class InitPassingAction implements ActionStrategy {
       });
     }
 
-    removeOppositionPlayersFromTargets() {
-      this.oppositonPlayerPositions.forEach(oppositonPlayerPosition => {
-        this.availableTargets = this.availableTargets.filter(targetHex => !equals(targetHex, oppositonPlayerPosition))
-      })
-    }
-
     removeUnsightTargets(context: ActionContext) {
       const startHex = this.grid.getHex(context.lastActionMeta?.clickedCoordinates!)
-      if (startHex) {
-        const startHexCenterPoint = { x: startHex.x, y: startHex.y }
-        this.availableTargets = this.availableTargets.filter(targetHex => {
-          const targetHexCenterPoint = { x: targetHex.x, y: targetHex.y }
-          const points: Point[] = this.coordinate.getIntermediatePointsBetweenEndPoints(startHexCenterPoint, targetHexCenterPoint);          
-          return !points.some(point => {
-            console.log(targetHex, this.oppositonPlayerPositions.pointToHex(point, { allowOutside: false }))
-            return this.oppositonPlayerPositions.pointToHex(point, { allowOutside: false });
-          });
-        })        
-      }      
+      if (!startHex) return;
+
+      const sectors: Sector[] = this.generateSectorsFromOpponents(startHex)
+
+      this.availableTargets = this.filterVisibleTargets(startHex, sectors);
+    }
+
+    generateSectorsFromOpponents(startingHex: Hex): Sector[] {
+      const sectors: Sector[] = [];
+
+      this.oppositonPlayerPositions.forEach(opponentPosition => {
+        const edgePoints = this.coordinate.findEdgePointsFromPointPerspective(
+          startingHex,
+          opponentPosition.corners
+        );
+
+        this.edgePoints.push(edgePoints)
+    
+        sectors.push({
+          startAngle: this.coordinate.calculateAngle(startingHex, edgePoints[0]),
+          endAngle: this.coordinate.calculateAngle(startingHex, edgePoints[1]),
+          distance: this.coordinate.calculatePointDistance(startingHex, opponentPosition)
+        });
+      });
+
+      return sectors;
+    }
+    
+    filterVisibleTargets(startingHex: Hex, sectors: Sector[]): Grid<Hex> {
+      return this.availableTargets.filter(targetHex => {
+        return !sectors.some(sector => this.coordinate.isPointInSector(startingHex, targetHex, sector));
+      });
     }
   
     updateState(context: ActionContext): void {
@@ -104,7 +120,8 @@ export class InitPassingAction implements ActionStrategy {
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
         availableNextActions: [CancelAction, SetPassingPathAction],
-        availableTargets: this.availableTargets
+        availableTargets: this.availableTargets,
+        edgePoints: this.edgePoints
       }
       this.store.dispatch(saveActionMeta(initPassingActionMeta));
     }

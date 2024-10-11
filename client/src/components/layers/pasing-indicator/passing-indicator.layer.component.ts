@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { Container, Graphics } from "pixi.js";
+import { Container, Graphics, Point } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { GridService } from "../../../services/grid/grid.service";
@@ -11,6 +11,7 @@ import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-pat
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
+import { DrawService } from "../../../services/draw/draw.service";
 
 @Component({
     selector: 'passing-indicator-layer',
@@ -31,7 +32,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
     constructor(
         private store: Store,
         private app: AppService,
-        private grid: GridService
+        private draw: DrawService
     ) {}
     
     ngOnInit(): void {
@@ -59,6 +60,16 @@ export class PasingIndicatorLayerComponent implements OnInit {
         if (initPassingActionMeta.availableTargets) {
             this.passerPosition = initPassingActionMeta.playerCoordinates  
             this.availableTargets = initPassingActionMeta.availableTargets
+
+            initPassingActionMeta.edgePoints?.forEach(edgePoints => {
+                const gr = new Graphics();
+                const points = [
+                    new Point(edgePoints[0].x, edgePoints[0].y),
+                    new Point(edgePoints[1].x, edgePoints[1].y)
+                ]
+                this.draw.drawLine(gr, points)
+                this.container.addChild(gr);
+            })
         }
     }
 
