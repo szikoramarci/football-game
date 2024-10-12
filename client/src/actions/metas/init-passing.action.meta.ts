@@ -4,6 +4,5 @@ import { Point } from "honeycomb-grid";
 
 export interface InitPassingActionMeta extends ActionMeta {
     playerCoordinates: OffsetCoordinates,
-    availableTargets: Grid<Hex>,
-    edgePoints?: Point[][]
+    availableTargets: Grid<Hex>
 }

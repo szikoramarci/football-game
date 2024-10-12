@@ -23,18 +23,16 @@ export class CoordinateService {
         return distance >= sector.distance && sector.startAngle <= angle && angle <= sector.endAngle;
     }
 
-    findEdgePointsFromPointPerspective(startPoint: Point, points: Point[]): Point[] {
-        const pointsWithAngles = points.map(point => ({
-            point,
-            angle: this.calculateAngle(startPoint, point)
-        }));
-      
-        pointsWithAngles.sort((a, b) => a.angle - b.angle);
-      
-        const leftMost = pointsWithAngles[0].point;
-        const rightMost = pointsWithAngles[pointsWithAngles.length - 1].point;
-      
-        return [leftMost, rightMost]
+    findEdgePointsFromPointPerspective(startPoint: Point, hexPoints: Point[]): Point[] {
+        hexPoints.sort((a, b) => this.crossProduct(startPoint, a, b));
+    
+        // Select the first and last points in the sorted array
+        const edgePoints = [hexPoints[hexPoints.length - 1], hexPoints[0]];
+        return edgePoints;
+    }
+
+    crossProduct(o: Point, a: Point, b: Point): number {
+        return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
     }
     
 }

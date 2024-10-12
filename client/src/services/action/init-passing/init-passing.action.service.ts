@@ -30,7 +30,6 @@ export class InitPassingAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     availableTargets!: Grid<Hex>;
     oppositonPlayerPositions!: Grid<Hex>;
-    edgePoints: Point[][] = [];
   
     constructor(
       private store: Store,
@@ -95,8 +94,6 @@ export class InitPassingAction implements ActionStrategy {
           opponentPosition.corners
         );
 
-        this.edgePoints.push(edgePoints)
-    
         sectors.push({
           startAngle: this.coordinate.calculateAngle(startingHex, edgePoints[0]),
           endAngle: this.coordinate.calculateAngle(startingHex, edgePoints[1]),
@@ -120,8 +117,7 @@ export class InitPassingAction implements ActionStrategy {
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
         availableNextActions: [CancelAction, SetPassingPathAction],
-        availableTargets: this.availableTargets,
-        edgePoints: this.edgePoints
+        availableTargets: this.availableTargets
       }
       this.store.dispatch(saveActionMeta(initPassingActionMeta));
     }

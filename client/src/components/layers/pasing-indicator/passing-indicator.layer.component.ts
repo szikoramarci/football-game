@@ -60,16 +60,6 @@ export class PasingIndicatorLayerComponent implements OnInit {
         if (initPassingActionMeta.availableTargets) {
             this.passerPosition = initPassingActionMeta.playerCoordinates  
             this.availableTargets = initPassingActionMeta.availableTargets
-
-            initPassingActionMeta.edgePoints?.forEach(edgePoints => {
-                const gr = new Graphics();
-                const points = [
-                    new Point(edgePoints[0].x, edgePoints[0].y),
-                    new Point(edgePoints[1].x, edgePoints[1].y)
-                ]
-                this.draw.drawLine(gr, points)
-                this.container.addChild(gr);
-            })
         }
     }
 
