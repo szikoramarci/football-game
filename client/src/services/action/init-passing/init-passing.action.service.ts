@@ -19,9 +19,8 @@ import { STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../
 import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
-import { CoordinateService } from "../../coordinate/coordinate.service";
 import { Sector } from "../../../interfaces/sector.interface";
-import { Point } from "honeycomb-grid";
+import { GeometryService } from "../../geometry/geometry.service";
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +34,7 @@ export class InitPassingAction implements ActionStrategy {
       private store: Store,
       private grid: GridService,
       private traverser: TraverserService,
-      private coordinate: CoordinateService
+      private geometry: GeometryService
     ) {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
@@ -89,15 +88,15 @@ export class InitPassingAction implements ActionStrategy {
       const sectors: Sector[] = [];
 
       this.oppositonPlayerPositions.forEach(opponentPosition => {
-        const edgePoints = this.coordinate.findEdgePointsFromPointPerspective(
+        const edgePoints = this.geometry.findEdgePointsFromPointPerspective(
           startingHex,
           opponentPosition.corners
         );
 
         sectors.push({
-          startAngle: this.coordinate.calculateAngle(startingHex, edgePoints[0]),
-          endAngle: this.coordinate.calculateAngle(startingHex, edgePoints[1]),
-          distance: this.coordinate.calculatePointDistance(startingHex, opponentPosition)
+          startAngle: this.geometry.calculateAngle(startingHex, edgePoints[0]),
+          endAngle: this.geometry.calculateAngle(startingHex, edgePoints[1]),
+          distance: this.geometry.calculatePointDistance(startingHex, opponentPosition)
         });
       });
 
@@ -106,7 +105,7 @@ export class InitPassingAction implements ActionStrategy {
     
     filterVisibleTargets(startingHex: Hex, sectors: Sector[]): Grid<Hex> {
       return this.availableTargets.filter(targetHex => {
-        return !sectors.some(sector => this.coordinate.isPointInSector(startingHex, targetHex, sector));
+        return !sectors.some(sector => this.geometry.isPointInSector(startingHex, targetHex, sector));
       });
     }
   

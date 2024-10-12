@@ -5,7 +5,7 @@ import { Sector } from "../../interfaces/sector.interface";
 @Injectable({
     providedIn: 'root'
 })
-export class CoordinateService {
+export class GeometryService {
 
     calculatePointDistance(point1: Point, point2: Point): number {
         const dx = point2.x - point1.x;
@@ -16,19 +16,19 @@ export class CoordinateService {
     calculateAngle(center: Point, point: Point): number {
         return Math.atan2(point.y - center.y, point.x - center.x); // szög radiánban
     }
+
     
     isPointInSector(center: Point, point: Point, sector: Sector): boolean {
         const distance = this.calculatePointDistance(center, point)
         const angle = this.calculateAngle(center, point);
-        return distance >= sector.distance && sector.startAngle <= angle && angle <= sector.endAngle;
+        return distance >= sector.distance && (sector.startAngle <= sector.endAngle ?
+            (sector.startAngle <= angle && angle <= sector.endAngle) :
+            (sector.startAngle <= angle || angle <= sector.endAngle))
     }
 
-    findEdgePointsFromPointPerspective(startPoint: Point, hexPoints: Point[]): Point[] {
+    findEdgePointsFromPointPerspective(startPoint: Point, hexPoints: Point[]): [Point, Point] {
         hexPoints.sort((a, b) => this.crossProduct(startPoint, a, b));
-    
-        // Select the first and last points in the sorted array
-        const edgePoints = [hexPoints[hexPoints.length - 1], hexPoints[0]];
-        return edgePoints;
+        return [hexPoints[hexPoints.length - 1], hexPoints[0]];
     }
 
     crossProduct(o: Point, a: Point, b: Point): number {

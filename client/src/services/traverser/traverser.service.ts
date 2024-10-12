@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
 import { equals, Grid, Hex, HexCoordinates, line, OffsetCoordinates, pathFind, reachable, repeatWith, ring, spiral, Traverser } from "honeycomb-grid";
-import { CoordinateService } from "../coordinate/coordinate.service";
+import { GeometryService } from "../geometry/geometry.service";
 import { Point } from "pixi.js";
 import { PITCH_LENGTH, PITCH_WIDTH } from "../../constants";
 
@@ -12,13 +12,13 @@ export class TraverserService {
 
     constructor(
         private grid: GridService,
-        private coordinate: CoordinateService
+        private geometry: GeometryService
     ) {}
 
     getHexCenterDistanceInPixelsByHex(fromHex: Hex, toHex: Hex): number | null {
         const fromPoint = new Point(fromHex.x, fromHex.y);
         const toPoint = new Point(toHex.x, toHex.y)
-        return this.coordinate.calculatePointDistance(fromPoint, toPoint)
+        return this.geometry.calculatePointDistance(fromPoint, toPoint)
     }
 
     getHexCenterDistanceInPixelsByCoordinates(from: HexCoordinates, to: HexCoordinates): number | null {

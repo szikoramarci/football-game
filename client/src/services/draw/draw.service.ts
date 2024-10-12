@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { Graphics, Point, StrokeStyle } from "pixi.js";
 import { MOVEMENT_PATH_WIDTH, PASSING_PATH_WITH } from "../../constants";
-import { CoordinateService } from "../coordinate/coordinate.service";
+import { GeometryService } from "../geometry/geometry.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class DrawService {
 
-    constructor(private coordinate: CoordinateService) {}
+    constructor(private geometry: GeometryService) {}
 
     drawPassingPathArrowLine(graphics: Graphics, line: Point[]){
         const color = "white";
@@ -33,7 +33,7 @@ export class DrawService {
 
         const endPoint: Point = line[1];
 
-        const angle = this.coordinate.calculateAngle(line[0],line[1]);
+        const angle = this.geometry.calculateAngle(line[0],line[1]);
         
         const offsetX = Math.cos(angle) * halfBase;  
         const offsetY = Math.sin(angle) * halfBase;
@@ -73,7 +73,7 @@ export class DrawService {
     ): void {
         const [startPoint, endPoint] = line;
         const totalLength = Math.hypot(endPoint.x - startPoint.x, endPoint.y - startPoint.y); // Calculate the total length of the line
-        const angle = this.coordinate.calculateAngle(startPoint, endPoint); // Calculate the angle of the line
+        const angle = this.geometry.calculateAngle(startPoint, endPoint); // Calculate the angle of the line
         const cycleLength = dashLength + gapLength;
         const numFullCycles = Math.floor(totalLength / cycleLength);
         const remainingLength = totalLength - numFullCycles * cycleLength;

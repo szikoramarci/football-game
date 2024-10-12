@@ -4,7 +4,6 @@ import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throt
 import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
 import { equals, OffsetCoordinates } from "honeycomb-grid";
 import { Point } from "pixi.js";
-import { CoordinateService } from "../coordinate/coordinate.service";
 
 @Injectable({
     providedIn: 'root'
@@ -14,8 +13,7 @@ export class MouseEventService {
     mouseEvents: Subject<MouseTriggerEvent> = new Subject();
 
     constructor(
-        private grid: GridService,
-        private coordinate: CoordinateService
+        private grid: GridService
     ) {
         this.initClickListener();
     }

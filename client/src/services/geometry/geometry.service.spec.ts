@@ -1,12 +1,10 @@
-import { TestBed } from '@angular/core/testing';
-import { CoordinateService } from './coordinate.service';
-import { distance } from 'honeycomb-grid';
+import { GeometryService } from './geometry.service';
 
-describe('CoordinateService', () => {
-    let service: CoordinateService;
+describe('GeometryService', () => {
+    let service: GeometryService;
 
     beforeEach(() => {
-        service = new CoordinateService();
+        service = new GeometryService();
     });
 
 
