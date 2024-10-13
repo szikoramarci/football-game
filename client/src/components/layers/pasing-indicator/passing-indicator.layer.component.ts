@@ -1,17 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { Container, Graphics, Point } from "pixi.js";
+import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { GridService } from "../../../services/grid/grid.service";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
 import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
-import { DrawService } from "../../../services/draw/draw.service";
+import { ContextService } from "../../../services/context/context.service";
 
 @Component({
     selector: 'passing-indicator-layer',
@@ -23,6 +22,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
     passerPosition!: OffsetCoordinates | null
     passingPath!: Hex[] | null
     availableTargets!: Grid<Hex> | null
+    passingGraphicsContext!: GraphicsContext
 
     container: Container = new Container({
         interactiveChildren: false,
@@ -32,10 +32,12 @@ export class PasingIndicatorLayerComponent implements OnInit {
     constructor(
         private store: Store,
         private app: AppService,
-        private draw: DrawService
+        private context: ContextService
     ) {}
     
     ngOnInit(): void {
+        this.passingGraphicsContext = this.context.getPassingIndicatorContext();
+
         this.app.addChild(this.container);
                 
         this.store.select(getLastActionMeta()).subscribe(actionMeta => {     
@@ -43,8 +45,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
 
             this.handleAvailableTargets(actionMeta);
             this.handlePassingPath(actionMeta);       
-        });
-
+        });        
     }
 
     resetElements() {        

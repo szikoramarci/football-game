@@ -43,7 +43,7 @@ export class InitMovingAction implements ActionStrategy {
     }
   
     calculation(context: ActionContext): void {      
-      this.generateReachableHexes(context);
+      this.generateReachableHexes(context);      
       this.generateAvailableNextActions(context);      
     }
 

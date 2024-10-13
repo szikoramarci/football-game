@@ -1,6 +1,6 @@
+@for (availableTarget of availableTargets; track availableTarget.center) {
+    <indicator [hex]="availableTarget" [graphicsContext]="passingGraphicsContext" (onGraphicsChanged)="handleGraphics($event)"></indicator>
+}
 @if (passingPath && passingPath.length > 0) {
     <passing-path [passingPath]="passingPath" (onGraphicsChanged)="handleGraphics($event)"></passing-path>
-}
-@for (availableTarget of availableTargets; track availableTarget.center) {
-    <indicator [hex]="availableTarget" (onGraphicsChanged)="handleGraphics($event)"></indicator>
 }

@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Hex } from "honeycomb-grid";
-import { Graphics } from "pixi.js";
-import { ContextService } from "../../services/context/context.service";
+import { Graphics, GraphicsContext } from "pixi.js";
 
 @Component({
     selector: 'indicator',
@@ -11,12 +10,12 @@ import { ContextService } from "../../services/context/context.service";
 export class IndicatorComponent implements OnInit, OnDestroy {
 
     @Input() hex!: Hex;
+
+    @Input() graphicsContext!: GraphicsContext;
     
     @Output() onGraphicsChanged = new EventEmitter<Graphics>()
     
     indicator: Graphics = new Graphics();  
-
-    constructor(private context: ContextService) {}
 
     ngOnInit(): void {
         this.setDesign();       
@@ -25,7 +24,7 @@ export class IndicatorComponent implements OnInit, OnDestroy {
     }
 
     setDesign(){
-        this.indicator.context = this.context.getStatusHoveredFieldContext();
+        this.indicator.context = this.graphicsContext
         this.indicator.zIndex = -1
     }
 

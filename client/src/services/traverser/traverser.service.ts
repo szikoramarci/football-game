@@ -44,4 +44,9 @@ export class TraverserService {
             return distance && distance < pixelDistance || false
         })
     }
+
+    getNeighbors(centerPoint: HexCoordinates) {
+        const neighborTraverse = ring({ radius: 1, center: centerPoint })
+        return this.grid.getGrid().traverse(neighborTraverse);
+    }
 }

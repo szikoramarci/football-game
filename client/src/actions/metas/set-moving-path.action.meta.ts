@@ -3,5 +3,6 @@ import { InitMovingActionMeta } from "./init-moving.action.meta";
 
 export interface SetMovingPathActionMeta extends InitMovingActionMeta {
     movingPath: Grid<Hex>,
-    targetHex: OffsetCoordinates
+    targetHex: OffsetCoordinates,
+    challengeHexes: Map<string,Hex>
 }

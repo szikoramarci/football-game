@@ -6,7 +6,7 @@ import { ActionContext } from "../../../actions/interfaces/action.context.interf
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { IsReachableHexClicked } from "../../../actions/rules/move/is-reachable-hex-clicked.rule";
 import { GridService } from "../../grid/grid.service";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, neighborOf, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovePlayerAction } from "../move-player/move-player.action.service";
@@ -14,10 +14,11 @@ import { IsNotTargetHexClicked } from "../../../actions/rules/move/is-not-target
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
-import { take } from "rxjs";
+import { from, map, skip, take } from "rxjs";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 import { InitPassingAction } from "../init-passing/init-passing.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
+import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 
 @Injectable({
     providedIn: 'root',
@@ -27,6 +28,7 @@ export class SetMovingPathAction implements ActionStrategy {
     movingPath!: Grid<Hex>;
     lastActionMeta!: InitMovingActionMeta;
     availableNextActions: Type<ActionStrategy>[] = [];
+    challengeHexes: Map<string,Hex> = new Map()
 
     constructor(
         private store: Store,
@@ -48,8 +50,10 @@ export class SetMovingPathAction implements ActionStrategy {
 
         if (this.isSelectedHexReachable(context)) {
             this.generateMovingPath(context);
+            this.generateChallengeHexes(context);
         } else {
             this.resetMovingPath();
+            this.resetChallengeHexes();
         }
         this.generateAvailableNextActions(context);
     }
@@ -70,8 +74,37 @@ export class SetMovingPathAction implements ActionStrategy {
         })
     }
 
+    generateChallengeHexes(context: ActionContext) {
+        this.resetChallengeHexes();
+
+        this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
+            take(1)
+        ).subscribe(oppositionPlayers => {
+            let previousNeighborOppositionPlayers: string[] = [];            
+            from(this.movingPath.toArray())
+                .pipe(skip(1))
+                .subscribe((hex) => {
+                    const neighborHexes = this.traverser.getNeighbors(hex)
+                    const neighborOppositionPlayers = oppositionPlayers.filter(player => neighborHexes.getHex(player.position))                
+                    
+                    neighborOppositionPlayers.forEach(player => {
+                        if (!previousNeighborOppositionPlayers.includes(player.id)) {                            
+                            this.challengeHexes.set(player.id, hex)
+                        }
+                    });
+                    
+                    previousNeighborOppositionPlayers = neighborOppositionPlayers.map(player => player.id)            
+                })
+         
+        })                
+    }
+
     resetMovingPath() {
         this.movingPath = this.grid.createGrid();
+    }
+
+    resetChallengeHexes() {
+        this.challengeHexes = new Map();
     }
 
     generateAvailableNextActions(context: ActionContext) {        
@@ -92,7 +125,8 @@ export class SetMovingPathAction implements ActionStrategy {
             availableNextActions: this.availableNextActions,
             clickedCoordinates: context.coordinates, 
             movingPath: this.movingPath,
-            targetHex: context.coordinates
+            targetHex: context.coordinates,
+            challengeHexes: this.challengeHexes
         }          
         this.store.dispatch(saveActionMeta(setMovingPathActionMeta));        
     }
