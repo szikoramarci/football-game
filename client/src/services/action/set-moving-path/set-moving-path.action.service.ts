@@ -14,7 +14,7 @@ import { IsNotTargetHexClicked } from "../../../actions/rules/move/is-not-target
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
-import { from, map, skip, take } from "rxjs";
+import { from, map, scan, skip, switchMap, take } from "rxjs";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 import { InitPassingAction } from "../init-passing/init-passing.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
@@ -77,26 +77,34 @@ export class SetMovingPathAction implements ActionStrategy {
     generateChallengeHexes(context: ActionContext) {
         this.resetChallengeHexes();
 
+        if (!this.lastActionMeta.playerHasBall) {
+            return
+        }
+        
         this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
-            take(1)
-        ).subscribe(oppositionPlayers => {
-            let previousNeighborOppositionPlayers: string[] = [];            
-            from(this.movingPath.toArray())
-                .pipe(skip(1))
-                .subscribe((hex) => {
-                    const neighborHexes = this.traverser.getNeighbors(hex)
-                    const neighborOppositionPlayers = oppositionPlayers.filter(player => neighborHexes.getHex(player.position))                
-                    
-                    neighborOppositionPlayers.forEach(player => {
-                        if (!previousNeighborOppositionPlayers.includes(player.id)) {                            
-                            this.challengeHexes.set(player.id, hex)
-                        }
-                    });
-                    
-                    previousNeighborOppositionPlayers = neighborOppositionPlayers.map(player => player.id)            
-                })
-         
-        })                
+            take(1),
+            switchMap(oppositionPlayers =>
+                from(this.movingPath.toArray())
+                .pipe(
+                    skip(1),
+                    map(hex => {
+                        const neighborHexes = this.traverser.getNeighbors(hex)
+                        const neighborOppositionPlayers = oppositionPlayers.filter(player => neighborHexes.getHex(player.position))                
+                        return { hex, neighborOppositionPlayers }
+                    }),
+                    scan((acc, { hex, neighborOppositionPlayers }) => {
+                        neighborOppositionPlayers.forEach(player => {
+                            if (!acc.previous.includes(player.id)) {                            
+                                this.challengeHexes.set(player.id, hex)
+                            }
+                        });
+                        return {
+                            previous: neighborOppositionPlayers.map(player => player.id),
+                        };
+                    }, { previous: [] as string[] })      
+                )            
+            )
+        ).subscribe();
     }
 
     resetMovingPath() {
