@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
-import { equals, Grid, Hex, HexCoordinates, line, OffsetCoordinates, pathFind, reachable, repeatWith, ring, spiral, Traverser } from "honeycomb-grid";
+import { Grid, Hex, HexCoordinates, pathFind, reachable, ring, spiral } from "honeycomb-grid";
 import { GeometryService } from "../geometry/geometry.service";
 import { Point } from "pixi.js";
-import { PITCH_LENGTH, PITCH_WIDTH } from "../../constants";
 
 @Injectable({
     providedIn: 'root'
