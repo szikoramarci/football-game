@@ -1,4 +1,3 @@
-import { ActionMeta } from "../../actions/interfaces/action.meta.interface";
 
 export interface GameplayState {
   activeTeam: string

@@ -4,9 +4,8 @@ import { ActionStrategy } from "../../../actions/interfaces/action.strategy.inte
 import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
-import { IsReachableHexClicked } from "../../../actions/rules/move/is-reachable-hex-clicked.rule";
 import { GridService } from "../../grid/grid.service";
-import { Grid, Hex, neighborOf, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
 import { MovePlayerAction } from "../move-player/move-player.action.service";
@@ -50,7 +49,7 @@ export class SetMovingPathAction implements ActionStrategy {
 
         if (this.isSelectedHexReachable(context)) {
             this.generateMovingPath(context);
-            this.generateChallengeHexes(context);
+            this.generateChallengeHexes();
         } else {
             this.resetMovingPath();
             this.resetChallengeHexes();
@@ -74,7 +73,7 @@ export class SetMovingPathAction implements ActionStrategy {
         })
     }
 
-    generateChallengeHexes(context: ActionContext) {
+    generateChallengeHexes() {
         this.resetChallengeHexes();
 
         if (!this.lastActionMeta.playerHasBall) {

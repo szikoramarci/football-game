@@ -42,7 +42,7 @@ export class SetPassingPathAction implements ActionStrategy {
         } else {
             this.resetPassingPath();
         }
-        this.generateAvailableNextActions(context);
+        this.generateAvailableNextActions();
     }
 
     isSelectedHexPassable(context: ActionContext) {
@@ -64,7 +64,7 @@ export class SetPassingPathAction implements ActionStrategy {
         this.passingPath = []
     }
 
-    generateAvailableNextActions(context: ActionContext) {        
+    generateAvailableNextActions() {        
         this.availableNextActions = [SetPassingPathAction, CancelAction];
     }
 

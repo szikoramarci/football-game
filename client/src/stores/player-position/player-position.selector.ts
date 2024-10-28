@@ -4,7 +4,7 @@ import { equals, Grid, Hex, OffsetCoordinates } from 'honeycomb-grid';
 
 export const playerMovementEvents = createFeatureSelector<PlayerPositionState>('playerPosition');
 
-export const playerMoveEvent = (playerID: string) =>
+export const getPlayerPosition = (playerID: string) =>
   createSelector(playerMovementEvents, (positions) => positions[playerID]);
 
 const searchPlayerByPosition = (coordinatesToFind: OffsetCoordinates, positions: PlayerPositionState) => {

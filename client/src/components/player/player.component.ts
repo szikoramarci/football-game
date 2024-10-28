@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
-import { playerMoveEvent } from "../../stores/player-position/player-position.selector";
+import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
 import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
 
@@ -61,7 +61,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     }
 
     initPlayerPositionSubscription() {        
-        this.playerMovementSubscription = this.store.select(playerMoveEvent(this.player.id))
+        this.playerMovementSubscription = this.store.select(getPlayerPosition(this.player.id))
             .subscribe(position => {                
                 this.movePlayer(position);
             })
