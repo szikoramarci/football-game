@@ -6,7 +6,7 @@ import { Injectable } from "@angular/core";
 export class ChallengeService {
 
     dribbleTackleChallenge() {
-        return this.rollDice() == 1
+        return this.rollDice() == 6
     }
 
     rollDice(): number {
