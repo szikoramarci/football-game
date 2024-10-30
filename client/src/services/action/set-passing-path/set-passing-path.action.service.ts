@@ -5,16 +5,16 @@ import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { GridService } from "../../grid/grid.service";
-import { Direction, Hex, neighborOf, OffsetCoordinates, Point } from "honeycomb-grid";
+import { Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
 import { GeometryService } from "../../geometry/geometry.service";
-import { Sector } from "../../../interfaces/sector.interface";
-import { HEXA_RADIUS, HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
+import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { TraverserService } from "../../traverser/traverser.service";
+import { ChallengeService } from "../../challenge/challenge.service";
 
 @Injectable({
     providedIn: 'root',
@@ -25,13 +25,13 @@ export class SetPassingPathAction implements ActionStrategy {
     challengeHexes!: Map<string,Hex>
     lastActionMeta!: InitPassingActionMeta
     availableNextActions: Type<ActionStrategy>[] = []
-    testPoints: Point[] = []
 
     constructor(
         private store: Store,
         private grid: GridService,
         private geometry: GeometryService,
-        private traverser: TraverserService
+        private traverser: TraverserService,
+        private challenge: ChallengeService
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
@@ -70,26 +70,27 @@ export class SetPassingPathAction implements ActionStrategy {
         }             
     }
 
-    generateChallengeHexes() {
-        this.resetChallengeHexes();
-
-        this.testPoints = [];
-
+    generateCoveredHexesByPassPath() {
         const startHex: Hex = this.passingPath[0]
         const endHex: Hex = this.passingPath[1]
-        const rectangle = this.geometry.offsetLineToRectangle(startHex, endHex, HEXA_WIDTH/2*1.0000001)
-
-        // TODO ez a basic lefedet vonal - ezt kell szűrni a szomszéd ellenfelek első találkozására
-        this.traverser.getAreaByDistance(
+        const rectangleWidth = HEXA_WIDTH/2*1.000001
+        const passLaneRectangle = this.geometry.offsetLineToRectangle(startHex, endHex, rectangleWidth)
+        return this.traverser.getAreaByDistance(
             startHex, 
             STANDARD_PASS_HEX_DISTANCE,
             STANDARD_PASS_PIXEL_DISTANCE
         ).filter(availableTarget => {
-            return this.geometry.isPointInRectangle(availableTarget, rectangle)
-        }).forEach(availableTarget => {
-            const id: string = availableTarget.col.toString() + " - " + availableTarget.row.toString()
-            this.challengeHexes.set(id, availableTarget)
+            return this.geometry.isPointInRectangle(availableTarget, passLaneRectangle)
         })
+    }
+
+    generateChallengeHexes() {
+        this.resetChallengeHexes();
+
+        const coveredHexes = this.generateCoveredHexesByPassPath()
+        this.challenge.generateChallengeHexes(coveredHexes.toArray()).subscribe(challengeHexes => {
+            this.challengeHexes = challengeHexes
+        })         
     }
 
     resetPassingPath() {
@@ -111,8 +112,7 @@ export class SetPassingPathAction implements ActionStrategy {
             clickedCoordinates: context.coordinates, 
             passingPath: this.passingPath,            
             targetHex: context.coordinates,
-            challengeHexes: this.challengeHexes,
-            testPoints: this.testPoints
+            challengeHexes: this.challengeHexes
         }          
         this.store.dispatch(saveActionMeta(setPassingPathActionMeta));        
     }

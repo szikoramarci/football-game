@@ -66,9 +66,9 @@ export class InitPassingAction implements ActionStrategy {
     getOppositionPlayersInBaseArea() {      
       this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
         take(1),
-        map(players => players
-          .filter(player => this.availableTargets.getHex(player.position))
-          .map(player => player.position)
+        map(playersWithPosition => playersWithPosition
+          .filter(playerWithPosition => this.availableTargets.getHex(playerWithPosition.position))
+          .map(playerWithPosition => playerWithPosition.position)
         )
       ).subscribe(oppositionPlayerPositionsInArea => {
         this.oppositonPlayerPositions = this.grid.createGrid().setHexes(oppositionPlayerPositionsInArea);

@@ -7,6 +7,3 @@
 @for (challengeHex of challengeHexes; track challengeHex.center) {
     <indicator [hex]="challengeHex" [graphicsContext]="challengeGraphicsContext" (onGraphicsChanged)="handleGraphics($event)"></indicator>
 }
-@for (testPoint of testPoints; track testPoint) {
-    <point [point]="testPoint" (onGraphicsChanged)="handleGraphics($event)"></point>
-}

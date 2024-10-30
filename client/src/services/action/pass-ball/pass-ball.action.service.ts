@@ -9,14 +9,22 @@ import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
 import { IsPassTargetHexClicked } from "../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
+import { Hex } from "honeycomb-grid";
+import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
+import { ChallengeService } from "../../challenge/challenge.service";
 
 @Injectable({
     providedIn: 'root',
 })
 export class PassBallAction implements ActionStrategy {
-    ruleSet: ActionRuleSet;
+    ruleSet: ActionRuleSet
+    lastActionMeta!: SetPassingPathActionMeta
+    challengeHexes!: Map<string, Hex>
 
-    constructor(private store: Store) {
+    constructor(
+        private store: Store,
+        private challenge: ChallengeService
+    ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsLeftClick());
         this.ruleSet.addRule(new IsTheNextAction(SetPassingPathAction));    
@@ -28,11 +36,24 @@ export class PassBallAction implements ActionStrategy {
     }
 
     calculation(context: ActionContext): void {
-           
+        this.lastActionMeta = context.lastActionMeta as SetPassingPathActionMeta
+        this.challengeHexes = this.lastActionMeta.challengeHexes
     }
 
-    updateState(context: ActionContext): void {                  
-        this.store.dispatch(moveBall(context.coordinates));
-        this.store.dispatch(clearActionMeta());                
+    updateState(context: ActionContext): void {  
+        const ballWasStolen = Array.from(this.challengeHexes.entries()).some(([oppositionPlayerID]) => {
+            if (this.challenge.dribbleTackleChallenge()) {
+                this.challenge.transferBallToOpponent(oppositionPlayerID);                         
+                this.challenge.switchActiveTeam(oppositionPlayerID)
+                return true;
+            }
+            return false;
+        });        
+
+        if (!ballWasStolen) {
+            this.store.dispatch(moveBall(context.coordinates));          
+        }        
+
+        this.store.dispatch(clearActionMeta());    
     }    
 }

@@ -17,12 +17,10 @@ export const selectPlayersWithPositions = (isActiveTeam: boolean) => createSelec
 
         const activeTeamPlayers = Object.values(players).filter(player => isActiveTeam ? player.team === activeTeam : player.team !== activeTeam);
 
-        const activeTeamPlayersWithPositions = activeTeamPlayers.map(player => ({
-            ...player,
+        return activeTeamPlayers.map(player => ({
+            player: player,
             position: playerPositions[player.id] 
         }));
-
-        return activeTeamPlayersWithPositions;
     });
 
 export const selectActiveTeamPlayersWithPositions = selectPlayersWithPositions(true);

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Grid, Hex, OffsetCoordinates, Point } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
@@ -11,12 +11,11 @@ import { PassingPathComponent } from "../../passing-path/passing-path.component"
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { ContextService } from "../../../services/context/context.service";
-import { PointComponent } from "../../point/point.component";
 
 @Component({
     selector: 'passing-indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent, PlayerStrokeComponent, PassingPathComponent, PointComponent],
+    imports: [IndicatorComponent, PlayerStrokeComponent, PassingPathComponent],
     templateUrl: './passing-indicator.layer.component.html',
 })
 export class PasingIndicatorLayerComponent implements OnInit {
@@ -24,7 +23,6 @@ export class PasingIndicatorLayerComponent implements OnInit {
     passingPath!: Hex[] | null
     challengeHexes!: Grid<Hex>
     availableTargets!: Grid<Hex> | null    
-    testPoints!: Point[] | null
     
     passingGraphicsContext!: GraphicsContext
     challengeGraphicsContext!: GraphicsContext
@@ -58,7 +56,6 @@ export class PasingIndicatorLayerComponent implements OnInit {
         this.passerPosition = null;
         this.passingPath = null;        
         this.availableTargets = null;
-        this.testPoints = null;
     }
 
     handleAvailableTargets(actionMeta: ActionMeta | undefined) {
@@ -79,7 +76,6 @@ export class PasingIndicatorLayerComponent implements OnInit {
             this.passerPosition = setPassingPathActionMeta.playerCoordinates  
             this.passingPath = setPassingPathActionMeta.passingPath             
             this.availableTargets = setPassingPathActionMeta.availableTargets
-            this.testPoints = setPassingPathActionMeta.testPoints
         }
     }
 

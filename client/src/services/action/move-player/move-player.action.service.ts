@@ -10,13 +10,10 @@ import { clearActionMeta } from "../../../stores/action/action.actions";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { equals, Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
-import { concatMap, delay, from, of, take, takeWhile } from "rxjs";
+import { concatMap, delay, from, of, takeWhile } from "rxjs";
 import { IsTargetHexNotThePlayerHex } from "../../../actions/rules/move/is-target-hex-not-the-player-hex.rule";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { ChallengeService } from "../../challenge/challenge.service";
-import { getPlayerPosition } from "../../../stores/player-position/player-position.selector";
-import { getPlayer } from "../../../stores/player/player.selector";
-import { setActiveTeam } from "../../../stores/gameplay/gameplay.actions";
 
 const playerStepDelay: number = 300
 
@@ -76,42 +73,21 @@ export class MovePlayerAction implements ActionStrategy {
         }
 
         const challengesOnHex = Array.from(this.challengeHexes.entries())
-                                .filter(([_, challengePosition]) => equals(challengePosition, position))
-                                .map(([oppositionPlayerID,_]) => oppositionPlayerID)
+            .filter(([_, challengePosition]) => equals(challengePosition, position))
+            .map(([oppositionPlayerID,_]) => oppositionPlayerID)
 
         for (const oppositionPlayerID of challengesOnHex) {
             this.challengeHexes.delete(oppositionPlayerID);
 
             if (this.challenge.dribbleTackleChallenge()) {                                
-                this.transferBallToOpponent(oppositionPlayerID);
-                this.switchActiveTeam(oppositionPlayerID)
+                this.challenge.transferBallToOpponent(oppositionPlayerID, 2*playerStepDelay);
+                this.challenge.switchActiveTeam(oppositionPlayerID)
                 return false;
             }
         }
         
         return true;
-    }
-
-    transferBallToOpponent(oppositionPlayerID: string) {
-        this.store.select(getPlayerPosition(oppositionPlayerID))
-            .pipe(
-                take(1),
-                delay(2*playerStepDelay)
-            )
-            .subscribe(playerPosition => {
-                this.store.dispatch(moveBall(playerPosition))
-            })        
-    }
-
-    switchActiveTeam(oppositionPlayerID: string) {
-        this.store.select(getPlayer(oppositionPlayerID))
-            .pipe(
-                take(1)
-            )
-            .subscribe(player => {
-                this.store.dispatch(setActiveTeam({ activeTeam: player.team }))
-            })
-    }
+    }     
 
     movePlayer(coordinates: OffsetCoordinates) {
         this.store.dispatch(movePlayer({
