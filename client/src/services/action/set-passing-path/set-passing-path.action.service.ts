@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { GridService } from "../../grid/grid.service";
-import { Hex, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
@@ -15,6 +15,9 @@ import { GeometryService } from "../../geometry/geometry.service";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
+import { selectActiveTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
+import { filter, from, Observable, toArray, switchMap, take } from "rxjs";
+import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
 
 @Injectable({
     providedIn: 'root',
@@ -70,27 +73,44 @@ export class SetPassingPathAction implements ActionStrategy {
         }             
     }
 
-    generateCoveredHexesByPassPath() {
+    generateCoveredHexesByPassPath(): Observable<Hex[]> {
         const startHex: Hex = this.passingPath[0]
         const endHex: Hex = this.passingPath[1]
         const rectangleWidth = HEXA_WIDTH/2*1.000001
         const passLaneRectangle = this.geometry.offsetLineToRectangle(startHex, endHex, rectangleWidth)
-        return this.traverser.getAreaByDistance(
+        const baseAreaByDistance = this.traverser.getAreaByDistance(
             startHex, 
             STANDARD_PASS_HEX_DISTANCE,
             STANDARD_PASS_PIXEL_DISTANCE
-        ).filter(availableTarget => {
-            return this.geometry.isPointInRectangle(availableTarget, passLaneRectangle)
-        })
+        )
+
+        return this.store.select(selectActiveTeamPlayersWithPositions).pipe(
+            take(1),
+            switchMap(teamMatesWithPosition => 
+                from(baseAreaByDistance)
+                .pipe(
+                    filter(availableTarget => {
+                        return this.geometry.isPointInRectangle(availableTarget, passLaneRectangle)
+                    }),
+                    filter(availableTarget => {
+                        return !teamMatesWithPosition.some(teamMateWithPosition => equals(teamMateWithPosition.position, availableTarget))
+                    }),
+                    toArray()
+                )               
+            )
+        )
     }
 
     generateChallengeHexes() {
         this.resetChallengeHexes();
 
-        const coveredHexes = this.generateCoveredHexesByPassPath()
-        this.challenge.generateChallengeHexes(coveredHexes.toArray()).subscribe(challengeHexes => {
-            this.challengeHexes = challengeHexes
-        })         
+        this.generateCoveredHexesByPassPath().subscribe(coveredHexes => {
+            this.challenge.generateChallengeHexes(coveredHexes).subscribe(challengeHexes => {
+                this.challengeHexes = challengeHexes
+            })
+        })
+        
+               
     }
 
     resetPassingPath() {
@@ -116,4 +136,8 @@ export class SetPassingPathAction implements ActionStrategy {
         }          
         this.store.dispatch(saveActionMeta(setPassingPathActionMeta));        
     }
+}
+
+function toArrayrray(): import("rxjs").OperatorFunction<Hex, unknown> {
+    throw new Error("Function not implemented.");
 }
