@@ -15,7 +15,7 @@ import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
-import { InitPassingAction } from "../init-passing/init-passing.action.service";
+import { InitStandardPassingAction } from "../init-standard-passing/init-standard-passing.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 
@@ -98,7 +98,7 @@ export class SetMovingPathAction implements ActionStrategy {
         this.availableNextActions = [SetMovingPathAction, CancelAction];
 
         if (this.lastActionMeta.playerHasBall){
-            this.availableNextActions.push(InitPassingAction);
+            this.availableNextActions.push(InitStandardPassingAction);
         } 
 
         if (this.isSelectedHexReachable(context)) {

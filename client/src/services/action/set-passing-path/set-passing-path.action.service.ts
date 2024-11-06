@@ -10,14 +10,13 @@ import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
+import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { GeometryService } from "../../geometry/geometry.service";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { selectActiveTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { filter, from, Observable, toArray, switchMap, take } from "rxjs";
-import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
 
 @Injectable({
     providedIn: 'root',

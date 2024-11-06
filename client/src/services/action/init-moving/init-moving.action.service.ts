@@ -8,11 +8,11 @@ import { IsAvailableNextActionsEmpty } from "../../../actions/rules/is-available
 import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
-import { equals, Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { take } from "rxjs";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
-import { InitPassingAction } from "../init-passing/init-passing.action.service";
+import { InitStandardPassingAction } from "../init-standard-passing/init-standard-passing.action.service";
 import { SetMovingPathAction } from "../set-moving-path/set-moving-path.action.service";
 import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
 import { CancelAction } from "../cancel/cancel.service";
@@ -62,7 +62,7 @@ export class InitMovingAction implements ActionStrategy {
       this.availableNextActions = [SetMovingPathAction, CancelAction];
      
       if (context.playerHasBall){
-        this.availableNextActions.push(InitPassingAction);
+        this.availableNextActions.push(InitStandardPassingAction);        
       }
     }
   

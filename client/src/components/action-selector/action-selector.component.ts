@@ -3,10 +3,10 @@ import { ActionMenuItem } from "../../actions/interfaces/action.menu.item.interf
 import { Store } from "@ngrx/store";
 import { filter, tap } from "rxjs";
 import { getLastActionMeta } from "../../stores/action/action.selector";
-import { InitMovingActionMeta } from "../../actions/metas/init-moving.action.meta";
 import { InitMovingAction } from "../../services/action/init-moving/init-moving.action.service";
 import { SetMovingPathAction } from "../../services/action/set-moving-path/set-moving-path.action.service";
-import { InitPassingAction } from "../../services/action/init-passing/init-passing.action.service";
+import { InitStandardPassingAction } from "../../services/action/init-standard-passing/init-standard-passing.action.service";
+import { InitHighPassingAction } from "../../services/action/init-high-passing/init-high-passing.action.service";
 
 @Component({
     selector: 'action-selector',
@@ -25,7 +25,11 @@ export class ActionSelectorComponent implements OnInit {
         },
         {
             label: 'Standard Pass',
-            relatedActions: [InitPassingAction],
+            relatedActions: [InitStandardPassingAction],
+        },
+        {
+            label: 'High Pass',
+            relatedActions: [InitHighPassingAction],
         }
     ]
 

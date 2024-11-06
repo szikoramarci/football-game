@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Type } from "@angular/core";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { ActionStrategy } from "../../../actions/interfaces/action.strategy.interface";
 import { ActionRuleSet } from "../../../actions/interfaces/action.rule.interface";
@@ -21,14 +21,16 @@ import { SetPassingPathAction } from "../set-passing-path/set-passing-path.actio
 import { TraverserService } from "../../traverser/traverser.service";
 import { Sector } from "../../../interfaces/sector.interface";
 import { GeometryService } from "../../geometry/geometry.service";
+import { InitHighPassingAction } from "../init-high-passing/init-high-passing.action.service";
 
 @Injectable({
   providedIn: 'root',
 })
-export class InitPassingAction implements ActionStrategy {
+export class InitStandardPassingAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     availableTargets!: Grid<Hex>;
     oppositonPlayerPositions!: Grid<Hex>;
+    availableNextActions: Type<ActionStrategy>[] = [];
   
     constructor(
       private store: Store,
@@ -38,7 +40,7 @@ export class InitPassingAction implements ActionStrategy {
     ) {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
-      this.ruleSet.addRule(new IsTheNextAction(InitPassingAction));    
+      this.ruleSet.addRule(new IsTheNextAction(InitStandardPassingAction));    
       this.ruleSet.addRule(new IsPickedPlayerClicked());
       this.ruleSet.addRule(new IsPlayerSelected());
       this.ruleSet.addRule(new HasThePlayerTheBall());
@@ -53,6 +55,7 @@ export class InitPassingAction implements ActionStrategy {
         this.generateBaseAreaOfDistance(context);
         this.getOppositionPlayersInBaseArea();
         this.removeUnsightTargets(context);
+        this.generateAvailableNextActions(context);
     }
 
     generateBaseAreaOfDistance(context: ActionContext) {
@@ -108,14 +111,22 @@ export class InitPassingAction implements ActionStrategy {
         return !sectors.some(sector => this.geometry.isPointInSector(startingHex, targetHex, sector));
       });
     }
+
+    generateAvailableNextActions(context: ActionContext) {
+      this.availableNextActions = [SetPassingPathAction, CancelAction];
+     
+      if (context.playerHasBall){
+        this.availableNextActions.push(InitHighPassingAction);        
+      }
+    }
   
     updateState(context: ActionContext): void {
       const initPassingActionMeta: InitPassingActionMeta = {     
-        actionType: InitPassingAction,   
+        actionType: InitStandardPassingAction,   
         timestamp: new Date(),
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
-        availableNextActions: [CancelAction, SetPassingPathAction],
+        availableNextActions: this.availableNextActions,
         availableTargets: this.availableTargets
       }
       this.store.dispatch(saveActionMeta(initPassingActionMeta));

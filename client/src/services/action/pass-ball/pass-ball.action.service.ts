@@ -10,7 +10,7 @@ import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
 import { IsPassTargetHexClicked } from "../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
 import { Hex } from "honeycomb-grid";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
+import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { ChallengeService } from "../../challenge/challenge.service";
 
 @Injectable({

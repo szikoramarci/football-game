@@ -6,7 +6,7 @@ import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-passing-path.action.meta";
+import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
