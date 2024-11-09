@@ -19,9 +19,8 @@ import { STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../
 import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
-import { Sector } from "../../../interfaces/sector.interface";
-import { GeometryService } from "../../geometry/geometry.service";
 import { InitHighPassingAction } from "../init-high-passing/init-high-passing.action.service";
+import { SectorService } from "../../sector/sector.service";
 
 @Injectable({
   providedIn: 'root',
@@ -29,14 +28,13 @@ import { InitHighPassingAction } from "../init-high-passing/init-high-passing.ac
 export class InitStandardPassingAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     availableTargets!: Grid<Hex>;
-    oppositonPlayerPositions!: Grid<Hex>;
     availableNextActions: Type<ActionStrategy>[] = [];
   
     constructor(
       private store: Store,
       private grid: GridService,
       private traverser: TraverserService,
-      private geometry: GeometryService
+      private sector: SectorService
     ) {
       this.ruleSet = new ActionRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
@@ -53,7 +51,6 @@ export class InitStandardPassingAction implements ActionStrategy {
 
     calculation(context: ActionContext): void {  
         this.generateBaseAreaOfDistance(context);
-        this.getOppositionPlayersInBaseArea();
         this.removeUnsightTargets(context);
         this.generateAvailableNextActions(context);
     }
@@ -66,7 +63,9 @@ export class InitStandardPassingAction implements ActionStrategy {
       )
     }
 
-    getOppositionPlayersInBaseArea() {      
+    removeUnsightTargets(context: ActionContext) {
+      const startHex: Hex | undefined = this.grid.getHex(context.lastActionMeta?.clickedCoordinates!)
+
       this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
         take(1),
         map(playersWithPosition => playersWithPosition
@@ -74,42 +73,10 @@ export class InitStandardPassingAction implements ActionStrategy {
           .map(playerWithPosition => playerWithPosition.position)
         )
       ).subscribe(oppositionPlayerPositionsInArea => {
-        this.oppositonPlayerPositions = this.grid.createGrid().setHexes(oppositionPlayerPositionsInArea);
+        const oppositonPlayerPositions = this.grid.createGrid().setHexes(oppositionPlayerPositionsInArea);
+        this.availableTargets = this.sector.removeUnsightTargets(startHex!, this.availableTargets, oppositonPlayerPositions);
       });
-    }
-
-    removeUnsightTargets(context: ActionContext) {
-      const startHex = this.grid.getHex(context.lastActionMeta?.clickedCoordinates!)
-      if (!startHex) return;
-
-      const sectors: Sector[] = this.generateSectorsFromOpponents(startHex)
-
-      this.availableTargets = this.filterVisibleTargets(startHex, sectors);
-    }
-
-    generateSectorsFromOpponents(startingHex: Hex): Sector[] {
-      const sectors: Sector[] = [];
-
-      this.oppositonPlayerPositions.forEach(opponentPosition => {
-        const edgePoints = this.geometry.findEdgePointsFromPointPerspective(
-          startingHex,
-          opponentPosition.corners
-        );
-
-        sectors.push({
-          startAngle: this.geometry.calculateAngle(startingHex, edgePoints[0]),
-          endAngle: this.geometry.calculateAngle(startingHex, edgePoints[1]),
-          distance: this.geometry.calculatePointDistance(startingHex, opponentPosition)
-        });
-      });
-
-      return sectors;
-    }
     
-    filterVisibleTargets(startingHex: Hex, sectors: Sector[]): Grid<Hex> {
-      return this.availableTargets.filter(targetHex => {
-        return !sectors.some(sector => this.geometry.isPointInSector(startingHex, targetHex, sector));
-      });
     }
 
     generateAvailableNextActions(context: ActionContext) {

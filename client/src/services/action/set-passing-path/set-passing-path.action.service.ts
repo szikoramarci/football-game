@@ -136,7 +136,3 @@ export class SetPassingPathAction implements ActionStrategy {
         this.store.dispatch(saveActionMeta(setPassingPathActionMeta));        
     }
 }
-
-function toArrayrray(): import("rxjs").OperatorFunction<Hex, unknown> {
-    throw new Error("Function not implemented.");
-}
