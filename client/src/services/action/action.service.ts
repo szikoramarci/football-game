@@ -6,9 +6,10 @@ import { SetMovingPathAction } from "./set-moving-path/set-moving-path.action.se
 import { MovePlayerAction } from "./move-player/move-player.action.service";
 import { CancelAction } from "./cancel/cancel.service";
 import { InitStandardPassingAction } from "./init-standard-passing/init-standard-passing.action.service";
-import { SetPassingPathAction } from "./set-passing-path/set-passing-path.action.service";
+import { SetStandardPassingPathAction } from "./set-standard-passing-path/set-standard-passing-path.action.service";
 import { PassBallAction } from "./pass-ball/pass-ball.action.service";
 import { InitHighPassingAction } from "./init-high-passing/init-high-passing.action.service";
+import { SetHighPassingPathAction } from "./set-high-passing-path/set-high-passing-path.action.service";
 
 @Injectable({
     providedIn: 'root',
@@ -24,10 +25,11 @@ export class ActionService {
     private movePlayer: MovePlayerAction,
 
     private initStandardPassing: InitStandardPassingAction,
-    private setPassingPath: SetPassingPathAction,
+    private setStandardPassingPath: SetStandardPassingPathAction,
     private passBall: PassBallAction,
 
     private initHighPassing: InitHighPassingAction,
+    private setHighPassingPath: SetHighPassingPathAction,
 
     private cancelMovingPlayer: CancelAction
   ) {
@@ -37,10 +39,12 @@ export class ActionService {
       this.movePlayer,
 
       this.initStandardPassing,
-      this.setPassingPath,
-      this.passBall,
+      this.setStandardPassingPath,      
 
       this.initHighPassing,
+      this.setHighPassingPath,
+
+      this.passBall,
 
       this.cancelMovingPlayer
     ]

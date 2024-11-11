@@ -17,7 +17,7 @@ import { HasThePlayerTheBall } from "../../../actions/rules/pass/has-the-player-
 import { map, take } from "rxjs";
 import { STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
-import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
+import { SetStandardPassingPathAction } from "../set-standard-passing-path/set-standard-passing-path.action.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { InitHighPassingAction } from "../init-high-passing/init-high-passing.action.service";
 import { SectorService } from "../../sector/sector.service";
@@ -80,7 +80,7 @@ export class InitStandardPassingAction implements ActionStrategy {
     }
 
     generateAvailableNextActions(context: ActionContext) {
-      this.availableNextActions = [SetPassingPathAction, CancelAction];
+      this.availableNextActions = [SetStandardPassingPathAction, CancelAction];
      
       if (context.playerHasBall){
         this.availableNextActions.push(InitHighPassingAction);        

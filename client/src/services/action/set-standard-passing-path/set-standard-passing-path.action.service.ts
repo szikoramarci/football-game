@@ -10,18 +10,19 @@ import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
+import { SetStandardPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { GeometryService } from "../../geometry/geometry.service";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { selectActiveTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { filter, from, Observable, toArray, switchMap, take } from "rxjs";
+import { InitHighPassingAction } from "../init-high-passing/init-high-passing.action.service";
 
 @Injectable({
     providedIn: 'root',
 })
-export class SetPassingPathAction implements ActionStrategy {
+export class SetStandardPassingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet
     passingPath!: Hex[]
     challengeHexes!: Map<string,Hex>
@@ -37,7 +38,7 @@ export class SetPassingPathAction implements ActionStrategy {
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
-        this.ruleSet.addRule(new IsTheNextAction(SetPassingPathAction));                   
+        this.ruleSet.addRule(new IsTheNextAction(SetStandardPassingPathAction));                   
     }
 
     identify(context: ActionContext): boolean {
@@ -121,11 +122,11 @@ export class SetPassingPathAction implements ActionStrategy {
     }
 
     generateAvailableNextActions() {        
-        this.availableNextActions = [SetPassingPathAction, CancelAction];
+        this.availableNextActions = [SetStandardPassingPathAction, InitHighPassingAction, CancelAction];
     }
 
     updateState(context: ActionContext): void {
-        const setPassingPathActionMeta: SetPassingPathActionMeta = {... this.lastActionMeta,             
+        const setPassingPathActionMeta: SetStandardPassingPathActionMeta = {... this.lastActionMeta,             
             timestamp: new Date(),
             availableNextActions: this.availableNextActions,
             clickedCoordinates: context.coordinates, 

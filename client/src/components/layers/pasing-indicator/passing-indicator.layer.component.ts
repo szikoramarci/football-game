@@ -6,7 +6,7 @@ import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
 import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
+import { SetStandardPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
@@ -71,7 +71,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
     handlePassingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const setPassingPathActionMeta = actionMeta as SetPassingPathActionMeta;
+        const setPassingPathActionMeta = actionMeta as SetStandardPassingPathActionMeta;
         if (setPassingPathActionMeta.availableTargets && setPassingPathActionMeta.passingPath) {
             this.passerPosition = setPassingPathActionMeta.playerCoordinates  
             this.passingPath = setPassingPathActionMeta.passingPath             
@@ -82,7 +82,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
     handleChallengeHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetPassingPathActionMeta;
+        const setMovingPathActionMeta = actionMeta as SetStandardPassingPathActionMeta;
         if (setMovingPathActionMeta.challengeHexes) {
             this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
         }       

@@ -7,10 +7,10 @@ import { Store } from "@ngrx/store";
 import { clearActionMeta } from "../../../stores/action/action.actions";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
-import { SetPassingPathAction } from "../set-passing-path/set-passing-path.action.service";
+import { SetStandardPassingPathAction } from "../set-standard-passing-path/set-standard-passing-path.action.service";
 import { IsPassTargetHexClicked } from "../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
 import { Hex } from "honeycomb-grid";
-import { SetPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
+import { SetStandardPassingPathActionMeta } from "../../../actions/metas/set-standard-passing-path.action.meta";
 import { ChallengeService } from "../../challenge/challenge.service";
 
 @Injectable({
@@ -18,7 +18,7 @@ import { ChallengeService } from "../../challenge/challenge.service";
 })
 export class PassBallAction implements ActionStrategy {
     ruleSet: ActionRuleSet
-    lastActionMeta!: SetPassingPathActionMeta
+    lastActionMeta!: SetStandardPassingPathActionMeta
     challengeHexes!: Map<string, Hex>
 
     constructor(
@@ -27,7 +27,7 @@ export class PassBallAction implements ActionStrategy {
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsLeftClick());
-        this.ruleSet.addRule(new IsTheNextAction(SetPassingPathAction));    
+        this.ruleSet.addRule(new IsTheNextAction(SetStandardPassingPathAction));    
         this.ruleSet.addRule(new IsPassTargetHexClicked()); 
     }
 
@@ -36,7 +36,7 @@ export class PassBallAction implements ActionStrategy {
     }
 
     calculation(context: ActionContext): void {
-        this.lastActionMeta = context.lastActionMeta as SetPassingPathActionMeta
+        this.lastActionMeta = context.lastActionMeta as SetStandardPassingPathActionMeta
         this.challengeHexes = this.lastActionMeta.challengeHexes
     }
 
