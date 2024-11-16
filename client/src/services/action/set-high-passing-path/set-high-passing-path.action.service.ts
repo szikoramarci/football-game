@@ -5,7 +5,7 @@ import { Store } from "@ngrx/store";
 import { ActionContext } from "../../../actions/interfaces/action.context.interface";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { GridService } from "../../grid/grid.service";
-import { Hex, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex, OffsetCoordinates, reachable } from "honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { CancelAction } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
@@ -13,6 +13,8 @@ import { InitPassingActionMeta } from "../../../actions/metas/init-passing.actio
 import { GeometryService } from "../../geometry/geometry.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { SetHighPassingPathActionMeta } from "../../../actions/metas/set-high-passing-path.action.meta";
+import { InitHighPassingActionMeta } from "../../../actions/metas/init-high-passing.action.meta";
+import { eq } from "lodash";
 
 @Injectable({
     providedIn: 'root',
@@ -20,14 +22,12 @@ import { SetHighPassingPathActionMeta } from "../../../actions/metas/set-high-pa
 export class SetHighPassingPathAction implements ActionStrategy {
     ruleSet: ActionRuleSet
     passingPath!: Hex[]
-    lastActionMeta!: InitPassingActionMeta
+    lastActionMeta!: InitHighPassingActionMeta
     availableNextActions: Type<ActionStrategy>[] = []
 
     constructor(
         private store: Store,
-        private grid: GridService,
-        private geometry: GeometryService,
-        private traverser: TraverserService
+        private grid: GridService
     ) {
         this.ruleSet = new ActionRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
@@ -39,9 +39,10 @@ export class SetHighPassingPathAction implements ActionStrategy {
     }
 
     calculation(context: ActionContext): void {
-        this.lastActionMeta = context.lastActionMeta as InitPassingActionMeta;
+        this.lastActionMeta = context.lastActionMeta as InitHighPassingActionMeta;
 
         if (this.isSelectedHexPassable(context)) {
+            this.collectPossibleHeadingPlayer(context)
             this.generatePassingPath(context)
         } else {
             this.resetPassingPath()
@@ -68,6 +69,13 @@ export class SetHighPassingPathAction implements ActionStrategy {
         this.passingPath = []
     }
 
+    collectPossibleHeadingPlayer(context: ActionContext) {
+        this.lastActionMeta.possibleHeadingPlayers.forEach((availableTargets, playerPosition) => {
+            if (availableTargets.some(availableTarget => equals(availableTarget, context.coordinates))) {
+                console.log(playerPosition)
+            }
+        })
+    }
 
     generateAvailableNextActions() {        
         this.availableNextActions = [SetHighPassingPathAction, CancelAction];

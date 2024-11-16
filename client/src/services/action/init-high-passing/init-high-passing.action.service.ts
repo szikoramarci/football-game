@@ -5,7 +5,7 @@ import { ActionRuleSet } from "../../../actions/interfaces/action.rule.interface
 import { IsOwnPlayer } from "../../../actions/rules/move/is-own-player.rule";
 import { MemoizedSelector, Store } from "@ngrx/store";
 import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
-import { equals, Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { IsTheNextAction } from "../../../actions/rules/is-the-next-action.rule";
 import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
@@ -19,8 +19,8 @@ import { forkJoin, map, Observable, take } from "rxjs";
 import { GridService } from "../../grid/grid.service";
 import { SectorService } from "../../sector/sector.service";
 import { SetHighPassingPathAction } from "../set-high-passing-path/set-high-passing-path.action.service";
-import { InitPassingActionMeta } from "../../../actions/metas/init-passing.action.meta";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
+import { InitHighPassingActionMeta } from "../../../actions/metas/init-high-passing.action.meta";
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +28,7 @@ import { PlayerWithPosition } from "../../../interfaces/player-with-position.int
 export class InitHighPassingAction implements ActionStrategy {
     ruleSet: ActionRuleSet;
     availableTargets!: Grid<Hex>;
+    possibleHeadingPlayers!: Map<OffsetCoordinates, OffsetCoordinates[]>
     availableNextActions: Type<ActionStrategy>[] = [];
   
     constructor(
@@ -96,13 +97,17 @@ export class InitHighPassingAction implements ActionStrategy {
         this.getFilteredPlayerPositions(selectActiveTeamPlayersWithPositions, this.availableTargets),
         this.getFilteredPlayerPositions(selectOppositeTeamPlayersWithPositions, this.availableTargets)
       ]).subscribe(([teamMatesInArea, oppositionsInArea]) => {          
-        const oppositionsInAreaGrid = this.grid.createGrid().setHexes(oppositionsInArea)
+        const playersInAreaGrid = this.grid.createGrid().setHexes(oppositionsInArea).setHexes(teamMatesInArea)
         const filteredTargetHexes: Hex[] = []       
-        teamMatesInArea.forEach(teamMatePosition => {          
-        const teamMateSuroundingHexes = this.availableTargets.traverse(reachable(teamMatePosition, 3, oppositionsInAreaGrid))
+        this.possibleHeadingPlayers = new Map()
+        teamMatesInArea.forEach(teamMatePosition => {   
+          const availableTargetsForPlayer: OffsetCoordinates[] = []
+          const teamMateSuroundingHexes = this.availableTargets.traverse(reachable(teamMatePosition, 3, playersInAreaGrid))        
           this.availableTargets.filter(availableTarget => teamMateSuroundingHexes.hasHex(availableTarget)).forEach(availableTarget => {           
             filteredTargetHexes.push(availableTarget)
+            availableTargetsForPlayer.push(availableTarget)
           })       
+          this.possibleHeadingPlayers.set(teamMatePosition, availableTargetsForPlayer)
         })
         this.availableTargets = this.grid.createGrid().setHexes(filteredTargetHexes)
       })              
@@ -113,13 +118,14 @@ export class InitHighPassingAction implements ActionStrategy {
     }
   
     updateState(context: ActionContext): void {
-      const initPassingActionMeta: InitPassingActionMeta = {     
+      const initPassingActionMeta: InitHighPassingActionMeta = {     
         actionType: InitHighPassingAction,   
         timestamp: new Date(),
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
         availableNextActions: this.availableNextActions,
-        availableTargets: this.availableTargets
+        availableTargets: this.availableTargets,
+        possibleHeadingPlayers: this.possibleHeadingPlayers
       }
       this.store.dispatch(saveActionMeta(initPassingActionMeta));
     }
