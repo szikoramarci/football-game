@@ -1,12 +1,12 @@
 import { Component, OnInit } from "@angular/core";
-import { ActionMenuItem } from "../../actions/interfaces/action.menu.item.interface";
+import { ActionStepMenuItem } from "../../action-steps/interfaces/action-step-menu-item.interface";
 import { Store } from "@ngrx/store";
 import { filter, tap } from "rxjs";
 import { getLastActionMeta } from "../../stores/action/action.selector";
-import { InitMovingAction } from "../../services/action/init-moving/init-moving.action.service";
-import { SetMovingPathAction } from "../../services/action/set-moving-path/set-moving-path.action.service";
-import { InitStandardPassingAction } from "../../services/action/init-standard-passing/init-standard-passing.action.service";
-import { InitHighPassingAction } from "../../services/action/init-high-passing/init-high-passing.action.service";
+import { InitMovingActionStep } from "../../services/action-step/init-moving/init-moving.action.service";
+import { SetMovingPathActionStep } from "../../services/action-step/set-moving-path/set-moving-path.action.service";
+import { InitStandardPassingActionStep } from "../../services/action-step/init-standard-passing/init-standard-passing.action.service";
+import { InitHighPassingActionStep } from "../../services/action-step/init-high-passing/init-high-passing.action.service";
 
 @Component({
     selector: 'action-selector',
@@ -18,18 +18,18 @@ export class ActionSelectorComponent implements OnInit {
 
     actionLabel!: string | null;    
 
-    actionMenuItems: ActionMenuItem[] = [
+    actionMenuItems: ActionStepMenuItem[] = [
         {
             label: 'Move',
-            relatedActions: [InitMovingAction, SetMovingPathAction],
+            relatedActions: [InitMovingActionStep, SetMovingPathActionStep],
         },
         {
             label: 'Standard Pass',
-            relatedActions: [InitStandardPassingAction],
+            relatedActions: [InitStandardPassingActionStep],
         },
         {
             label: 'High Pass',
-            relatedActions: [InitHighPassingAction],
+            relatedActions: [InitHighPassingActionStep],
         }
     ]
 

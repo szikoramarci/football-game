@@ -1,7 +1,7 @@
-import { ActionMeta } from "../../actions/interfaces/action.meta.interface";
+import { ActionStepMeta } from "../../action-steps/interfaces/action-step-meta.interface";
 
 export interface ActionState {
-  lastActionMeta: ActionMeta | undefined
+  lastActionMeta: ActionStepMeta | undefined
 }
 
 export const initialState: ActionState = {

@@ -1,9 +1,9 @@
 import { createAction, props } from "@ngrx/store";
-import { ActionMeta } from "../../actions/interfaces/action.meta.interface";
+import { ActionStepMeta } from "../../action-steps/interfaces/action-step-meta.interface";
 
-export const saveActionMeta = createAction(
+export const saveActionStepMeta = createAction(
     '[Action] Save Action Meta',
-    props<ActionMeta>()
+    props<ActionStepMeta>()
 );
 
-export const clearActionMeta = createAction('[Action] Clear Action Meta');
+export const clearActionStepMeta = createAction('[Action] Clear Action Step Meta');

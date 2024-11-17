@@ -5,11 +5,11 @@ import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { SetMovingPathActionMeta } from "../../../actions/metas/set-moving-path.action.meta";
+import { SetMovingPathActionStepMeta } from "../../../action-steps/metas/moving/set-moving-path.action-step-meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { InitMovingActionMeta } from "../../../actions/metas/init-moving.action.meta";
-import { ActionMeta } from "../../../actions/interfaces/action.meta.interface";
+import { InitMovingActionStepMeta } from "../../../action-steps/metas/moving/init-moving.action-step-meta";
+import { ActionStepMeta } from "../../../action-steps/interfaces/action-step-meta.interface";
 import { ContextService } from "../../../services/context/context.service";
 @Component({
     selector: 'moving-indicator-layer',
@@ -58,28 +58,28 @@ export class MovingIndicatorLayerComponent implements OnInit {
         this.challengeHexes = this.grid.createGrid();
     }
 
-    handleMovingPath(actionMeta: ActionMeta | undefined) {
+    handleMovingPath(actionMeta: ActionStepMeta | undefined) {
         if (!actionMeta) return;
 
-        const initMovingActionMeta = actionMeta as InitMovingActionMeta;
+        const initMovingActionMeta = actionMeta as InitMovingActionStepMeta;
         if (initMovingActionMeta.reachableHexes) {
             this.indicators = initMovingActionMeta.reachableHexes
         }
     }
 
-    handleReachableHexes(actionMeta: ActionMeta | undefined) {
+    handleReachableHexes(actionMeta: ActionStepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathActionMeta;
+        const setMovingPathActionMeta = actionMeta as SetMovingPathActionStepMeta;
         if (setMovingPathActionMeta.movingPath) {
             this.movingPath = setMovingPathActionMeta.movingPath
         }        
     }
 
-    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
+    handleChallengeHexes(actionMeta: ActionStepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathActionMeta;
+        const setMovingPathActionMeta = actionMeta as SetMovingPathActionStepMeta;
         if (setMovingPathActionMeta.challengeHexes) {
             this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
         }       
