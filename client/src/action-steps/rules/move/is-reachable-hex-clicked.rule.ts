@@ -1,11 +1,11 @@
-import { ActionStepContext } from "../../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../../interfaces/action-step-rule.interface";
-import { InitMovingActionStepMeta } from "../../metas/moving/init-moving.action-step-meta";
+import { StepContext } from "../../interfaces/step-context.interface";
+import { StepRule } from "../../interfaces/step-rule.interface";
+import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
 
-export class IsReachableHexClicked implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
-        const lastActionMeta = context.lastActionStepMeta as InitMovingActionStepMeta;
-        return !!lastActionMeta.reachableHexes.getHex(context.coordinates) || false;
+export class IsReachableHexClicked implements StepRule {
+    validate(context: StepContext): boolean {
+        const lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
+        return !!lastStepMeta.reachableHexes.getHex(context.coordinates) || false;
     }
     errorMessage = "not a reachable hex";
 }

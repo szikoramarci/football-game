@@ -1,13 +1,13 @@
 import { equals } from "honeycomb-grid";
-import { ActionStepContext } from "../../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../../interfaces/action-step-rule.interface";
-import { InitMovingActionStepMeta } from "../../metas/moving/init-moving.action-step-meta";
+import { StepContext } from "../../interfaces/step-context.interface";
+import { StepRule } from "../../interfaces/step-rule.interface";
+import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
 
-export class IsPickedPlayerClicked implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
-        const lastActionMeta = context.lastActionStepMeta as InitMovingActionStepMeta;
-        if (lastActionMeta.playerCoordinates) {
-            return equals(lastActionMeta.playerCoordinates, context.coordinates);
+export class IsPickedPlayerClicked implements StepRule {
+    validate(context: StepContext): boolean {
+        const lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
+        if (lastStepMeta.playerCoordinates) {
+            return equals(lastStepMeta.playerCoordinates, context.coordinates);
         }        
 
         return false;

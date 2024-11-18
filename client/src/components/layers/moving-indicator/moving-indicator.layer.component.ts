@@ -4,12 +4,12 @@ import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
-import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { SetMovingPathActionStepMeta } from "../../../action-steps/metas/moving/set-moving-path.action-step-meta";
+import { getLastStepMeta } from "../../../stores/action/action.selector";
+import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { InitMovingActionStepMeta } from "../../../action-steps/metas/moving/init-moving.action-step-meta";
-import { ActionStepMeta } from "../../../action-steps/interfaces/action-step-meta.interface";
+import { InitMovingStepMeta } from "../../../action-steps/metas/moving/init-moving.step-meta";
+import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
 import { ContextService } from "../../../services/context/context.service";
 @Component({
     selector: 'moving-indicator-layer',
@@ -43,7 +43,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getLastActionMeta()).subscribe(actionMeta => {     
+        this.store.select(getLastStepMeta()).subscribe(actionMeta => {     
             this.resetElements();
 
             this.handleReachableHexes(actionMeta);
@@ -58,28 +58,28 @@ export class MovingIndicatorLayerComponent implements OnInit {
         this.challengeHexes = this.grid.createGrid();
     }
 
-    handleMovingPath(actionMeta: ActionStepMeta | undefined) {
+    handleMovingPath(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const initMovingActionMeta = actionMeta as InitMovingActionStepMeta;
+        const initMovingActionMeta = actionMeta as InitMovingStepMeta;
         if (initMovingActionMeta.reachableHexes) {
             this.indicators = initMovingActionMeta.reachableHexes
         }
     }
 
-    handleReachableHexes(actionMeta: ActionStepMeta | undefined) {
+    handleReachableHexes(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathActionStepMeta;
+        const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;
         if (setMovingPathActionMeta.movingPath) {
             this.movingPath = setMovingPathActionMeta.movingPath
         }        
     }
 
-    handleChallengeHexes(actionMeta: ActionStepMeta | undefined) {
+    handleChallengeHexes(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathActionStepMeta;
+        const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;
         if (setMovingPathActionMeta.challengeHexes) {
             this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
         }       

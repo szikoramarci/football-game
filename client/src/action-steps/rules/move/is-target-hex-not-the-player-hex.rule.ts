@@ -1,12 +1,12 @@
 import { equals } from "honeycomb-grid";
-import { ActionStepContext } from "../../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../../interfaces/action-step-rule.interface";
-import { SetMovingPathActionStepMeta } from "../../metas/moving/set-moving-path.action-step-meta";
+import { StepContext } from "../../interfaces/step-context.interface";
+import { StepRule } from "../../interfaces/step-rule.interface";
+import { SetMovingPathStepMeta } from "../../metas/moving/set-moving-path.step-meta";
 
-export class IsTargetHexNotThePlayerHex implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
-        const lastActionMeta = context.lastActionStepMeta as SetMovingPathActionStepMeta;
-        return !equals(lastActionMeta.targetHex, lastActionMeta.playerCoordinates);
+export class IsTargetHexNotThePlayerHex implements StepRule {
+    validate(context: StepContext): boolean {
+        const lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
+        return !equals(lastStepMeta.targetHex, lastStepMeta.playerCoordinates);
     }
     errorMessage = "target and player coordinates are the same";
 }

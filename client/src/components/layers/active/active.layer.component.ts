@@ -7,10 +7,10 @@ import { Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../../models/player.model";
 import { getPlayer } from "../../../stores/player/player.selector";
 import { GridService } from "../../../services/grid/grid.service";
-import { ActionStepContext } from "../../../action-steps/interfaces/action-step-context.interface";
-import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { ActionStepService } from "../../../services/action-step/action-step.service";
-import { ActionStepMeta } from "../../../action-steps/interfaces/action-step-meta.interface";
+import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
+import { getLastStepMeta } from "../../../stores/action/action.selector";
+import { StepService } from "../../../services/action-step/step.service";
+import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
 import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
 import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
@@ -29,7 +29,7 @@ export class ActiveLayerComponent implements OnInit {
         private mouseEvent: MouseEventService,
         private store: Store,
         private grid: GridService,
-        private action: ActionStepService
+        private action: StepService
     ) {}
 
     ngOnInit(): void {
@@ -46,8 +46,8 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
-    getLastActionMeta(): Observable<ActionStepMeta | undefined> {
-        return this.store.select(getLastActionMeta())
+    getLastActionStepMeta(): Observable<StepMeta | undefined> {
+        return this.store.select(getLastStepMeta())
             .pipe(
                 take(1)
             )
@@ -74,7 +74,7 @@ export class ActiveLayerComponent implements OnInit {
         return of(this.grid.getHex(coordinates));
     }
 
-    generateContext(mouseEventType: MouseTriggerEventType, coordinates: OffsetCoordinates, mousePosition: Point): Observable<ActionStepContext> {
+    generateContext(mouseEventType: MouseTriggerEventType, coordinates: OffsetCoordinates, mousePosition: Point): Observable<StepContext> {
         return forkJoin({
             mouseEventType: of(mouseEventType),
             coordinates: of(coordinates),
@@ -82,7 +82,7 @@ export class ActiveLayerComponent implements OnInit {
             hex: this.getRelatedHex(coordinates),              
             player: this.getRelatedPlayer(coordinates),
             playerHasBall: this.isPlayerHasBall(coordinates),
-            lastActionStepMeta: this.getLastActionMeta(),      
+            lastActionStepMeta: this.getLastActionStepMeta(),      
             activeTeam: this.getActiveTeam()            
         });
     }
@@ -92,10 +92,10 @@ export class ActiveLayerComponent implements OnInit {
             const mouseEventType: MouseTriggerEventType = mouseEvent.type;
             const coordinates: OffsetCoordinates = mouseEvent.coordinates;
             const mousePosition: Point = mouseEvent.position;
-            this.generateContext(mouseEventType, coordinates, mousePosition).subscribe((context: ActionStepContext) => {
-                const availableAction = this.action.resolveAction(context);                       
+            this.generateContext(mouseEventType, coordinates, mousePosition).subscribe((context: StepContext) => {
+                const availableAction = this.action.resolveStep(context);                       
                 if (availableAction) {
-                    this.action.executeAction(availableAction, context);
+                    this.action.executeStep(availableAction, context);
                 }
             });        
         });

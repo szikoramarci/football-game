@@ -1,15 +1,15 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialState } from "./action.state";
-import { clearActionStepMeta, saveActionStepMeta } from "./action.actions";
+import { clearStepMeta, saveStepMeta } from "./action.actions";
 
 export const actionReducer = createReducer(
     initialState,
-    on(saveActionStepMeta, (state, actionMeta) => ({      
+    on(saveStepMeta, (state, stepMeta) => ({      
       ...state,
-      lastActionMeta: actionMeta
+      lastStepMeta: stepMeta
     }),),
-    on(clearActionStepMeta, (state) => ({      
+    on(clearStepMeta, (state) => ({      
       ...state,
-      lastActionMeta: undefined
+      lastStepMeta: undefined
     }),)
   );

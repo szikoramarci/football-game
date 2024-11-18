@@ -1,35 +1,35 @@
 import { Injectable, Type } from "@angular/core";
-import { ActionStepContext } from "../../../action-steps/interfaces/action-step-context.interface";
-import { ActionStepStrategy } from "../../../action-steps/interfaces/action-step-strategy.interface";
-import { ActionStepRuleSet } from "../../../action-steps/interfaces/action-step-rule.interface";
+import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
+import { Step } from "../../../action-steps/interfaces/step.interface";
+import { StepRuleSet } from "../../../action-steps/interfaces/step-rule.interface";
 import { IsOwnPlayer } from "../../../action-steps/rules/move/is-own-player.rule";
 import { MemoizedSelector, Store } from "@ngrx/store";
 import { IsPlayerSelected } from "../../../action-steps/rules/move/is-player-selected.rule";
 import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
 import { IsLeftClick } from "../../../action-steps/rules/is-left-click.rule";
-import { IsTheNextActionStep } from "../../../action-steps/rules/is-the-next-action.rule";
+import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
 import { IsPickedPlayerClicked } from "../../../action-steps/rules/cancel/is-picked-player-clicked.rule";
-import { saveActionStepMeta } from "../../../stores/action/action.actions";
+import { saveStepMeta } from "../../../stores/action/action.actions";
 import { HasThePlayerTheBall } from "../../../action-steps/rules/pass/has-the-player-the-ball.rule";
 import { TraverserService } from "../../traverser/traverser.service";
-import { CancelActionStep } from "../cancel/cancel.service";
+import { CancelStep } from "../cancel/cancel.service";
 import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { selectActiveTeamPlayersWithPositions, selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { forkJoin, map, Observable, take } from "rxjs";
 import { GridService } from "../../grid/grid.service";
 import { SectorService } from "../../sector/sector.service";
-import { SetHighPassingPathActionStep } from "../set-high-passing-path/set-high-passing-path.action.service";
+import { SetHighPassingPathStep } from "../set-high-passing-path/set-high-passing-path.step.service";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
-import { InitHighPassingActionStepMeta } from "../../../action-steps/metas/passing/high-passing/init-high-passing.action-step-meta";
+import { InitHighPassingStepMeta } from "../../../action-steps/metas/passing/high-passing/init-high-passing.step-meta";
 
 @Injectable({
   providedIn: 'root',
 })
-export class InitHighPassingActionStep implements ActionStepStrategy {
-    ruleSet: ActionStepRuleSet;
+export class InitHighPassingStep implements Step {
+    ruleSet: StepRuleSet;
     availableTargets!: Grid<Hex>;
     possibleHeadingPlayers!: Map<OffsetCoordinates, OffsetCoordinates[]>
-    availableNextActionSteps: Type<ActionStepStrategy>[] = [];
+    availableNextSteps: Type<Step>[] = [];
   
     constructor(
       private store: Store,
@@ -37,31 +37,31 @@ export class InitHighPassingActionStep implements ActionStepStrategy {
       private grid: GridService,
       private sector: SectorService
     ) {
-      this.ruleSet = new ActionStepRuleSet();
+      this.ruleSet = new StepRuleSet();
       this.ruleSet.addRule(new IsLeftClick());
-      this.ruleSet.addRule(new IsTheNextActionStep(InitHighPassingActionStep));    
+      this.ruleSet.addRule(new IsTheNextStep(InitHighPassingStep));    
       this.ruleSet.addRule(new IsPickedPlayerClicked());
       this.ruleSet.addRule(new IsPlayerSelected());
       this.ruleSet.addRule(new HasThePlayerTheBall());
       this.ruleSet.addRule(new IsOwnPlayer());
     }
   
-    identify(context: ActionStepContext): boolean {
+    identify(context: StepContext): boolean {
       return this.ruleSet.validate(context);
     }
 
-    calculation(context: ActionStepContext): void {  
+    calculation(context: StepContext): void {  
       this.generateBaseAreaOfDistance(context)
       this.removeSurrundingHexesFromBaseArea(context)
       this.removeUnsightTargets(context)
       this.getTeamMatesInBaseArea()
-      this.generateAvailableNextActionSteps(context);  
+      this.generateAvailableNextSteps(context);  
     }  
     
-    removeUnsightTargets(context: ActionStepContext) {
-      const startHex: Hex | undefined  = this.grid.getHex(context.lastActionStepMeta?.clickedCoordinates!)
+    removeUnsightTargets(context: StepContext) {
+      const startHex: Hex | undefined  = this.grid.getHex(context.lastStepMeta?.clickedCoordinates!)
 
-      const neighborHexes = this.availableTargets.traverse(spiral({ start: context.lastActionStepMeta?.clickedCoordinates, radius: 1 }))
+      const neighborHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedCoordinates, radius: 1 }))
       this.getFilteredPlayerPositions(selectOppositeTeamPlayersWithPositions, neighborHexes)
         .subscribe(neighborOppositionPositions => {    
           const oppositonPlayerPositions = this.grid.createGrid().setHexes(neighborOppositionPositions)
@@ -69,16 +69,16 @@ export class InitHighPassingActionStep implements ActionStepStrategy {
         })      
     }
 
-    generateBaseAreaOfDistance(context: ActionStepContext) {
+    generateBaseAreaOfDistance(context: StepContext) {
       this.availableTargets = this.traverser.getAreaByDistance(
-        context.lastActionStepMeta?.clickedCoordinates!, 
+        context.lastStepMeta?.clickedCoordinates!, 
         HIGH_PASS_HEX_DISTANCE,
         HIGH_PASS_PIXEL_DISTANCE
       )
     }
 
-    removeSurrundingHexesFromBaseArea(context: ActionStepContext){
-        const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.lastActionStepMeta?.clickedCoordinates!, radius: 3 }))
+    removeSurrundingHexesFromBaseArea(context: StepContext){
+        const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedCoordinates!, radius: 3 }))
         this.availableTargets = this.availableTargets.filter(availableTarget => !surroundingHexes.getHex(availableTarget))
     }
 
@@ -113,20 +113,20 @@ export class InitHighPassingActionStep implements ActionStepStrategy {
       })              
     }
 
-    generateAvailableNextActionSteps(context: ActionStepContext) {
-      this.availableNextActionSteps = [SetHighPassingPathActionStep, CancelActionStep];
+    generateAvailableNextSteps(context: StepContext) {
+      this.availableNextSteps = [SetHighPassingPathStep, CancelStep];
     }
   
-    updateState(context: ActionStepContext): void {
-      const initPassingActionMeta: InitHighPassingActionStepMeta = {     
-        actionType: InitHighPassingActionStep,   
+    updateState(context: StepContext): void {
+      const initPassingStepMeta: InitHighPassingStepMeta = {     
+        stepType: InitHighPassingStep,   
         timestamp: new Date(),
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,
-        availableNextActionSteps: this.availableNextActionSteps,
+        availableNextSteps: this.availableNextSteps,
         availableTargets: this.availableTargets,
         possibleHeadingPlayers: this.possibleHeadingPlayers
       }
-      this.store.dispatch(saveActionStepMeta(initPassingActionMeta));
+      this.store.dispatch(saveStepMeta(initPassingStepMeta));
     }
   }

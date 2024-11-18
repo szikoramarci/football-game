@@ -1,7 +1,7 @@
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { InitMovingActionStepMeta } from "./init-moving.action-step-meta";
+import { InitMovingStepMeta } from "./init-moving.step-meta";
 
-export interface SetMovingPathActionStepMeta extends InitMovingActionStepMeta {
+export interface SetMovingPathStepMeta extends InitMovingStepMeta {
     movingPath: Grid<Hex>,
     targetHex: OffsetCoordinates,
     challengeHexes: Map<string,Hex>

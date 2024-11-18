@@ -1,8 +1,8 @@
-import { ActionStepContext } from "../../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../../interfaces/action-step-rule.interface";
+import { StepContext } from "../../interfaces/step-context.interface";
+import { StepRule } from "../../interfaces/step-rule.interface";
 
-export class IsPlayerSelected implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
+export class IsPlayerSelected implements StepRule {
+    validate(context: StepContext): boolean {
         return !!context.player;
     }
     errorMessage = "pick a player";

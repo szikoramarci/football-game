@@ -1,7 +1,7 @@
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { ActionStepMeta } from "../../interfaces/action-step-meta.interface";
+import { StepMeta } from "../../interfaces/step-meta.interface";
 
-export interface InitMovingActionStepMeta extends ActionStepMeta {
+export interface InitMovingStepMeta extends StepMeta {
     reachableHexes: Grid<Hex>,
     playerCoordinates: OffsetCoordinates,
     playerID: string | undefined,

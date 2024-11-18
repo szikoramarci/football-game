@@ -1,20 +1,20 @@
 import { equals } from "honeycomb-grid";
-import { ActionStepContext } from "../../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../../interfaces/action-step-rule.interface";
-import { SetMovingPathActionStepMeta } from "../../metas/moving/set-moving-path.action-step-meta";
+import { StepContext } from "../../interfaces/step-context.interface";
+import { StepRule } from "../../interfaces/step-rule.interface";
+import { SetMovingPathStepMeta } from "../../metas/moving/set-moving-path.step-meta";
 
-export class IsNotTargetHexClicked implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
-        const lastActionMeta = context.lastActionStepMeta as SetMovingPathActionStepMeta;
-        return this.isTargetHexNotSet(lastActionMeta) || !this.isTargetHexClicked(lastActionMeta, context)
+export class IsNotTargetHexClicked implements StepRule {
+    validate(context: StepContext): boolean {
+        const lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
+        return this.isTargetHexNotSet(lastStepMeta) || !this.isTargetHexClicked(lastStepMeta, context)
     }
     errorMessage = "already selected hex as target";
 
-    isTargetHexNotSet(lastActionMeta: SetMovingPathActionStepMeta) {
-        return lastActionMeta.targetHex == undefined
+    isTargetHexNotSet(lastStepMeta: SetMovingPathStepMeta) {
+        return lastStepMeta.targetHex == undefined
     }
 
-    isTargetHexClicked(lastActionMeta: SetMovingPathActionStepMeta, context: ActionStepContext) {
-        return equals(lastActionMeta.targetHex, context.coordinates);
+    isTargetHexClicked(lastStepMeta: SetMovingPathStepMeta, context: StepContext) {
+        return equals(lastStepMeta.targetHex, context.coordinates);
     }
 }

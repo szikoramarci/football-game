@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { ActionStepStrategy } from "../../../action-steps/interfaces/action-step-strategy.interface";
-import { ActionStepRuleSet } from "../../../action-steps/interfaces/action-step-rule.interface";
-import { ActionStepContext } from "../../../action-steps/interfaces/action-step-context.interface";
-import { SetMovingPathActionStepMeta } from "../../../action-steps/metas/moving/set-moving-path.action-step-meta";
-import { IsTheNextActionStep } from "../../../action-steps/rules/is-the-next-action.rule";
+import { Step } from "../../../action-steps/interfaces/step.interface";
+import { StepRuleSet } from "../../../action-steps/interfaces/step-rule.interface";
+import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
+import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
+import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
 import { IsMoveTargetHexClicked } from "../../../action-steps/rules/move/is-move-target-hex-clicked.rule";
 import { Store } from "@ngrx/store";
-import { clearActionStepMeta } from "../../../stores/action/action.actions";
+import { clearStepMeta } from "../../../stores/action/action.actions";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { equals, Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../action-steps/rules/is-left-click.rule";
@@ -20,9 +20,9 @@ const playerStepDelay: number = 300
 @Injectable({
     providedIn: 'root',
 })
-export class MovePlayerActionStep implements ActionStepStrategy {
-    ruleSet: ActionStepRuleSet
-    lastActionStepMeta!: SetMovingPathActionStepMeta
+export class MovePlayerStep implements Step {
+    ruleSet: StepRuleSet
+    lastStepMeta!: SetMovingPathStepMeta
     playerID!: string
     movingPath!: Grid<Hex>
     challengeHexes!: Map<string,Hex>
@@ -31,30 +31,30 @@ export class MovePlayerActionStep implements ActionStepStrategy {
             private store: Store,
             private challenge: ChallengeService
         ) {
-        this.ruleSet = new ActionStepRuleSet();   
+        this.ruleSet = new StepRuleSet();   
         this.ruleSet.addRule(new IsLeftClick());
-        this.ruleSet.addRule(new IsTheNextActionStep(MovePlayerActionStep));    
+        this.ruleSet.addRule(new IsTheNextStep(MovePlayerStep));    
         this.ruleSet.addRule(new IsMoveTargetHexClicked()); 
         this.ruleSet.addRule(new IsTargetHexNotThePlayerHex()); 
     }
 
-    identify(context: ActionStepContext): boolean {
+    identify(context: StepContext): boolean {
         return this.ruleSet.validate(context);
     }
 
-    calculation(context: ActionStepContext): void {
-        this.lastActionStepMeta = context.lastActionStepMeta as SetMovingPathActionStepMeta;
-        this.movingPath = this.lastActionStepMeta.movingPath;
-        this.challengeHexes = this.lastActionStepMeta.challengeHexes
-        if (this.lastActionStepMeta.playerID) {
-            this.playerID = this.lastActionStepMeta.playerID
+    calculation(context: StepContext): void {
+        this.lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
+        this.movingPath = this.lastStepMeta.movingPath;
+        this.challengeHexes = this.lastStepMeta.challengeHexes
+        if (this.lastStepMeta.playerID) {
+            this.playerID = this.lastStepMeta.playerID
         } else {
             console.log("Invalid player.");
         }
     }
 
     updateState(): void {     
-        this.store.dispatch(clearActionStepMeta())         
+        this.store.dispatch(clearStepMeta())         
         from(this.movingPath.toArray())
             .pipe(                
                 concatMap((position, index) => 
@@ -68,7 +68,7 @@ export class MovePlayerActionStep implements ActionStepStrategy {
     }    
 
     isBallStealSuccessfully(position: OffsetCoordinates) {
-        if (!this.lastActionStepMeta.playerHasBall) {    
+        if (!this.lastStepMeta.playerHasBall) {    
             return true;
         }
 
@@ -99,7 +99,7 @@ export class MovePlayerActionStep implements ActionStepStrategy {
     playerStepsAhead(nextHex: Hex) {
         const newCoordinates = hexToOffset(nextHex)                
         this.movePlayer(newCoordinates)      
-        if (this.lastActionStepMeta.playerHasBall) {
+        if (this.lastStepMeta.playerHasBall) {
             this.store.dispatch(moveBall(newCoordinates));
         }    
     }

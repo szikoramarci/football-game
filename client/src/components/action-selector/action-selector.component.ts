@@ -1,12 +1,11 @@
 import { Component, OnInit } from "@angular/core";
-import { ActionStepMenuItem } from "../../action-steps/interfaces/action-step-menu-item.interface";
 import { Store } from "@ngrx/store";
 import { filter, tap } from "rxjs";
-import { getLastActionMeta } from "../../stores/action/action.selector";
-import { InitMovingActionStep } from "../../services/action-step/init-moving/init-moving.action.service";
-import { SetMovingPathActionStep } from "../../services/action-step/set-moving-path/set-moving-path.action.service";
-import { InitStandardPassingActionStep } from "../../services/action-step/init-standard-passing/init-standard-passing.action.service";
-import { InitHighPassingActionStep } from "../../services/action-step/init-high-passing/init-high-passing.action.service";
+import { getLastStepMeta } from "../../stores/action/action.selector";
+import { InitMovingStep } from "../../services/action-step/init-moving/init-moving.step.service";
+import { SetMovingPathStep } from "../../services/action-step/set-moving-path/set-moving-path.step.service";
+import { InitStandardPassingStep } from "../../services/action-step/init-standard-passing/init-standard-passing.step.service";
+import { InitHighPassingStep } from "../../services/action-step/init-high-passing/init-high-passing.step.service";
 
 @Component({
     selector: 'action-selector',
@@ -21,22 +20,22 @@ export class ActionSelectorComponent implements OnInit {
     actionMenuItems: ActionStepMenuItem[] = [
         {
             label: 'Move',
-            relatedActions: [InitMovingActionStep, SetMovingPathActionStep],
+            relatedActions: [InitMovingStep, SetMovingPathStep],
         },
         {
             label: 'Standard Pass',
-            relatedActions: [InitStandardPassingActionStep],
+            relatedActions: [InitStandardPassingStep],
         },
         {
             label: 'High Pass',
-            relatedActions: [InitHighPassingActionStep],
+            relatedActions: [InitHighPassingStep],
         }
     ]
 
     constructor(private store: Store) {}
  
     ngOnInit(): void {
-        this.store.select(getLastActionMeta())
+        this.store.select(getLastStepMeta())
         .pipe(
             tap(() => {
                 this.actionLabel = null;
@@ -44,7 +43,7 @@ export class ActionSelectorComponent implements OnInit {
             filter(actionMeta => !!actionMeta),
         )
         .subscribe(lastActionMeta => {  
-            const actionMenuItem = this.actionMenuItems.find(item => item.relatedActions.includes(lastActionMeta.actionType))
+            const actionMenuItem = this.actionMenuItems.find(item => item.relatedActions.includes(lastActionMeta.stepType))
             if (actionMenuItem) {
                 this.actionLabel = actionMenuItem.label;
             }

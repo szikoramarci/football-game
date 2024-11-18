@@ -1,9 +1,13 @@
-import { ActionStepMeta } from "../../action-steps/interfaces/action-step-meta.interface";
+import { Type } from "@angular/core";
+import { StepMeta } from "../../action-steps/interfaces/step-meta.interface";
+import { Action } from "../../actions/action.interface";
 
 export interface ActionState {
-  lastActionMeta: ActionStepMeta | undefined
+  lastStepMeta: StepMeta | undefined,
+  availableActions: Type<Action>[]
 }
 
 export const initialState: ActionState = {
-  lastActionMeta: undefined
+  lastStepMeta: undefined,
+  availableActions: []
 };

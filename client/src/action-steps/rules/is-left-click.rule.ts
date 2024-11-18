@@ -1,9 +1,9 @@
 import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.interface";
-import { ActionStepContext } from "../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../interfaces/action-step-rule.interface";
+import { StepContext } from "../interfaces/step-context.interface";
+import { StepRule } from "../interfaces/step-rule.interface";
 
-export class IsLeftClick implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
+export class IsLeftClick implements StepRule {
+    validate(context: StepContext): boolean {
         return context.mouseEventType == MouseTriggerEventType.LEFT_CLICK;
     }
     errorMessage = "it wasn't a left click";

@@ -3,10 +3,10 @@ import { Store } from "@ngrx/store";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
-import { getLastActionMeta } from "../../../stores/action/action.selector";
-import { InitPassingActionStepMeta } from "../../../action-steps/metas/passing/init-passing.action-step-meta";
-import { ActionStepMeta } from "../../../action-steps/interfaces/action-step-meta.interface";
-import { SetStandardPassingPathActionStepMeta } from "../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.action-step-meta";
+import { getLastStepMeta } from "../../../stores/action/action.selector";
+import { InitPassingStepMeta } from "../../../action-steps/metas/passing/init-passing.step-meta";
+import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
+import { SetStandardPassingPathStepMeta } from "../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
@@ -44,7 +44,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getLastActionMeta()).subscribe(actionMeta => {     
+        this.store.select(getLastStepMeta()).subscribe(actionMeta => {     
             this.resetElements();
 
             this.handleAvailableTargets(actionMeta);
@@ -58,20 +58,20 @@ export class PasingIndicatorLayerComponent implements OnInit {
         this.availableTargets = null;
     }
 
-    handleAvailableTargets(actionMeta: ActionStepMeta | undefined) {
+    handleAvailableTargets(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const initPassingActionMeta = actionMeta as InitPassingActionStepMeta;
+        const initPassingActionMeta = actionMeta as InitPassingStepMeta;
         if (initPassingActionMeta.availableTargets) {
             this.passerPosition = initPassingActionMeta.playerCoordinates  
             this.availableTargets = initPassingActionMeta.availableTargets
         }
     }
 
-    handlePassingPath(actionMeta: ActionStepMeta | undefined) {
+    handlePassingPath(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setPassingPathActionMeta = actionMeta as SetStandardPassingPathActionStepMeta;
+        const setPassingPathActionMeta = actionMeta as SetStandardPassingPathStepMeta;
         if (setPassingPathActionMeta.availableTargets && setPassingPathActionMeta.passingPath) {
             this.passerPosition = setPassingPathActionMeta.playerCoordinates  
             this.passingPath = setPassingPathActionMeta.passingPath             
@@ -79,10 +79,10 @@ export class PasingIndicatorLayerComponent implements OnInit {
         }
     }
 
-    handleChallengeHexes(actionMeta: ActionStepMeta | undefined) {
+    handleChallengeHexes(actionMeta: StepMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetStandardPassingPathActionStepMeta;
+        const setMovingPathActionMeta = actionMeta as SetStandardPassingPathStepMeta;
         if (setMovingPathActionMeta.challengeHexes) {
             this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
         }       

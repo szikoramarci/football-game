@@ -1,32 +1,32 @@
 import { Injectable, Type } from "@angular/core";
-import { ActionStepRuleSet } from "../../../action-steps/interfaces/action-step-rule.interface";
-import { ActionStepStrategy } from "../../../action-steps/interfaces/action-step-strategy.interface";
+import { StepRuleSet } from "../../../action-steps/interfaces/step-rule.interface";
+import { Step } from "../../../action-steps/interfaces/step.interface";
 import { Store } from "@ngrx/store";
-import { ActionStepContext } from "../../../action-steps/interfaces/action-step-context.interface";
-import { IsTheNextActionStep } from "../../../action-steps/rules/is-the-next-action.rule";
+import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
+import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
 import { GridService } from "../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { saveActionStepMeta } from "../../../stores/action/action.actions";
-import { SetMovingPathActionStepMeta } from "../../../action-steps/metas/moving/set-moving-path.action-step-meta";
-import { MovePlayerActionStep } from "../move-player/move-player.action.service";
+import { saveStepMeta } from "../../../stores/action/action.actions";
+import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
+import { MovePlayerStep } from "../move-player/move-player.step.service";
 import { IsNotTargetHexClicked } from "../../../action-steps/rules/move/is-not-target-hex-clicked.rule";
-import { CancelActionStep } from "../cancel/cancel.service";
+import { CancelStep } from "../cancel/cancel.service";
 import { IsMouseOver } from "../../../action-steps/rules/is-mouse-over.rule";
 import { playerMovementEvents } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
-import { InitMovingActionStepMeta } from "../../../action-steps/metas/moving/init-moving.action-step-meta";
-import { InitStandardPassingActionStep } from "../init-standard-passing/init-standard-passing.action.service";
+import { InitMovingStepMeta } from "../../../action-steps/metas/moving/init-moving.step-meta";
+import { InitStandardPassingStep } from "../init-standard-passing/init-standard-passing.step.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 
 @Injectable({
     providedIn: 'root',
 })
-export class SetMovingPathActionStep implements ActionStepStrategy {
-    ruleSet: ActionStepRuleSet;
+export class SetMovingPathStep implements Step {
+    ruleSet: StepRuleSet;
     movingPath!: Grid<Hex>;
-    lastActionStepMeta!: InitMovingActionStepMeta;
-    availableNextActionSteps: Type<ActionStepStrategy>[] = [];
+    lastStepMeta!: InitMovingStepMeta;
+    availableNextSteps: Type<Step>[] = [];
     challengeHexes: Map<string,Hex> = new Map()
 
     constructor(
@@ -35,18 +35,18 @@ export class SetMovingPathActionStep implements ActionStepStrategy {
         private traverser: TraverserService,
         private challenge: ChallengeService
     ) {
-        this.ruleSet = new ActionStepRuleSet();   
+        this.ruleSet = new StepRuleSet();   
         this.ruleSet.addRule(new IsMouseOver());  
-        this.ruleSet.addRule(new IsTheNextActionStep(SetMovingPathActionStep));       
+        this.ruleSet.addRule(new IsTheNextStep(SetMovingPathStep));       
         this.ruleSet.addRule(new IsNotTargetHexClicked());
     }
 
-    identify(context: ActionStepContext): boolean {
+    identify(context: StepContext): boolean {
         return this.ruleSet.validate(context);
     }    
 
-    calculation(context: ActionStepContext): void {
-        this.lastActionStepMeta = context.lastActionStepMeta as InitMovingActionStepMeta;
+    calculation(context: StepContext): void {
+        this.lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
 
         if (this.isSelectedHexReachable(context)) {
             this.generateMovingPath(context);
@@ -55,16 +55,16 @@ export class SetMovingPathActionStep implements ActionStepStrategy {
             this.resetMovingPath();
             this.resetChallengeHexes();
         }
-        this.generateAvailableNextActionSteps(context);
+        this.generateAvailableNextSteps(context);
     }
 
-    isSelectedHexReachable(context: ActionStepContext) {
+    isSelectedHexReachable(context: StepContext) {
         const selectedPoint: OffsetCoordinates = context.coordinates;
-        return this.lastActionStepMeta.reachableHexes.getHex(selectedPoint) || false
+        return this.lastStepMeta.reachableHexes.getHex(selectedPoint) || false
     }
 
-    generateMovingPath(context: ActionStepContext) { 
-        const startPoint: OffsetCoordinates = this.lastActionStepMeta.playerCoordinates;
+    generateMovingPath(context: StepContext) { 
+        const startPoint: OffsetCoordinates = this.lastStepMeta.playerCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;        
         this.store.select(playerMovementEvents).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
@@ -77,7 +77,7 @@ export class SetMovingPathActionStep implements ActionStepStrategy {
     generateChallengeHexes() {
         this.resetChallengeHexes();
 
-        if (!this.lastActionStepMeta.playerHasBall) {
+        if (!this.lastStepMeta.playerHasBall) {
             return
         }
 
@@ -94,27 +94,27 @@ export class SetMovingPathActionStep implements ActionStepStrategy {
         this.challengeHexes = new Map();
     }
 
-    generateAvailableNextActionSteps(context: ActionStepContext) {        
-        this.availableNextActionSteps = [SetMovingPathActionStep, CancelActionStep];
+    generateAvailableNextSteps(context: StepContext) {        
+        this.availableNextSteps = [SetMovingPathStep, CancelStep];
 
-        if (this.lastActionStepMeta.playerHasBall){
-            this.availableNextActionSteps.push(InitStandardPassingActionStep);
+        if (this.lastStepMeta.playerHasBall){
+            this.availableNextSteps.push(InitStandardPassingStep);
         } 
 
         if (this.isSelectedHexReachable(context)) {
-            this.availableNextActionSteps.push(MovePlayerActionStep)
+            this.availableNextSteps.push(MovePlayerStep)
         }
     }
 
-    updateState(context: ActionStepContext): void {
-        const setMovingPathActionMeta: SetMovingPathActionStepMeta = {... this.lastActionStepMeta,             
+    updateState(context: StepContext): void {
+        const setMovingPathStepMeta: SetMovingPathStepMeta = {... this.lastStepMeta,             
             timestamp: new Date(),
-            availableNextActionSteps: this.availableNextActionSteps,
+            availableNextSteps: this.availableNextSteps,
             clickedCoordinates: context.coordinates, 
             movingPath: this.movingPath,
             targetHex: context.coordinates,
             challengeHexes: this.challengeHexes
         }          
-        this.store.dispatch(saveActionStepMeta(setMovingPathActionMeta));        
+        this.store.dispatch(saveStepMeta(setMovingPathStepMeta));        
     }
 }

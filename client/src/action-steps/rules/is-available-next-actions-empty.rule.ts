@@ -1,9 +1,9 @@
-import { ActionStepContext } from "../interfaces/action-step-context.interface";
-import { ActionStepRule } from "../interfaces/action-step-rule.interface";
+import { StepContext } from "../interfaces/step-context.interface";
+import { StepRule } from "../interfaces/step-rule.interface";
 
-export class IsAvailableNextActionsEmpty implements ActionStepRule {
-    validate(context: ActionStepContext): boolean {
-        return context.lastActionStepMeta == undefined || context.lastActionStepMeta.availableNextActionSteps.length == 0;
+export class AreAvailableNextStepsEmpty implements StepRule {
+    validate(context: StepContext): boolean {
+        return context.lastStepMeta == undefined || context.lastStepMeta.availableNextSteps.length == 0;
     }
     errorMessage = "availalbe next actions are not empty";
 }
