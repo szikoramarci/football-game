@@ -15,9 +15,9 @@ import { GeometryService } from "../../geometry/geometry.service";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { TraverserService } from "../../traverser/traverser.service";
 import { ChallengeService } from "../../challenge/challenge.service";
-import { selectActiveTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { filter, from, Observable, toArray, switchMap, take } from "rxjs";
 import { InitHighPassingStep } from "../init-high-passing/init-high-passing.step.service";
+import { selectAttackingTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 
 @Injectable({
     providedIn: 'root',
@@ -84,7 +84,7 @@ export class SetStandardPassingPathStep implements Step {
             STANDARD_PASS_PIXEL_DISTANCE
         )
 
-        return this.store.select(selectActiveTeamPlayersWithPositions).pipe(
+        return this.store.select(selectAttackingTeamPlayersWithPositions).pipe(
             take(1),
             switchMap(teamMatesWithPosition => 
                 from(baseAreaByDistance)

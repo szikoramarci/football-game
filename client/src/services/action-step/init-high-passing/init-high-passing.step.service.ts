@@ -14,7 +14,7 @@ import { HasThePlayerTheBall } from "../../../action-steps/rules/pass/has-the-pl
 import { TraverserService } from "../../traverser/traverser.service";
 import { CancelStep } from "../cancel/cancel.service";
 import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../constants";
-import { selectActiveTeamPlayersWithPositions, selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
+import { selectAttackingTeamPlayersWithPositions, selectDefendingTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { forkJoin, map, Observable, take } from "rxjs";
 import { GridService } from "../../grid/grid.service";
 import { SectorService } from "../../sector/sector.service";
@@ -62,7 +62,7 @@ export class InitHighPassingStep implements Step {
       const startHex: Hex | undefined  = this.grid.getHex(context.lastStepMeta?.clickedCoordinates!)
 
       const neighborHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedCoordinates, radius: 1 }))
-      this.getFilteredPlayerPositions(selectOppositeTeamPlayersWithPositions, neighborHexes)
+      this.getFilteredPlayerPositions(selectDefendingTeamPlayersWithPositions, neighborHexes)
         .subscribe(neighborOppositionPositions => {    
           const oppositonPlayerPositions = this.grid.createGrid().setHexes(neighborOppositionPositions)
           this.availableTargets = this.sector.removeUnsightTargets(startHex!, this.availableTargets, oppositonPlayerPositions)
@@ -94,8 +94,8 @@ export class InitHighPassingStep implements Step {
 
     getTeamMatesInBaseArea() {     
       forkJoin([
-        this.getFilteredPlayerPositions(selectActiveTeamPlayersWithPositions, this.availableTargets),
-        this.getFilteredPlayerPositions(selectOppositeTeamPlayersWithPositions, this.availableTargets)
+        this.getFilteredPlayerPositions(selectAttackingTeamPlayersWithPositions, this.availableTargets),
+        this.getFilteredPlayerPositions(selectDefendingTeamPlayersWithPositions, this.availableTargets)
       ]).subscribe(([teamMatesInArea, oppositionsInArea]) => {          
         const playersInAreaGrid = this.grid.createGrid().setHexes(oppositionsInArea).setHexes(teamMatesInArea)
         const filteredTargetHexes: Hex[] = []       

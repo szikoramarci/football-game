@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { selectOppositeTeamPlayersWithPositions } from "../../stores/gameplay/gameplay.selector";
+import { selectDefendingTeamPlayersWithPositions } from "../../stores/gameplay/gameplay.selector";
 import { delay, filter, from, map, Observable, scan, skip, switchMap, take } from "rxjs";
 import { Hex } from "honeycomb-grid";
 import { TraverserService } from "../traverser/traverser.service";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
 import { HexRelatedPlayers } from "../../interfaces/hex-related-players.interface";
 import { getPlayer } from "../../stores/player/player.selector";
-import { setActiveTeam } from "../../stores/gameplay/gameplay.actions";
+import { setAttackingTeam } from "../../stores/gameplay/gameplay.actions";
 import { moveBall } from "../../stores/ball-position/ball-position.actions";
 import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 
@@ -32,7 +32,7 @@ export class ChallengeService {
     }
 
     generateChallengeHexes(pathHexes: Hex[], skipHex: number = 0): Observable<Map<string,Hex>> {
-        return this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
+        return this.store.select(selectDefendingTeamPlayersWithPositions).pipe(
             take(1),
             switchMap(oppositionPlayers =>
                 from(pathHexes)                
@@ -82,7 +82,7 @@ export class ChallengeService {
                 take(1)
             )
             .subscribe(player => {
-                this.store.dispatch(setActiveTeam({ activeTeam: player.team }))
+                this.store.dispatch(setAttackingTeam({ attackingTeam: player.team }))
             })
     }
 }

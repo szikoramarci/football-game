@@ -8,6 +8,7 @@ import { playerReducer } from '../../stores/player/player.reducer';
 import { actionReducer } from '../../stores/action/action.reducer';
 import { ballPositionReducer } from '../../stores/ball-position/ball-position.reducer';
 import { gameplayReducer } from '../../stores/gameplay/gameplay.reducer';
+import { relocationReducer } from '../../stores/relocation/relocation.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,7 +19,8 @@ export const appConfig: ApplicationConfig = {
       ballPosition: ballPositionReducer,
       player: playerReducer,      
       action: actionReducer,
-      gameplay: gameplayReducer
+      gameplay: gameplayReducer,
+      relocation: relocationReducer
     })
   ]
 };

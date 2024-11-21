@@ -5,24 +5,24 @@ import { playerMovementEvents } from '../player-position/player-position.selecto
 
 export const getGameplay = createFeatureSelector<GameplayState>('gameplay');
 
-export const getActiveTeam = () =>
-    createSelector(getGameplay, (state) => state.activeTeam);
+export const getAttackingTeam = () =>
+    createSelector(getGameplay, (state) => state.attackingTeam);
 
-export const selectPlayersWithPositions = (isActiveTeam: boolean) => createSelector(
+export const selectPlayersWithPositions = (isAttackingTeam: boolean) => createSelector(
     playerMovementEvents,
     getAllPlayers,
     getGameplay,
     (playerPositions, players, gameplayState) => {
-        const activeTeam = gameplayState.activeTeam;
+        const attackingTeam = gameplayState.attackingTeam;
 
-        const activeTeamPlayers = Object.values(players).filter(player => isActiveTeam ? player.team === activeTeam : player.team !== activeTeam);
+        const attackingTeamPlayers = Object.values(players).filter(player => isAttackingTeam ? player.team === attackingTeam : player.team !== attackingTeam);
 
-        return activeTeamPlayers.map(player => ({
+        return attackingTeamPlayers.map(player => ({
             player: player,
             position: playerPositions[player.id] 
         }));
     });
 
-export const selectActiveTeamPlayersWithPositions = selectPlayersWithPositions(true);
+export const selectAttackingTeamPlayersWithPositions = selectPlayersWithPositions(true);
 
-export const selectOppositeTeamPlayersWithPositions = selectPlayersWithPositions(false);
+export const selectDefendingTeamPlayersWithPositions = selectPlayersWithPositions(false);

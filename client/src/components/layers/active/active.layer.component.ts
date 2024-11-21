@@ -14,7 +14,7 @@ import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
 import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
 import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
-import { getActiveTeam } from "../../../stores/gameplay/gameplay.selector";
+import { getAttackingTeam } from "../../../stores/gameplay/gameplay.selector";
 import { Point } from "pixi.js";
 
 @Component({
@@ -46,7 +46,7 @@ export class ActiveLayerComponent implements OnInit {
             )
     }
 
-    getLastActionStepMeta(): Observable<StepMeta | undefined> {
+    getLastStepMeta(): Observable<StepMeta | undefined> {
         return this.store.select(getLastStepMeta())
             .pipe(
                 take(1)
@@ -54,7 +54,7 @@ export class ActiveLayerComponent implements OnInit {
     }
 
     getActiveTeam(): Observable<string> {
-        return this.store.select(getActiveTeam())
+        return this.store.select(getAttackingTeam())
             .pipe(
                 take(1)
             )
@@ -82,7 +82,7 @@ export class ActiveLayerComponent implements OnInit {
             hex: this.getRelatedHex(coordinates),              
             player: this.getRelatedPlayer(coordinates),
             playerHasBall: this.isPlayerHasBall(coordinates),
-            lastActionStepMeta: this.getLastActionStepMeta(),      
+            lastStepMeta: this.getLastStepMeta(),      
             activeTeam: this.getActiveTeam()            
         });
     }

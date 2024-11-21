@@ -1,8 +1,8 @@
 
 export interface GameplayState {
-  activeTeam: string
+  attackingTeam: string
 }
 
 export const initialState: GameplayState = {
-  activeTeam: 'barca'
+  attackingTeam: 'barca'
 };

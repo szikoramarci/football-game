@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { ActionState } from './action.state';
 
-export const getStep = createFeatureSelector<ActionState>('step');
+export const getAction = createFeatureSelector<ActionState>('action');
 
 export const getLastStepMeta = () =>
-    createSelector(getStep, (state) => state.lastStepMeta);
+    createSelector(getAction, (state) => state.lastStepMeta);

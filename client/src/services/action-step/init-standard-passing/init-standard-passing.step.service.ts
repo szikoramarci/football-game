@@ -16,7 +16,7 @@ import { InitPassingStepMeta } from "../../../action-steps/metas/passing/init-pa
 import { HasThePlayerTheBall } from "../../../action-steps/rules/pass/has-the-player-the-ball.rule";
 import { map, take } from "rxjs";
 import { STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../constants";
-import { selectOppositeTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
+import { selectDefendingTeamPlayersWithPositions } from "../../../stores/gameplay/gameplay.selector";
 import { SetStandardPassingPathStep } from "../set-standard-passing-path/set-standard-passing-path.step.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { InitHighPassingStep } from "../init-high-passing/init-high-passing.step.service";
@@ -66,7 +66,7 @@ export class InitStandardPassingStep implements Step {
     removeUnsightTargets(context: StepContext) {
       const startHex: Hex | undefined = this.grid.getHex(context.lastStepMeta?.clickedCoordinates!)
 
-      this.store.select(selectOppositeTeamPlayersWithPositions).pipe(
+      this.store.select(selectDefendingTeamPlayersWithPositions).pipe(
         take(1),
         map(playersWithPosition => playersWithPosition
           .filter(playerWithPosition => this.availableTargets.getHex(playerWithPosition.position))

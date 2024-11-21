@@ -17,7 +17,7 @@ export class ActionSelectorComponent implements OnInit {
 
     actionLabel!: string | null;    
 
-    actionMenuItems: ActionStepMenuItem[] = [
+   /* actionMenuItems: ActionStepMenuItem[] = [
         {
             label: 'Move',
             relatedActions: [InitMovingStep, SetMovingPathStep],
@@ -30,12 +30,12 @@ export class ActionSelectorComponent implements OnInit {
             label: 'High Pass',
             relatedActions: [InitHighPassingStep],
         }
-    ]
+    ]*/
 
     constructor(private store: Store) {}
  
     ngOnInit(): void {
-        this.store.select(getLastStepMeta())
+    /*    this.store.select(getLastStepMeta())
         .pipe(
             tap(() => {
                 this.actionLabel = null;
@@ -47,7 +47,7 @@ export class ActionSelectorComponent implements OnInit {
             if (actionMenuItem) {
                 this.actionLabel = actionMenuItem.label;
             }
-        })
+        })*/
     }
 
 }
