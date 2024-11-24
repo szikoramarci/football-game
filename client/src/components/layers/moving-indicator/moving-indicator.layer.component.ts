@@ -9,8 +9,8 @@ import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-mo
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
 import { InitMovingStepMeta } from "../../../action-steps/metas/moving/init-moving.step-meta";
-import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
-import { ContextService } from "../../../services/context/context.service";
+import { StepMeta } from "../../../action-steps/classes/step-meta.interface";
+import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 @Component({
     selector: 'moving-indicator-layer',
     standalone: true,
@@ -34,7 +34,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
         private store: Store,
         private app: AppService,
         private grid: GridService,
-        private context: ContextService
+        private context: PIXIContextService
     ) {}
     
     ngOnInit(): void {

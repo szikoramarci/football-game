@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { StepMeta } from "../../action-steps/interfaces/step-meta.interface";
+import { StepMeta } from "../../action-steps/classes/step-meta.interface";
 
 export const saveStepMeta = createAction(
     '[Step] Save Step Meta',

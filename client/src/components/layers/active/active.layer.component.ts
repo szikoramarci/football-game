@@ -1,21 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { MouseEventService } from "../../../services/mouse-event/mouse-event.service";
-import { Store } from "@ngrx/store";
-import { getPlayerByPosition } from "../../../stores/player-position/player-position.selector";
-import { forkJoin, map, Observable, of, switchMap, take } from "rxjs";
-import { Hex, OffsetCoordinates } from "honeycomb-grid";
-import { Player } from "../../../models/player.model";
-import { getPlayer } from "../../../stores/player/player.selector";
-import { GridService } from "../../../services/grid/grid.service";
-import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
-import { getLastStepMeta } from "../../../stores/action/action.selector";
 import { StepService } from "../../../services/action-step/step.service";
-import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
-import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
-import { IsBallInPosition } from "../../../stores/ball-position/ball-position.selector";
-import { getAttackingTeam } from "../../../stores/gameplay/gameplay.selector";
-import { Point } from "pixi.js";
+import { StepContextService } from "../../../services/step-context/step-context.service";
+import { BaseContext } from "../../../action-steps/classes/base-context.interface";
 
 @Component({
     selector: 'active-layer',
@@ -27,8 +15,7 @@ export class ActiveLayerComponent implements OnInit {
 
     constructor(
         private mouseEvent: MouseEventService,
-        private store: Store,
-        private grid: GridService,
+        private stepContext: StepContextService,
         private action: StepService
     ) {}
 
@@ -36,68 +23,19 @@ export class ActiveLayerComponent implements OnInit {
         this.initMouseEventSubscriptions();
     }
 
-    getRelatedPlayer(coordinates: OffsetCoordinates): Observable<Player | undefined> {
-        return this.store.select(getPlayerByPosition(coordinates))
-            .pipe(      
-                switchMap(playerId => {
-                    return playerId ? this.store.select(getPlayer(playerId)) : of(undefined);        
-                }),
-                take(1)
-            )
-    }
-
-    getLastStepMeta(): Observable<StepMeta | undefined> {
-        return this.store.select(getLastStepMeta())
-            .pipe(
-                take(1)
-            )
-    }
-
-    getActiveTeam(): Observable<string> {
-        return this.store.select(getAttackingTeam())
-            .pipe(
-                take(1)
-            )
-    }
-
-    isPlayerHasBall(coordinates: OffsetCoordinates): Observable<boolean> {
-        return this.store.select(IsBallInPosition(coordinates))
-            .pipe(                
-                take(1),
-                map(IsBallInPosition => !!IsBallInPosition)    
-            )
-    }
-
-    getRelatedHex(coordinates: OffsetCoordinates): Observable<Hex | undefined> {
-        // TODO valójában itt arra vagyunk kíváncsiak, hogy ezen a hexen mik a szabályok
-        // külön HEX RULES bevezetése kellene
-        return of(this.grid.getHex(coordinates));
-    }
-
-    generateContext(mouseEventType: MouseTriggerEventType, coordinates: OffsetCoordinates, mousePosition: Point): Observable<StepContext> {
-        return forkJoin({
-            mouseEventType: of(mouseEventType),
-            coordinates: of(coordinates),
-            mousePosition: of(mousePosition),
-            hex: this.getRelatedHex(coordinates),              
-            player: this.getRelatedPlayer(coordinates),
-            playerHasBall: this.isPlayerHasBall(coordinates),
-            lastStepMeta: this.getLastStepMeta(),      
-            activeTeam: this.getActiveTeam()            
-        });
-    }
-
     initMouseEventSubscriptions() {
-        this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {
-            const mouseEventType: MouseTriggerEventType = mouseEvent.type;
-            const coordinates: OffsetCoordinates = mouseEvent.coordinates;
-            const mousePosition: Point = mouseEvent.position;
-            this.generateContext(mouseEventType, coordinates, mousePosition).subscribe((context: StepContext) => {
-                const availableAction = this.action.resolveStep(context);                       
+        this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {           
+            const baseContext: BaseContext = {
+                mouseEventType: mouseEvent.type,
+                coordinates: mouseEvent.coordinates,
+                mousePosition: mouseEvent.position
+            }
+            this.stepContext.generateStepContext(baseContext).subscribe(stepContext => {
+                const availableAction = this.action.resolveStep(stepContext);                       
                 if (availableAction) {
-                    this.action.executeStep(availableAction, context);
-                }
-            });        
+                    this.action.executeStep(availableAction,stepContext);
+                }   
+            })           
         });
     }   
 

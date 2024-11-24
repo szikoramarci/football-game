@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
-import { StepContext } from "../../action-steps/interfaces/step-context.interface";
-import { Step } from "../../action-steps/interfaces/step.interface";
-import { InitMovingStep } from "./init-moving/init-moving.step.service";
-import { SetMovingPathStep } from "./set-moving-path/set-moving-path.step.service";
-import { MovePlayerStep } from "./move-player/move-player.step.service";
+import { Step } from "../../action-steps/classes/step.class";
+import { InitMovingStep } from "./moving/init-moving/init-moving.step.service";
+import { SetMovingPathStep } from "./moving/set-moving-path/set-moving-path.step.service";
+import { MovePlayerStep } from "./moving/move-player/move-player.step.service";
 import { CancelStep } from "./cancel/cancel.service";
-import { InitStandardPassingStep } from "./init-standard-passing/init-standard-passing.step.service";
-import { SetStandardPassingPathStep } from "./set-standard-passing-path/set-standard-passing-path.step.service";
-import { PassBallStep } from "./pass-ball/pass-ball.step.service";
-import { InitHighPassingStep } from "./init-high-passing/init-high-passing.step.service";
-import { SetHighPassingPathStep } from "./set-high-passing-path/set-high-passing-path.step.service";
+import { StandardPassBallStep } from "./standard-pass/standard-pass-ball/standard-pass-ball.step.service";
+import { InitHighPassingStep } from "./high-pass/init-high-passing/init-high-passing.step.service";
+import { StepContext } from "../../action-steps/classes/step-context.interface";
+import { InitStandardPassingStep } from "./standard-pass/init-standard-passing/init-standard-passing.step.service";
+import { SetStandardPassingPathStep } from "./standard-pass/set-standard-passing-path/set-standard-passing-path.step.service";
+import { SetHighPassingPathStep } from "./high-pass/set-high-passing-path/set-high-passing-path.step.service";
 
 @Injectable({
     providedIn: 'root',
@@ -26,7 +26,7 @@ export class StepService {
 
     private initStandardPassing: InitStandardPassingStep,
     private setStandardPassingPath: SetStandardPassingPathStep,
-    private passBall: PassBallStep,
+    private passBall: StandardPassBallStep,
 
     private initHighPassing: InitHighPassingStep,
     private setHighPassingPath: SetHighPassingPathStep,

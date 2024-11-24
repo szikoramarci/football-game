@@ -1,5 +1,5 @@
-import { StepContext } from "../../interfaces/step-context.interface";
-import { StepRule } from "../../interfaces/step-rule.interface";
+import { StepContext } from "../../classes/step-context.class";
+import { StepRule } from "../../classes/step-rule.interface";
 import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
 
 export class IsReachableHexClicked implements StepRule {

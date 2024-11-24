@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { StepMeta } from "../../action-steps/interfaces/step-meta.interface";
+import { StepMeta } from "../../action-steps/classes/step-meta.interface";
 import { Action } from "../../actions/action.interface";
 
 export interface ActionState {

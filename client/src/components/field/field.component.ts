@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Hex } from "honeycomb-grid";
 import { Graphics } from "pixi.js";
-import { ContextService } from "../../services/context/context.service";
+import { PIXIContextService } from "../../services/pixi-context/pixi-context.service";
 
 @Component({
     selector: 'field',
@@ -16,7 +16,7 @@ export class FieldComponent implements OnInit, OnDestroy {
     
     field: Graphics = new Graphics();  
 
-    constructor(private context: ContextService) {}
+    constructor(private context: PIXIContextService) {}
 
     ngOnInit(): void {
         this.setDesign();       

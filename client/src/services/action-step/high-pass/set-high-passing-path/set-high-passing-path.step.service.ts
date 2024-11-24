@@ -1,22 +1,20 @@
 import { Injectable, Type } from "@angular/core";
-import { StepRuleSet } from "../../../action-steps/interfaces/step-rule.interface";
-import { Step } from "../../../action-steps/interfaces/step.interface";
 import { Store } from "@ngrx/store";
-import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
-import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
-import { GridService } from "../../grid/grid.service";
 import { equals, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { saveStepMeta } from "../../../stores/action/action.actions";
-import { CancelStep } from "../cancel/cancel.service";
-import { IsMouseOver } from "../../../action-steps/rules/is-mouse-over.rule";
-import { InitHighPassingStepMeta } from "../../../action-steps/metas/passing/high-passing/init-high-passing.step-meta";
-import { SetHighPassingPathStepMeta } from "../../../action-steps/metas/passing/high-passing/set-high-passing-path.step-meta";
+import { Step } from "../../../../action-steps/classes/step.class";
+import { InitHighPassingStepMeta } from "../../../../action-steps/metas/passing/high-passing/init-high-passing.step-meta";
+import { GridService } from "../../../grid/grid.service";
+import { IsMouseOver } from "../../../../action-steps/rules/is-mouse-over.rule";
+import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
+import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { CancelStep } from "../../cancel/cancel.service";
+import { SetHighPassingPathStepMeta } from "../../../../action-steps/metas/passing/high-passing/set-high-passing-path.step-meta";
+import { saveStepMeta } from "../../../../stores/action/action.actions";
 
 @Injectable({
     providedIn: 'root',
 })
-export class SetHighPassingPathStep implements Step {
-    ruleSet: StepRuleSet
+export class SetHighPassingPathStep extends Step {
     passingPath!: Hex[]
     lastStepMeta!: InitHighPassingStepMeta
     availableSteps: Type<Step>[] = []
@@ -25,13 +23,13 @@ export class SetHighPassingPathStep implements Step {
         private store: Store,
         private grid: GridService
     ) {
-        this.ruleSet = new StepRuleSet();   
-        this.ruleSet.addRule(new IsMouseOver());  
-        this.ruleSet.addRule(new IsTheNextStep(SetHighPassingPathStep));                   
+        super()
+        this.initRuleSet()                        
     }
 
-    identify(context: StepContext): boolean {
-        return this.ruleSet.validate(context);
+    initRuleSet(): void {
+        this.addRule(new IsMouseOver());  
+        this.addRule(new IsTheNextStep(SetHighPassingPathStep));   
     }
 
     calculation(context: StepContext): void {
@@ -79,7 +77,6 @@ export class SetHighPassingPathStep implements Step {
 
     updateState(context: StepContext): void {
         const setHighPassingPathStepMeta: SetHighPassingPathStepMeta = {... this.lastStepMeta,             
-            timestamp: new Date(),
             availableNextSteps: this.availableSteps,
             clickedCoordinates: context.coordinates, 
             passingPath: this.passingPath,            

@@ -9,7 +9,7 @@ import ChallengeIndicatorContext from "../../contexts/ChallengeIndicatorContext.
 @Injectable({
     providedIn: 'root'
 })
-export class ContextService {
+export class PIXIContextService {
     lightFieldContext!: LightFieldContext;
     darkFieldContext!: DarkFieldContext;
 

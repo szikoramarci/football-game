@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Grid, Hex, defineHex, rectangle, Orientation, HexCoordinates, line, Traverser, Direction, neighborOf, OffsetCoordinates } from 'honeycomb-grid';
-import { ContextService } from '../context/context.service';
+import { PIXIContextService } from '../pixi-context/pixi-context.service';
 import { HEXA_RADIUS, PITCH_LENGTH, PITCH_WIDTH } from '../../constants';
 import { Point } from 'pixi.js';
 
@@ -22,7 +22,7 @@ export class GridService {
     frame!: Grid<Hex>
 
     constructor(
-        private context: ContextService
+        private context: PIXIContextService
     ) {
         this.initGrid();
         this.generateFrame();

@@ -5,12 +5,12 @@ import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastStepMeta } from "../../../stores/action/action.selector";
 import { InitPassingStepMeta } from "../../../action-steps/metas/passing/init-passing.step-meta";
-import { StepMeta } from "../../../action-steps/interfaces/step-meta.interface";
+import { StepMeta } from "../../../action-steps/classes/step-meta.interface";
 import { SetStandardPassingPathStepMeta } from "../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
-import { ContextService } from "../../../services/context/context.service";
+import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 
 @Component({
     selector: 'passing-indicator-layer',
@@ -35,7 +35,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
     constructor(
         private store: Store,
         private app: AppService,
-        private context: ContextService
+        private context: PIXIContextService
     ) {}
     
     ngOnInit(): void {

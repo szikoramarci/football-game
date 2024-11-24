@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Step } from "../../../action-steps/interfaces/step.interface";
-import { StepRuleSet } from "../../../action-steps/interfaces/step-rule.interface";
-import { StepContext } from "../../../action-steps/interfaces/step-context.interface";
+import { Step } from "../../../action-steps/classes/step.class";
+import { StepContext } from "../../../action-steps/classes/step-context.interface";
 import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
 import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
@@ -15,26 +14,22 @@ import { IsLeftClick } from "../../../action-steps/rules/is-left-click.rule";
 @Injectable({
     providedIn: 'root',
 })
-export class CancelStep implements Step {
-    ruleSet: StepRuleSet;
+export class CancelStep extends Step {
     lastStepMeta!: SetMovingPathStepMeta;
 
     constructor(private store: Store) {
-        this.ruleSet = new StepRuleSet();           
-        this.ruleSet.addRule(new IsTheNextStep(CancelStep));    
-        this.ruleSet.addRule(new AtLeastOneRule(
+        super()    
+    }
+
+    initRuleSet() {          
+        this.addRule(new IsTheNextStep(CancelStep));    
+        this.addRule(new AtLeastOneRule(
             new AllOfThemRule(new IsPickedPlayerClicked(), new IsLeftClick()), 
             new IsRightClick()
-        )); 
+        ));   
     }
 
-    identify(context: StepContext): boolean {
-        return this.ruleSet.validate(context);
-    }
-
-    calculation(context: StepContext): void {
-
-    }
+    calculation(context: StepContext): void {}
 
     updateState(context: StepContext): void {
         this.store.dispatch(clearStepMeta());

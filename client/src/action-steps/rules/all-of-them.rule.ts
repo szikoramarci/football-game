@@ -1,5 +1,5 @@
-import { StepContext } from "../interfaces/step-context.interface";
-import { StepRule } from "../interfaces/step-rule.interface";
+import { StepContext } from "../classes/step-context.interface";
+import { StepRule } from "../classes/step-rule.interface";
 
 export class AllOfThemRule implements StepRule {
     rules: StepRule[] = [];

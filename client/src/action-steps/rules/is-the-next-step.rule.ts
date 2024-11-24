@@ -1,7 +1,7 @@
 import { Type } from "@angular/core";
-import { StepContext } from "../interfaces/step-context.interface";
-import { StepRule } from "../interfaces/step-rule.interface";
-import { Step } from "../interfaces/step.interface";
+import { StepRule } from "../classes/step-rule.interface";
+import { Step } from "../classes/step.class";
+import { StepContext } from "../classes/step-context.interface";
 
 export class IsTheNextStep implements StepRule {
     actionStepToCheck: Type<Step>;

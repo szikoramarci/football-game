@@ -1,7 +1,7 @@
 import { equals } from "honeycomb-grid";
-import { StepContext } from "../../interfaces/step-context.interface";
-import { StepRule } from "../../interfaces/step-rule.interface";
+import { StepRule } from "../../classes/step-rule.interface";
 import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
+import { StepContext } from "../../classes/step-context.interface";
 
 export class IsPickedPlayerClicked implements StepRule {
     validate(context: StepContext): boolean {

@@ -1,5 +1,5 @@
-import { StepContext } from "../../interfaces/step-context.interface";
-import { StepRule } from "../../interfaces/step-rule.interface";
+import { StepContext } from "../../../action-steps/classes/step-context.interface";
+import { StepRule } from "../../classes/step-rule.interface";
 import { InitPassingStepMeta } from "../../metas/passing/init-passing.step-meta";
 
 export class IsPassTargetHexClicked implements StepRule {

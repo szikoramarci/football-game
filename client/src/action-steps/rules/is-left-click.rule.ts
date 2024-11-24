@@ -1,6 +1,6 @@
 import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.interface";
-import { StepContext } from "../interfaces/step-context.interface";
-import { StepRule } from "../interfaces/step-rule.interface";
+import { StepContext } from "../classes/step-context.interface";
+import { StepRule } from "../classes/step-rule.interface";
 
 export class IsLeftClick implements StepRule {
     validate(context: StepContext): boolean {

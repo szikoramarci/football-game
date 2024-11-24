@@ -1,5 +1,5 @@
-import { StepContext } from "../../interfaces/step-context.interface";
-import { StepRule } from "../../interfaces/step-rule.interface";
+import { StepContext } from "../../../action-steps/classes/step-context.interface";
+import { StepRule } from "../../classes/step-rule.interface";
 
 export class IsPlayerSelected implements StepRule {
     validate(context: StepContext): boolean {
