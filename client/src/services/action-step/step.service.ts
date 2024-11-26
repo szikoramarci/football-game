@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { Step } from "../../action-steps/classes/step.class";
 import { InitMovingStep } from "./moving/init-moving/init-moving.step.service";
 import { SetMovingPathStep } from "./moving/set-moving-path/set-moving-path.step.service";
@@ -10,6 +10,7 @@ import { StepContext } from "../../action-steps/classes/step-context.interface";
 import { InitStandardPassingStep } from "./standard-pass/init-standard-passing/init-standard-passing.step.service";
 import { SetStandardPassingPathStep } from "./standard-pass/set-standard-passing-path/set-standard-passing-path.step.service";
 import { SetHighPassingPathStep } from "./high-pass/set-high-passing-path/set-high-passing-path.step.service";
+import { movingAction } from "../../actions/moving.action";
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +19,8 @@ export class StepService {
 
   stepList: Step[] = [];
 
+  constructor(private injector: Injector) {}
+/*
   constructor(
 
     private initMoving: InitMovingStep,
@@ -49,11 +52,14 @@ export class StepService {
       this.cancelMovingPlayer
     ]
   }
-
+*/
   resolveStep(context: StepContext): Step | null {
-    for (const step of this.stepList) {
-      if (step.identify(context)) {
-        return step;
+    for(const action of context.availableActions) {
+      for (const step of action.steps) {
+        const stepInstance = this.injector.get(step);
+        if (stepInstance.identify(context)) {
+          return stepInstance;
+        }
       }
     }
 

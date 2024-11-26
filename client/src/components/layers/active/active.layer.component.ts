@@ -31,9 +31,9 @@ export class ActiveLayerComponent implements OnInit {
                 mousePosition: mouseEvent.position
             }
             this.stepContext.generateStepContext(baseContext).subscribe(stepContext => {
-                const availableAction = this.action.resolveStep(stepContext);                       
-                if (availableAction) {
-                    this.action.executeStep(availableAction,stepContext);
+                const availableStep = this.action.resolveStep(stepContext);                       
+                if (availableStep) {
+                    this.action.executeStep(availableStep,stepContext);
                 }   
             })           
         });

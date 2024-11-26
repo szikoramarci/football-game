@@ -30,7 +30,7 @@ export class InitMovingStep extends Step {
       private traverser: TraverserService
     ) {
       super()
-      this.initRuleSet()
+      this.initRuleSet()      
     }
 
     initRuleSet() {      

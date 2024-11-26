@@ -1,26 +1,42 @@
-import { Injectable } from "@angular/core";
-import { Hex } from "honeycomb-grid";
+import { Injectable, OnDestroy, Type } from "@angular/core";
 import { BaseContext } from "../../action-steps/classes/base-context.interface";
-import { forkJoin, map, Observable, switchMap, take } from "rxjs";
-import { Player } from "../../models/player.model";
+import { forkJoin, map, Observable, Subscription, take } from "rxjs";
 import { StepMeta } from "../../action-steps/classes/step-meta.interface";
 import { GridService } from "../grid/grid.service";
 import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { Store } from "@ngrx/store";
-import { getLastStepMeta } from "../../stores/action/action.selector";
+import { getAvailableActions, getLastStepMeta } from "../../stores/action/action.selector";
 import { StepContext } from "../../action-steps/classes/step-context.interface";
+import { Action } from "../../actions/action.interface";
 
 @Injectable({
     providedIn: 'root'
 })
-export class StepContextService {
+export class StepContextService implements OnDestroy {
+
+    lastStepMeta!: StepMeta | undefined
+    availableActions!: Action[]
+
+    lastStepMetaSubscription!: Subscription
+    availableActionsSubscription!: Subscription
 
     constructor(
         private grid: GridService,
         private store: Store,
         private player: PlayerService
-    ){}
+    ){
+        this.initSubscriptions()
+    }
+
+    initSubscriptions() {
+        this.lastStepMetaSubscription = this.store.select(getLastStepMeta()).subscribe(lastStepMeta => {
+            this.lastStepMeta = lastStepMeta
+        })
+        this.availableActionsSubscription = this.store.select(getAvailableActions()).subscribe(availableActions => {
+            this.availableActions = availableActions
+        })
+    }
 
     getLastStepMeta(): Observable<StepMeta | undefined> {
         return this.store.select(getLastStepMeta())
@@ -39,21 +55,26 @@ export class StepContextService {
     generateStepContext(baseContext: BaseContext): Observable<StepContext> {
         return forkJoin({            
             player: this.player.getPlayerOnCoordinates(baseContext.coordinates),
-            playerHasBall: this.player.playerHasBall(baseContext.coordinates),
-            lastStepMeta: this.getLastStepMeta(),
+            playerHasBall: this.player.playerHasBall(baseContext.coordinates),            
             activeTeam: this.getActiveTeam()
         }).pipe(
-            map(({player, playerHasBall, lastStepMeta, activeTeam }) => {
+            map(({player, playerHasBall, activeTeam }) => {
                 return {
                     ...baseContext,
                     player: player,  
                     hex: this.grid.getHex(baseContext.coordinates),
                     playerHasBall: playerHasBall,
-                    lastStepMeta: lastStepMeta,
+                    lastStepMeta: this.lastStepMeta,
+                    availableActions: this.availableActions,
                     activeTeam: activeTeam
                 }
             })
         )
+    }
+
+    ngOnDestroy(): void {
+        this.lastStepMetaSubscription.unsubscribe()
+        this.availableActionsSubscription.unsubscribe()
     }
 
 }

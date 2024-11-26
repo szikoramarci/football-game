@@ -1,5 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 import { StepMeta } from "../../action-steps/classes/step-meta.interface";
+import { Action } from "../../actions/action.interface";
 
 export const saveStepMeta = createAction(
     '[Step] Save Step Meta',
@@ -7,3 +8,13 @@ export const saveStepMeta = createAction(
 );
 
 export const clearStepMeta = createAction('[Step] Clear Step Meta');
+
+export const setAvailableActions = createAction(
+    '[Action] Set Available Actions',
+    props<{ actions: Action[] }>()
+);
+
+export const setLastAction = createAction(
+    '[Action] Set Last Action',
+    props<{ action: Action }>()
+);
