@@ -11,7 +11,7 @@ import { IsPickedPlayerClicked } from "../../../../action-steps/rules/cancel/is-
 import { IsPlayerSelected } from "../../../../action-steps/rules/move/is-player-selected.rule";
 import { HasThePlayerTheBall } from "../../../../action-steps/rules/pass/has-the-player-the-ball.rule";
 import { IsOwnPlayer } from "../../../../action-steps/rules/move/is-own-player.rule";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../../constants";
 import { SetStandardPassingPathStep } from "../set-standard-passing-path/set-standard-passing-path.step.service";
 import { CancelStep } from "../../cancel/cancel.service";
@@ -58,13 +58,13 @@ export class InitStandardPassingStep extends Step {
       this.addSubscription(defensiveTeamPlayersWithPositionsSubscriptions)
     }
 
-    calculation(context: StepContext): void {  
+    calculation(context: ActionContext): void {  
         this.generateBaseAreaOfDistance(context);
         this.removeUnsightTargets(context);
         this.generateAvailableNextSteps(context);
     }
 
-    generateBaseAreaOfDistance(context: StepContext) {
+    generateBaseAreaOfDistance(context: ActionContext) {
       this.availableTargets = this.traverser.getAreaByDistance(
         context.lastStepMeta?.clickedCoordinates!, 
         STANDARD_PASS_HEX_DISTANCE,
@@ -72,7 +72,7 @@ export class InitStandardPassingStep extends Step {
       )
     }
 
-    removeUnsightTargets(context: StepContext) {
+    removeUnsightTargets(context: ActionContext) {
       const startHex: Hex | undefined = context.hex
 
       const oppositionPlayerPositionsInArea = this.defensiveTeamPlayersWithPositions
@@ -83,7 +83,7 @@ export class InitStandardPassingStep extends Step {
       this.availableTargets = this.sector.removeUnsightTargets(startHex!, this.availableTargets, oppositonPlayerPositions);    
     }
 
-    generateAvailableNextSteps(context: StepContext) {
+    generateAvailableNextSteps(context: ActionContext) {
       this.availableNextSteps = [SetStandardPassingPathStep, CancelStep];
      
       if (context.playerHasBall){
@@ -91,7 +91,7 @@ export class InitStandardPassingStep extends Step {
       }
     }
   
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
       const initPassingStepMeta: InitPassingStepMeta = {     
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,

@@ -1,3 +1,3 @@
-@if (actionLabel) {
-    <div>{{ actionLabel }}</div>
+@for (availableAction of availableActions; track availableAction.name) {
+    <div>{{ availableAction.name }}</div>
 }

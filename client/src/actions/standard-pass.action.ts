@@ -4,6 +4,7 @@ import { StandardPassBallStep } from "../services/action-step/standard-pass/stan
 import { Action } from "./action.interface";
 
 export const standardPassAction: Action = {
+    name: 'STANDARD PASS',
     steps: [
         InitStandardPassingStep,
         SetStandardPassingPathStep,

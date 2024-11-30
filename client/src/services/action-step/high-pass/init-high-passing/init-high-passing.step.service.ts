@@ -1,5 +1,5 @@
 import { Injectable, Type } from "@angular/core";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { Step } from "../../../../action-steps/classes/step.class";
 import { IsOwnPlayer } from "../../../../action-steps/rules/move/is-own-player.rule";
 import { IsPlayerSelected } from "../../../../action-steps/rules/move/is-player-selected.rule";
@@ -63,7 +63,7 @@ export class InitHighPassingStep extends Step {
       this.addSubscription(defensiveTeamPlayersWithPositionsSubscriptions)
     }
 
-    calculation(context: StepContext): void {  
+    calculation(context: ActionContext): void {  
       this.generateBaseAreaOfDistance(context)
       this.removeSurrundingHexesFromBaseArea(context)
       this.removeUnsightTargets(context)
@@ -71,7 +71,7 @@ export class InitHighPassingStep extends Step {
       this.generateAvailableNextSteps(context);  
     }  
     
-    removeUnsightTargets(context: StepContext) {
+    removeUnsightTargets(context: ActionContext) {
       const startHex: Hex | undefined  = context.hex
 
       const neighborHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedCoordinates, radius: 1 }))
@@ -81,7 +81,7 @@ export class InitHighPassingStep extends Step {
       this.availableTargets = this.sector.removeUnsightTargets(startHex!, this.availableTargets, oppositonPlayerPositions)    
     }
 
-    generateBaseAreaOfDistance(context: StepContext) {
+    generateBaseAreaOfDistance(context: ActionContext) {
       this.availableTargets = this.traverser.getAreaByDistance(
         context.lastStepMeta?.clickedCoordinates!, 
         HIGH_PASS_HEX_DISTANCE,
@@ -89,7 +89,7 @@ export class InitHighPassingStep extends Step {
       )
     }
 
-    removeSurrundingHexesFromBaseArea(context: StepContext){
+    removeSurrundingHexesFromBaseArea(context: ActionContext){
         const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedCoordinates!, radius: 3 }))
         this.availableTargets = this.availableTargets.filter(availableTarget => !surroundingHexes.getHex(availableTarget))
     }
@@ -121,11 +121,11 @@ export class InitHighPassingStep extends Step {
       this.availableTargets = this.grid.createGrid().setHexes(filteredTargetHexes)            
     }
 
-    generateAvailableNextSteps(context: StepContext) {
+    generateAvailableNextSteps(context: ActionContext) {
       this.availableNextSteps = [SetHighPassingPathStep, CancelStep];
     }
   
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
       const initPassingStepMeta: InitHighPassingStepMeta = {     
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,

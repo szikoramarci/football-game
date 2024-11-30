@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Step } from "../../../../action-steps/classes/step.class";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
 import { clearStepMeta } from "../../../../stores/action/action.actions";
@@ -32,12 +32,12 @@ export class StandardPassBallStep extends Step {
         this.addRule(new IsPassTargetHexClicked()); 
     }
 
-    calculation(context: StepContext): void {
+    calculation(context: ActionContext): void {
         this.lastStepMeta = context.lastStepMeta as SetStandardPassingPathStepMeta
         this.challengeHexes = this.lastStepMeta.challengeHexes
     }
 
-    updateState(context: StepContext): void {  
+    updateState(context: ActionContext): void {  
         const ballWasStolen = Array.from(this.challengeHexes.entries()).some(([oppositionPlayerID]) => {
             if (this.challenge.dribbleTackleChallenge()) {
                 this.challenge.transferBallToOpponent(oppositionPlayerID);                         

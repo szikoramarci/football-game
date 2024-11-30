@@ -4,7 +4,7 @@ import { StepMeta } from "./step-meta.interface";
 import { BaseContext } from "./base-context.interface";
 import { Action } from "../../actions/action.interface";
 
-export interface StepContext extends BaseContext {
+export interface ActionContext extends BaseContext {
     player: Player | undefined,    
     hex: Hex | undefined,
     playerHasBall: boolean,

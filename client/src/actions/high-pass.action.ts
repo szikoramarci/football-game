@@ -3,6 +3,7 @@ import { SetHighPassingPathStep } from "../services/action-step/high-pass/set-hi
 import { Action } from "./action.interface";
 
 export const highPassAction: Action = {
+    name: 'HIGH PASS',
     steps: [
         InitHighPassingStep,
         SetHighPassingPathStep,        

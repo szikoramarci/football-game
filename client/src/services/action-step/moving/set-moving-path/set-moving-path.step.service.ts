@@ -15,7 +15,7 @@ import { take } from "rxjs";
 import { InitMovingStepMeta } from "../../../../action-steps/metas/moving/init-moving.step-meta";
 import { TraverserService } from "../../../traverser/traverser.service";
 import { ChallengeService } from "../../../challenge/challenge.service";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { InitStandardPassingStep } from "../../standard-pass/init-standard-passing/init-standard-passing.step.service";
 
 @Injectable({
@@ -43,7 +43,7 @@ export class SetMovingPathStep extends Step {
         this.addRule(new IsNotTargetHexClicked());
     } 
 
-    calculation(context: StepContext): void {
+    calculation(context: ActionContext): void {
         this.lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
 
         if (this.isSelectedHexReachable(context)) {
@@ -56,12 +56,12 @@ export class SetMovingPathStep extends Step {
         this.generateAvailableNextSteps(context);
     }
 
-    isSelectedHexReachable(context: StepContext) {
+    isSelectedHexReachable(context: ActionContext) {
         const selectedPoint: OffsetCoordinates = context.coordinates;
         return this.lastStepMeta.reachableHexes.getHex(selectedPoint) || false
     }
 
-    generateMovingPath(context: StepContext) { 
+    generateMovingPath(context: ActionContext) { 
         const startPoint: OffsetCoordinates = this.lastStepMeta.playerCoordinates;
         const endPoint: OffsetCoordinates = context.coordinates;        
         this.store.select(getPlayerPositions).pipe(take(1))
@@ -90,7 +90,7 @@ export class SetMovingPathStep extends Step {
         this.challengeHexes = new Map();
     }
 
-    generateAvailableNextSteps(context: StepContext) {        
+    generateAvailableNextSteps(context: ActionContext) {        
         this.availableNextSteps = [SetMovingPathStep, CancelStep];
 
         if (this.lastStepMeta.playerHasBall){
@@ -102,7 +102,7 @@ export class SetMovingPathStep extends Step {
         }
     }
 
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
         const setMovingPathStepMeta: SetMovingPathStepMeta = {... this.lastStepMeta,             
             availableNextSteps: this.availableNextSteps,
             clickedCoordinates: context.coordinates, 

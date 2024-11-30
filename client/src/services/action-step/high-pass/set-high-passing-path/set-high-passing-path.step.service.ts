@@ -6,7 +6,7 @@ import { InitHighPassingStepMeta } from "../../../../action-steps/metas/passing/
 import { GridService } from "../../../grid/grid.service";
 import { IsMouseOver } from "../../../../action-steps/rules/is-mouse-over.rule";
 import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { CancelStep } from "../../cancel/cancel.service";
 import { SetHighPassingPathStepMeta } from "../../../../action-steps/metas/passing/high-passing/set-high-passing-path.step-meta";
 import { saveStepMeta } from "../../../../stores/action/action.actions";
@@ -32,7 +32,7 @@ export class SetHighPassingPathStep extends Step {
         this.addRule(new IsTheNextStep(SetHighPassingPathStep));   
     }
 
-    calculation(context: StepContext): void {
+    calculation(context: ActionContext): void {
         this.lastStepMeta = context.lastStepMeta as InitHighPassingStepMeta;
 
         if (this.isSelectedHexPassable(context)) {
@@ -44,12 +44,12 @@ export class SetHighPassingPathStep extends Step {
         this.generateAvailableNextSteps()
     }
 
-    isSelectedHexPassable(context: StepContext) {
+    isSelectedHexPassable(context: ActionContext) {
         const selectedPoint: OffsetCoordinates = context.coordinates;
         return this.lastStepMeta.availableTargets.getHex(selectedPoint) || false
     }
 
-    generatePassingPath(context: StepContext) {  
+    generatePassingPath(context: ActionContext) {  
         const startCoordinate: OffsetCoordinates = this.lastStepMeta.playerCoordinates;       
         const startHex = this.grid.getHex(startCoordinate)
         const endHex = this.grid.getHex(context.coordinates)
@@ -63,7 +63,7 @@ export class SetHighPassingPathStep extends Step {
         this.passingPath = []
     }
 
-    collectPossibleHeadingPlayer(context: StepContext) {
+    collectPossibleHeadingPlayer(context: ActionContext) {
         this.lastStepMeta.possibleHeadingPlayers.forEach((availableTargets, playerPosition) => {
             if (availableTargets.some(availableTarget => equals(availableTarget, context.coordinates))) {
                 console.log(playerPosition)
@@ -75,7 +75,7 @@ export class SetHighPassingPathStep extends Step {
         this.availableSteps = [SetHighPassingPathStep, CancelStep];
     }
 
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
         const setHighPassingPathStepMeta: SetHighPassingPathStepMeta = {... this.lastStepMeta,             
             availableNextSteps: this.availableSteps,
             clickedCoordinates: context.coordinates, 

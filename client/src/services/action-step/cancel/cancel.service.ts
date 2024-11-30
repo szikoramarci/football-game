@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Step } from "../../../action-steps/classes/step.class";
-import { StepContext } from "../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../action-steps/classes/action-context.interface";
 import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
 import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
@@ -29,9 +29,9 @@ export class CancelStep extends Step {
         ));   
     }
 
-    calculation(context: StepContext): void {}
+    calculation(context: ActionContext): void {}
 
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
         this.store.dispatch(clearStepMeta());
     }    
 }

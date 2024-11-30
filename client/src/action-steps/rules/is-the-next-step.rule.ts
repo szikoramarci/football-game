@@ -1,7 +1,7 @@
 import { Type } from "@angular/core";
 import { StepRule } from "../classes/step-rule.interface";
 import { Step } from "../classes/step.class";
-import { StepContext } from "../classes/step-context.interface";
+import { ActionContext } from "../classes/action-context.interface";
 
 export class IsTheNextStep implements StepRule {
     actionStepToCheck: Type<Step>;
@@ -10,7 +10,7 @@ export class IsTheNextStep implements StepRule {
         this.actionStepToCheck = actionStepToCheck;
     }
 
-    validate(context: StepContext): boolean {
+    validate(context: ActionContext): boolean {
         return context.lastStepMeta?.availableNextSteps.includes(this.actionStepToCheck) || false;
     }
     errorMessage = "action to check is not in the next available action list";

@@ -1,9 +1,9 @@
 import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.interface";
-import { StepContext } from "../classes/step-context.interface";
+import { ActionContext } from "../classes/action-context.interface";
 import { StepRule } from "../classes/step-rule.interface";
 
 export class IsMouseOver implements StepRule {
-    validate(context: StepContext): boolean {
+    validate(context: ActionContext): boolean {
         return context.mouseEventType == MouseTriggerEventType.MOUSE_MOVE;
     }
     errorMessage = "it wasn't a mouse over";

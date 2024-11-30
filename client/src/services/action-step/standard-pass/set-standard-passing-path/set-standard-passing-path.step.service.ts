@@ -11,7 +11,7 @@ import { ChallengeService } from "../../../challenge/challenge.service";
 import { TraverserService } from "../../../traverser/traverser.service";
 import { IsMouseOver } from "../../../../action-steps/rules/is-mouse-over.rule";
 import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../../constants";
 import { InitHighPassingStep } from "../../high-pass/init-high-passing/init-high-passing.step.service";
 import { CancelStep } from "../../cancel/cancel.service";
@@ -57,7 +57,7 @@ export class SetStandardPassingPathStep extends Step {
         this.addSubscription(attackingPlayersWithPositionsSubscriptions)
     }
 
-    calculation(context: StepContext): void {
+    calculation(context: ActionContext): void {
         this.lastStepMeta = context.lastStepMeta as InitPassingStepMeta;
 
         if (this.isSelectedHexPassable(context)) {
@@ -70,12 +70,12 @@ export class SetStandardPassingPathStep extends Step {
         this.generateAvailableNextSteps()
     }
 
-    isSelectedHexPassable(context: StepContext) {
+    isSelectedHexPassable(context: ActionContext) {
         const selectedPoint: OffsetCoordinates = context.coordinates;
         return this.lastStepMeta.availableTargets.getHex(selectedPoint) || false
     }
 
-    generatePassingPath(context: StepContext) {  
+    generatePassingPath(context: ActionContext) {  
         const startCoordinate: OffsetCoordinates = this.lastStepMeta.playerCoordinates;       
         const startHex = this.grid.getHex(startCoordinate)
         const endHex = this.grid.getHex(context.coordinates)
@@ -129,7 +129,7 @@ export class SetStandardPassingPathStep extends Step {
         ];
     }
 
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
         const setPassingPathStepMeta: SetStandardPassingPathStepMeta = {... this.lastStepMeta,             
             availableNextSteps: this.availableNextSteps,
             clickedCoordinates: context.coordinates, 

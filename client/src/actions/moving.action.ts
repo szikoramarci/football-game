@@ -4,6 +4,7 @@ import { SetMovingPathStep } from "../services/action-step/moving/set-moving-pat
 import { Action } from "./action.interface";
 
 export const movingAction: Action = {
+    name: 'MOVING',
     steps: [
         InitMovingStep,
         SetMovingPathStep,

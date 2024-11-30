@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Step } from "../../../../action-steps/classes/step.class";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { SetMovingPathStepMeta } from "../../../../action-steps/metas/moving/set-moving-path.step-meta";
 import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
 import { IsMoveTargetHexClicked } from "../../../../action-steps/rules/move/is-move-target-hex-clicked.rule";
@@ -40,7 +40,7 @@ export class MovePlayerStep extends Step {
         this.addRule(new IsTargetHexNotThePlayerHex());    
     }
 
-    calculation(context: StepContext): void {
+    calculation(context: ActionContext): void {
         this.lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
         this.movingPath = this.lastStepMeta.movingPath;
         this.challengeHexes = this.lastStepMeta.challengeHexes

@@ -1,5 +1,5 @@
 import { Injectable, Type } from "@angular/core";
-import { StepContext } from "../../../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
 import { Step } from "../../../../action-steps/classes/step.class";
 import { IsOwnPlayer } from "../../../../action-steps/rules/move/is-own-player.rule";
 import { Store } from "@ngrx/store";
@@ -34,18 +34,18 @@ export class InitMovingStep extends Step {
     }
 
     initRuleSet() {      
-      this.addRule(new IsLeftClick());
+    /*  this.addRule(new IsLeftClick());
       this.addRule(new AreAvailableNextStepsEmpty());
       this.addRule(new IsPlayerSelected());
-      this.addRule(new IsOwnPlayer());
+      this.addRule(new IsOwnPlayer());*/
     }
   
-    calculation(context: StepContext): void {      
+    calculation(context: ActionContext): void {      
       this.generateReachableHexes(context);      
       this.generateAvailableNextSteps(context);      
     }
 
-    generateReachableHexes(context: StepContext) {
+    generateReachableHexes(context: ActionContext) {
       const centralPoint = context.coordinates;
       const distance = context.player?.speed || 0;      
       this.store.select(getPlayerPositions).pipe(take(1))
@@ -56,7 +56,7 @@ export class InitMovingStep extends Step {
         })
     }
 
-    generateAvailableNextSteps(context: StepContext) {
+    generateAvailableNextSteps(context: ActionContext) {
       this.availableNextSteps = [SetMovingPathStep, CancelStep];
      
       if (context.playerHasBall){
@@ -64,7 +64,7 @@ export class InitMovingStep extends Step {
       }
     }
   
-    updateState(context: StepContext): void {
+    updateState(context: ActionContext): void {
       const initMovingStepMeta: InitMovingStepMeta = {
         clickedCoordinates: context.coordinates,
         playerCoordinates: context.coordinates,        

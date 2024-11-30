@@ -14,7 +14,7 @@ export const setAvailableActions = createAction(
     props<{ actions: Action[] }>()
 );
 
-export const setLastAction = createAction(
-    '[Action] Set Last Action',
+export const setCurrentAction = createAction(
+    '[Action] Set Current Action',
     props<{ action: Action }>()
 );

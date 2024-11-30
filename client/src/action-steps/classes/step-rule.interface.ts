@@ -1,7 +1,7 @@
-import { StepContext } from "./step-context.interface";
+import { ActionContext } from "./action-context.interface";
 
 export interface StepRule {
-    validate(context: StepContext): boolean;
+    validate(context: ActionContext): boolean;
     errorMessage: string;
 }
 
@@ -12,7 +12,7 @@ export class StepRuleSet {
       this.rules.push(rule);
     }
   
-    validate(context: StepContext): boolean {
+    validate(context: ActionContext): boolean {
       return this.rules.every(rule => rule.validate(context));
     }
   }

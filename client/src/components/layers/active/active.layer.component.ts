@@ -1,9 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { MouseEventService } from "../../../services/mouse-event/mouse-event.service";
-import { StepService } from "../../../services/action-step/step.service";
+import { ActionService } from "../../../services/action/action.service";
 import { ActionSelectorComponent } from "../../action-selector/action-selector.component";
-import { StepContextService } from "../../../services/step-context/step-context.service";
+import { PlayerService } from "../../../services/player/player.service";
 import { BaseContext } from "../../../action-steps/classes/base-context.interface";
+import { ActionContextService } from "../../../services/action-context/action-context.service";
 
 @Component({
     selector: 'active-layer',
@@ -15,8 +16,9 @@ export class ActiveLayerComponent implements OnInit {
 
     constructor(
         private mouseEvent: MouseEventService,
-        private stepContext: StepContextService,
-        private action: StepService
+        private action: ActionService,
+        private actionContext: ActionContextService,
+        private player: PlayerService
     ) {}
 
     ngOnInit(): void {
@@ -24,18 +26,17 @@ export class ActiveLayerComponent implements OnInit {
     }
 
     initMouseEventSubscriptions() {
-        this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {           
+        this.mouseEvent.getMouseEvents().subscribe(mouseEvent => { 
             const baseContext: BaseContext = {
                 mouseEventType: mouseEvent.type,
                 coordinates: mouseEvent.coordinates,
                 mousePosition: mouseEvent.position
             }
-            this.stepContext.generateStepContext(baseContext).subscribe(stepContext => {
-                const availableStep = this.action.resolveStep(stepContext);                       
-                if (availableStep) {
-                    this.action.executeStep(availableStep,stepContext);
-                }   
-            })           
+            this.actionContext.generateActionContext(baseContext).subscribe(actionContext => {
+                if (this.player.isSelectableForAction(actionContext)) {
+                    this.action.setAvailableActions(actionContext)
+                }               
+            })         
         });
     }   
 

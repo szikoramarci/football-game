@@ -7,13 +7,13 @@ import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { Store } from "@ngrx/store";
 import { getAvailableActions, getLastStepMeta } from "../../stores/action/action.selector";
-import { StepContext } from "../../action-steps/classes/step-context.interface";
+import { ActionContext } from "../../action-steps/classes/action-context.interface";
 import { Action } from "../../actions/action.interface";
 
 @Injectable({
     providedIn: 'root'
 })
-export class StepContextService implements OnDestroy {
+export class ActionContextService implements OnDestroy {
 
     lastStepMeta!: StepMeta | undefined
     availableActions!: Action[]
@@ -52,7 +52,7 @@ export class StepContextService implements OnDestroy {
             )
     }
 
-    generateStepContext(baseContext: BaseContext): Observable<StepContext> {
+    generateActionContext(baseContext: BaseContext): Observable<ActionContext> {
         return forkJoin({            
             player: this.player.getPlayerOnCoordinates(baseContext.coordinates),
             playerHasBall: this.player.playerHasBall(baseContext.coordinates),            

@@ -1,4 +1,4 @@
-import { StepContext } from "../classes/step-context.interface";
+import { ActionContext } from "../classes/action-context.interface";
 import { StepRule } from "../classes/step-rule.interface";
 
 export class AllOfThemRule implements StepRule {
@@ -8,7 +8,7 @@ export class AllOfThemRule implements StepRule {
         this.rules = rules;
     }
 
-    validate(context: StepContext): boolean {
+    validate(context: ActionContext): boolean {
         return this.rules.every(rule => rule.validate(context));
     }
     errorMessage = "one of the rules was incorrect";

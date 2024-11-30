@@ -1,9 +1,9 @@
 import { MouseTriggerEventType } from "../../services/mouse-event/mouse-event.interface";
-import { StepContext } from "../classes/step-context.interface";
+import { ActionContext } from "../classes/action-context.interface";
 import { StepRule } from "../classes/step-rule.interface";
 
 export class IsRightClick implements StepRule {
-    validate(context: StepContext): boolean {
+    validate(context: ActionContext): boolean {
         return context.mouseEventType == MouseTriggerEventType.RIGHT_CLICK;
     }
     errorMessage = "it wasn't a right click";
