@@ -14,14 +14,12 @@ export class MouseEventService {
 
     constructor(
         private grid: GridService
-    ) {
-        this.initClickListener();
-    }
+    ) {}
 
-    initClickListener() {
-        const leftClickEvents = fromEvent<MouseEvent>(document, MouseTriggerEventType.LEFT_CLICK);
-        const rightClickEvents = fromEvent<MouseEvent>(document, MouseTriggerEventType.RIGHT_CLICK);
-        const mouseMoveEvents = fromEvent<MouseEvent>(document, MouseTriggerEventType.MOUSE_MOVE).pipe(throttleTime(50));
+    initClickListener(canvas: HTMLElement) {
+        const leftClickEvents = fromEvent<MouseEvent>(canvas, MouseTriggerEventType.LEFT_CLICK);
+        const rightClickEvents = fromEvent<MouseEvent>(canvas, MouseTriggerEventType.RIGHT_CLICK);
+        const mouseMoveEvents = fromEvent<MouseEvent>(canvas, MouseTriggerEventType.MOUSE_MOVE).pipe(throttleTime(50));
 
         merge(leftClickEvents, rightClickEvents, mouseMoveEvents)
         .pipe(

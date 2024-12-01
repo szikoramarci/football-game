@@ -6,6 +6,7 @@ import { StateLayerComponent } from '../layers/state/state.layer.component';
 import { ActiveLayerComponent } from '../layers/active/active.layer.component';
 import { PasingIndicatorLayerComponent } from '../layers/pasing-indicator/passing-indicator.layer.component';
 import { MovingIndicatorLayerComponent } from '../layers/moving-indicator/moving-indicator.layer.component';
+import { MouseEventService } from '../../services/mouse-event/mouse-event.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,8 @@ export class AppComponent implements OnInit {
   @ViewChild('gameboard') gameBoard!: ElementRef;
 
   constructor(
-    private app: AppService
+    private app: AppService,
+    private mouseEvent: MouseEventService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -36,6 +38,7 @@ export class AppComponent implements OnInit {
 
   appendGraphics(){
     this.gameBoard.nativeElement.appendChild(this.app.getCanvas());
+    this.mouseEvent.initClickListener(this.app.getCanvas())
   }
 
 }
