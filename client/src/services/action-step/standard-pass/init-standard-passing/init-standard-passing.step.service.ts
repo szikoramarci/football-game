@@ -20,6 +20,7 @@ import { saveStepMeta } from "../../../../stores/action/action.actions";
 import { InitPassingStepMeta } from "../../../../action-steps/metas/passing/init-passing.step-meta";
 import { PlayerWithPosition } from "../../../../interfaces/player-with-position.interface";
 import { PlayerService } from "../../../player/player.service";
+import { AreAvailableNextStepsEmpty } from "../../../../action-steps/rules/is-available-next-actions-empty.rule";
 
 @Injectable({
   providedIn: 'root',
@@ -44,7 +45,7 @@ export class InitStandardPassingStep extends Step {
   
     initRuleSet(): void {
       this.addRule(new IsLeftClick());
-      this.addRule(new IsTheNextStep(InitStandardPassingStep));    
+      this.addRule(new AreAvailableNextStepsEmpty());  
       this.addRule(new IsPickedPlayerClicked());
       this.addRule(new IsPlayerSelected());
       this.addRule(new HasThePlayerTheBall());

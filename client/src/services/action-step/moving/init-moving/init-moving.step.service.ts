@@ -34,10 +34,10 @@ export class InitMovingStep extends Step {
     }
 
     initRuleSet() {      
-    /*  this.addRule(new IsLeftClick());
+      this.addRule(new IsLeftClick());
       this.addRule(new AreAvailableNextStepsEmpty());
       this.addRule(new IsPlayerSelected());
-      this.addRule(new IsOwnPlayer());*/
+      this.addRule(new IsOwnPlayer());
     }
   
     calculation(context: ActionContext): void {      

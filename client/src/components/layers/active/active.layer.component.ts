@@ -32,10 +32,12 @@ export class ActiveLayerComponent implements OnInit {
                 coordinates: mouseEvent.coordinates,
                 mousePosition: mouseEvent.position
             }
-            this.actionContext.generateActionContext(baseContext).subscribe(actionContext => {
-                if (this.player.isSelectableForAction(actionContext)) {
-                    this.action.setAvailableActions(actionContext)
-                }               
+            this.actionContext.generateActionContext(baseContext).subscribe(actionContext => {                                         
+                if (this.player.isSelectableForAction(actionContext)) {      
+                    actionContext.lastStepMeta = undefined                 
+                    this.action.setCurrentAction(actionContext)
+                }         
+                this.action.startAction(actionContext)      
             })         
         });
     }   

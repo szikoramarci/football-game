@@ -6,42 +6,56 @@ import { standardPassAction } from "../../actions/standard-pass.action";
 import { highPassAction } from "../../actions/high-pass.action";
 import { movingAction } from "../../actions/moving.action";
 import { Store } from "@ngrx/store";
-import { setAvailableActions, setCurrentAction } from "../../stores/action/action.actions";
+import { clearStepMeta, setAvailableActions, setCurrentAction } from "../../stores/action/action.actions";
+import { getCurrentAction, getCurrentStepIndex } from "../../stores/action/action.selector";
+import { filter } from "rxjs";
 
 @Injectable({
     providedIn: 'root',
 })
 export class ActionService {
 
-  stepList: Step[] = [];
+  currentAction!: Action
 
   constructor(
     private store: Store,
     private injector: Injector
-  ) {}
-
-  startAction(action: Action, context: ActionContext) {
-    for (const step of action.steps) {
-      const stepInstance = this.injector.get(step);
-      if (stepInstance.identify(context)) {
-        stepInstance.calculation(context);
-        stepInstance.updateState(context);
-        return;
-      }
-    }
+  ) {
+    this.initSubscriptions()
   }
 
+  initSubscriptions() {
+    this.store.select(getCurrentAction())
+      .pipe(filter(action => !!action))
+      .subscribe(currentAction => {  
+          this.currentAction = currentAction
+          console.log(currentAction.name)
+      })
+  }  
 
-  setAvailableActions(actionContext: ActionContext){
+  startAction(context: ActionContext) {
+    if (this.currentAction) {
+      for (const step of this.currentAction.steps) {
+        const stepInstance = this.injector.get(step);
+        if (stepInstance.identify(context)) {
+          stepInstance.calculation(context);
+          stepInstance.updateState(context);
+          return;
+        }
+      }
+    }    
+  }
+
+  setCurrentAction(actionContext: ActionContext){
     const actions: Action[] = [
       movingAction
     ]
     if (actionContext.playerHasBall) {
       actions.push(standardPassAction, highPassAction)
     }
+    this.store.dispatch(clearStepMeta())
     this.store.dispatch(setAvailableActions({ actions: actions }))
-    this.store.dispatch(setCurrentAction({ action: actions[0] }))
-    this.startAction(actions[0], actionContext)
+    this.store.dispatch(setCurrentAction({ action: actions[0] }))    
   }
 
 }
