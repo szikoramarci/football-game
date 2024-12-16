@@ -4,9 +4,9 @@ import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastStepMeta } from "../../../stores/action/action.selector";
-import { InitPassingStepMeta } from "../../../action-steps/metas/passing/init-passing.step-meta";
-import { StepMeta } from "../../../action-steps/classes/step-meta.interface";
-import { SetStandardPassingPathStepMeta } from "../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.step-meta";
+import { InitPassingStepMeta } from "../../../actions/metas/passing/init-passing.step-meta";
+import { StepMeta } from "../../../actions/classes/step-meta.interface";
+import { SetStandardPassingPathStepMeta } from "../../../actions/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
@@ -63,7 +63,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
 
         const initPassingActionMeta = actionMeta as InitPassingStepMeta;
         if (initPassingActionMeta.availableTargets) {
-            this.passerPosition = initPassingActionMeta.playerCoordinates  
+            this.passerPosition = initPassingActionMeta.playerHex  
             this.availableTargets = initPassingActionMeta.availableTargets
         }
     }
@@ -73,7 +73,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
 
         const setPassingPathActionMeta = actionMeta as SetStandardPassingPathStepMeta;
         if (setPassingPathActionMeta.availableTargets && setPassingPathActionMeta.passingPath) {
-            this.passerPosition = setPassingPathActionMeta.playerCoordinates  
+            this.passerPosition = setPassingPathActionMeta.playerHex  
             this.passingPath = setPassingPathActionMeta.passingPath             
             this.availableTargets = setPassingPathActionMeta.availableTargets
         }

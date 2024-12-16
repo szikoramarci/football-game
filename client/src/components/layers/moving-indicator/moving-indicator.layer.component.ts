@@ -1,15 +1,15 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastStepMeta } from "../../../stores/action/action.selector";
-import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
+import { SetMovingPathStepMeta } from "../../../actions/metas/moving/set-moving-path.step-meta";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { InitMovingStepMeta } from "../../../action-steps/metas/moving/init-moving.step-meta";
-import { StepMeta } from "../../../action-steps/classes/step-meta.interface";
+import { InitMovingStepMeta } from "../../../actions/metas/moving/init-moving.step-meta";
+import { StepMeta } from "../../../actions/classes/step-meta.interface";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 @Component({
     selector: 'moving-indicator-layer',

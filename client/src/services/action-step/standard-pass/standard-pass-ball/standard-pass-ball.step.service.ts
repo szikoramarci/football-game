@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
-import { Step } from "../../../../action-steps/classes/step.class";
-import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
-import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
+import { Step } from "../../../../actions/classes/step.class";
+import { GameContext } from "../../../../actions/classes/game-context.interface";
+import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
 import { clearStepMeta } from "../../../../stores/action/action.actions";
-import { IsLeftClick } from "../../../../action-steps/rules/is-left-click.rule";
+import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
 import { moveBall } from "../../../../stores/ball-position/ball-position.actions";
-import { IsPassTargetHexClicked } from "../../../../action-steps/rules/pass/is-pass-target-hex-clicked.rule";
+import { IsPassTargetHexClicked } from "../../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
 import { Hex } from "honeycomb-grid";
-import { SetStandardPassingPathStepMeta } from "../../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.step-meta";
+import { SetStandardPassingPathStepMeta } from "../../../../actions/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { ChallengeService } from "../../../challenge/challenge.service";
 
 @Injectable({
@@ -32,12 +32,12 @@ export class StandardPassBallStep extends Step {
         this.addRule(new IsPassTargetHexClicked()); 
     }
 
-    calculation(context: ActionContext): void {
+    calculation(context: GameContext): void {
         this.lastStepMeta = context.lastStepMeta as SetStandardPassingPathStepMeta
         this.challengeHexes = this.lastStepMeta.challengeHexes
     }
 
-    updateState(context: ActionContext): void {  
+    updateState(context: GameContext): void {  
         const ballWasStolen = Array.from(this.challengeHexes.entries()).some(([oppositionPlayerID]) => {
             if (this.challenge.dribbleTackleChallenge()) {
                 this.challenge.transferBallToOpponent(oppositionPlayerID);                         
@@ -48,7 +48,7 @@ export class StandardPassBallStep extends Step {
         });        
 
         if (!ballWasStolen) {
-            this.store.dispatch(moveBall(context.coordinates));          
+            this.store.dispatch(moveBall(context.hex));          
         }        
 
         this.store.dispatch(clearStepMeta());    

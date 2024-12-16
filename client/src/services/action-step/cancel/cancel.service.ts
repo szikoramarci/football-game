@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
-import { Step } from "../../../action-steps/classes/step.class";
-import { ActionContext } from "../../../action-steps/classes/action-context.interface";
-import { SetMovingPathStepMeta } from "../../../action-steps/metas/moving/set-moving-path.step-meta";
-import { IsTheNextStep } from "../../../action-steps/rules/is-the-next-step.rule";
+import { Step } from "../../../actions/classes/step.class";
+import { GameContext } from "../../../actions/classes/game-context.interface";
+import { SetMovingPathStepMeta } from "../../../actions/metas/moving/set-moving-path.step-meta";
+import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
-import { IsPickedPlayerClicked } from "../../../action-steps/rules/cancel/is-picked-player-clicked.rule";
+import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
 import { clearStepMeta } from "../../../stores/action/action.actions";
-import { IsRightClick } from "../../../action-steps/rules/is-right-click.rule";
-import { AtLeastOneRule } from "../../../action-steps/rules/at-least-one.rule";
-import { AllOfThemRule } from "../../../action-steps/rules/all-of-them.rule";
-import { IsLeftClick } from "../../../action-steps/rules/is-left-click.rule";
+import { IsRightClick } from "../../../actions/rules/is-right-click.rule";
+import { AtLeastOneRule } from "../../../actions/rules/at-least-one.rule";
+import { AllOfThemRule } from "../../../actions/rules/all-of-them.rule";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -29,9 +29,9 @@ export class CancelStep extends Step {
         ));   
     }
 
-    calculation(context: ActionContext): void {}
+    calculation(context: GameContext): void {}
 
-    updateState(context: ActionContext): void {
+    updateState(context: GameContext): void {
         this.store.dispatch(clearStepMeta());
     }    
 }

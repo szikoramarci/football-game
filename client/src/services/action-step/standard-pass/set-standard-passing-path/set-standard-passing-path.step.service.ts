@@ -1,21 +1,20 @@
 import { Injectable, Type } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { equals, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { filter, from, Observable, toArray, switchMap, take } from "rxjs";
 
-import { Step } from "../../../../action-steps/classes/step.class";
-import { InitPassingStepMeta } from "../../../../action-steps/metas/passing/init-passing.step-meta";
+import { Step } from "../../../../actions/classes/step.class";
+import { InitPassingStepMeta } from "../../../../actions/metas/passing/init-passing.step-meta";
 import { GridService } from "../../../grid/grid.service";
 import { GeometryService } from "../../../geometry/geometry.service";
 import { ChallengeService } from "../../../challenge/challenge.service";
 import { TraverserService } from "../../../traverser/traverser.service";
-import { IsMouseOver } from "../../../../action-steps/rules/is-mouse-over.rule";
-import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
-import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
+import { IsMouseOver } from "../../../../actions/rules/is-mouse-over.rule";
+import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
+import { GameContext } from "../../../../actions/classes/game-context.interface";
 import { HEXA_WIDTH, STANDARD_PASS_HEX_DISTANCE, STANDARD_PASS_PIXEL_DISTANCE } from "../../../../constants";
 import { InitHighPassingStep } from "../../high-pass/init-high-passing/init-high-passing.step.service";
 import { CancelStep } from "../../cancel/cancel.service";
-import { SetStandardPassingPathStepMeta } from "../../../../action-steps/metas/passing/standard-passing/set-standard-passing-path.step-meta";
+import { SetStandardPassingPathStepMeta } from "../../../../actions/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { saveStepMeta } from "../../../../stores/action/action.actions";
 import { PlayerWithPosition } from "../../../../interfaces/player-with-position.interface";
 import { PlayerService } from "../../../player/player.service";
@@ -57,7 +56,7 @@ export class SetStandardPassingPathStep extends Step {
         this.addSubscription(attackingPlayersWithPositionsSubscriptions)
     }
 
-    calculation(context: ActionContext): void {
+    calculation(context: GameContext): void {
         this.lastStepMeta = context.lastStepMeta as InitPassingStepMeta;
 
         if (this.isSelectedHexPassable(context)) {
@@ -70,15 +69,15 @@ export class SetStandardPassingPathStep extends Step {
         this.generateAvailableNextSteps()
     }
 
-    isSelectedHexPassable(context: ActionContext) {
-        const selectedPoint: OffsetCoordinates = context.coordinates;
+    isSelectedHexPassable(context: GameContext) {
+        const selectedPoint: OffsetCoordinates = context.hex;
         return this.lastStepMeta.availableTargets.getHex(selectedPoint) || false
     }
 
-    generatePassingPath(context: ActionContext) {  
-        const startCoordinate: OffsetCoordinates = this.lastStepMeta.playerCoordinates;       
+    generatePassingPath(context: GameContext) {  
+        const startCoordinate: OffsetCoordinates = this.lastStepMeta.playerHex;       
         const startHex = this.grid.getHex(startCoordinate)
-        const endHex = this.grid.getHex(context.coordinates)
+        const endHex = this.grid.getHex(context.hex)
 
         if (startHex && endHex) {        
             this.passingPath = [startHex, endHex]   
@@ -129,12 +128,12 @@ export class SetStandardPassingPathStep extends Step {
         ];
     }
 
-    updateState(context: ActionContext): void {
+    updateState(context: GameContext): void {
         const setPassingPathStepMeta: SetStandardPassingPathStepMeta = {... this.lastStepMeta,             
             availableNextSteps: this.availableNextSteps,
-            clickedCoordinates: context.coordinates, 
+            clickedHex: context.hex, 
             passingPath: this.passingPath,            
-            targetHex: context.coordinates,
+            targetHex: context.hex,
             challengeHexes: this.challengeHexes
         }          
         this.store.dispatch(saveStepMeta(setPassingPathStepMeta));        

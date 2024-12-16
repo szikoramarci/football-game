@@ -1,10 +1,8 @@
-import { OffsetCoordinates } from "honeycomb-grid";
-import { Point } from "pixi.js";
+import { Hex } from "honeycomb-grid";
 
 export interface MouseTriggerEvent {
     type: MouseTriggerEventType,
-    coordinates: OffsetCoordinates,
-    position: Point
+    hex: Hex
 }
 
 export enum MouseTriggerEventType {

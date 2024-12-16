@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
-import { Step } from "../../../../action-steps/classes/step.class";
-import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
-import { SetMovingPathStepMeta } from "../../../../action-steps/metas/moving/set-moving-path.step-meta";
-import { IsTheNextStep } from "../../../../action-steps/rules/is-the-next-step.rule";
-import { IsMoveTargetHexClicked } from "../../../../action-steps/rules/move/is-move-target-hex-clicked.rule";
+import { Step } from "../../../../actions/classes/step.class";
+import { GameContext } from "../../../../actions/classes/game-context.interface";
+import { SetMovingPathStepMeta } from "../../../../actions/metas/moving/set-moving-path.step-meta";
+import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
+import { IsMoveTargetHexClicked } from "../../../../actions/rules/move/is-move-target-hex-clicked.rule";
 import { Store } from "@ngrx/store";
 import { clearStepMeta } from "../../../../stores/action/action.actions";
 import { movePlayer } from "../../../../stores/player-position/player-position.actions";
 import { equals, Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
-import { IsLeftClick } from "../../../../action-steps/rules/is-left-click.rule";
+import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
 import { concatMap, delay, from, of, takeWhile } from "rxjs";
-import { IsTargetHexNotThePlayerHex } from "../../../../action-steps/rules/move/is-target-hex-not-the-player-hex.rule";
+import { IsTargetHexNotThePlayerHex } from "../../../../actions/rules/move/is-target-hex-not-the-player-hex.rule";
 import { moveBall } from "../../../../stores/ball-position/ball-position.actions";
 import { ChallengeService } from "../../../challenge/challenge.service";
 
@@ -40,7 +40,7 @@ export class MovePlayerStep extends Step {
         this.addRule(new IsTargetHexNotThePlayerHex());    
     }
 
-    calculation(context: ActionContext): void {
+    calculation(context: GameContext): void {
         this.lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
         this.movingPath = this.lastStepMeta.movingPath;
         this.challengeHexes = this.lastStepMeta.challengeHexes

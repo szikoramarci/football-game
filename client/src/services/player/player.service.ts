@@ -8,8 +8,6 @@ import { IsBallInPosition } from "../../stores/ball-position/ball-position.selec
 import { Injectable } from "@angular/core";
 import { getGameplay } from "../../stores/gameplay/gameplay.selector";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
-import { ActionContext } from "../../action-steps/classes/action-context.interface";
-import { MouseTriggerEventType } from "../mouse-event/mouse-event.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -63,12 +61,6 @@ export class PlayerService {
                     position: playerPositions[player.id] 
                 }));
             }))                    
-    }
-
-    isSelectableForAction(actionContext: ActionContext) {
-        if (actionContext.mouseEventType !== MouseTriggerEventType.LEFT_CLICK) return false
-        
-        return actionContext.player?.team == actionContext.activeTeam || false
     }
 
 }

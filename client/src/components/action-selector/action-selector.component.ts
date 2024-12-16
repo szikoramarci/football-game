@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Type } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { getAvailableActions, getCurrentAction } from "../../stores/action/action.selector";
-import { Action } from "../../actions/action.interface";
 import { filter } from "rxjs";
 import { clearStepMeta, setCurrentAction } from "../../stores/action/action.actions";
+import { Action } from "../../actions/classes/action.class";
 @Component({
     selector: 'action-selector',
     standalone: true,
@@ -12,8 +12,8 @@ import { clearStepMeta, setCurrentAction } from "../../stores/action/action.acti
 })
 export class ActionSelectorComponent implements OnInit {
 
-    availableActions: Action[] = []
-    currentAction!: Action
+    availableActions: Type<Action>[] = []
+    currentAction!: Type<Action>
 
     constructor(private store: Store) {}
  
@@ -30,7 +30,7 @@ export class ActionSelectorComponent implements OnInit {
         })
     }
 
-    changeCurrentAction(action: Action) {
+    changeCurrentAction(action: Type<Action>) {
         if (action.name === this.currentAction.name) return
 
         this.store.dispatch(clearStepMeta())

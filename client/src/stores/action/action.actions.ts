@@ -1,7 +1,8 @@
 import { createAction, props } from "@ngrx/store";
-import { StepMeta } from "../../action-steps/classes/step-meta.interface";
-import { Action } from "../../actions/action.interface";
-import { ActionContext } from "../../action-steps/classes/action-context.interface";
+import { StepMeta } from "../../actions/classes/step-meta.interface";
+import { GameContext } from "../../actions/classes/game-context.interface";
+import { Action } from "../../actions/classes/action.class";
+import { Type } from "@angular/core";
 
 export const saveStepMeta = createAction(
     '[Step] Save Step Meta',
@@ -12,19 +13,19 @@ export const clearStepMeta = createAction('[Step] Clear Step Meta');
 
 export const setAvailableActions = createAction(
     '[Action] Set Available Actions',
-    props<{ actions: Action[] }>()
+    props<{ actions: Type<Action>[] }>()
 );
 
 export const setCurrentAction = createAction(
     '[Action] Set Current Action',
-    props<{ action: Action }>()
+    props<{ action: Type<Action> }>()
 );
 
 export const clearCurentAction = createAction('[Action] Clear Current Action');
 
 export const setActionContext = createAction(
     '[Action] Set Action Context',
-    props<{ actionContext: ActionContext }>()
+    props<{ actionContext: GameContext }>()
 );
 
 export const setCurrentStepIndex = createAction(

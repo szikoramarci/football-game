@@ -1,17 +1,17 @@
 import { Injectable, Type } from "@angular/core";
-import { ActionContext } from "../../../../action-steps/classes/action-context.interface";
-import { Step } from "../../../../action-steps/classes/step.class";
-import { IsOwnPlayer } from "../../../../action-steps/rules/move/is-own-player.rule";
+import { GameContext } from "../../../../actions/classes/game-context.interface";
+import { Step } from "../../../../actions/classes/step.class";
+import { IsOwnPlayer } from "../../../../actions/rules/move/is-own-player.rule";
 import { Store } from "@ngrx/store";
-import { AreAvailableNextStepsEmpty } from "../../../../action-steps/rules/is-available-next-actions-empty.rule";
-import { IsPlayerSelected } from "../../../../action-steps/rules/move/is-player-selected.rule";
+import { AreAvailableNextStepsEmpty } from "../../../../actions/rules/is-available-next-actions-empty.rule";
+import { IsPlayerSelected } from "../../../../actions/rules/move/is-player-selected.rule";
 import { saveStepMeta } from "../../../../stores/action/action.actions";
 import { GridService } from "../../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { IsLeftClick } from "../../../../action-steps/rules/is-left-click.rule";
+import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
 import { take } from "rxjs";
 import { getPlayerPositions } from "../../../../stores/player-position/player-position.selector";
-import { InitMovingStepMeta } from "../../../../action-steps/metas/moving/init-moving.step-meta";
+import { InitMovingStepMeta } from "../../../../actions/metas/moving/init-moving.step-meta";
 import { CancelStep } from "../../cancel/cancel.service";
 import { TraverserService } from "../../../traverser/traverser.service";
 import { SetMovingPathStep } from "../set-moving-path/set-moving-path.step.service";
@@ -29,8 +29,7 @@ export class InitMovingStep extends Step {
       private grid: GridService,
       private traverser: TraverserService
     ) {
-      super()
-      this.initRuleSet()      
+      super()     
     }
 
     initRuleSet() {      
@@ -40,13 +39,13 @@ export class InitMovingStep extends Step {
       this.addRule(new IsOwnPlayer());
     }
   
-    calculation(context: ActionContext): void {      
+    calculation(context: GameContext): void {      
       this.generateReachableHexes(context);      
       this.generateAvailableNextSteps(context);      
     }
 
-    generateReachableHexes(context: ActionContext) {
-      const centralPoint = context.coordinates;
+    generateReachableHexes(context: GameContext) {
+      const centralPoint = context.hex;
       const distance = context.player?.speed || 0;      
       this.store.select(getPlayerPositions).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
@@ -56,7 +55,7 @@ export class InitMovingStep extends Step {
         })
     }
 
-    generateAvailableNextSteps(context: ActionContext) {
+    generateAvailableNextSteps(context: GameContext) {
       this.availableNextSteps = [SetMovingPathStep, CancelStep];
      
       if (context.playerHasBall){
@@ -64,10 +63,10 @@ export class InitMovingStep extends Step {
       }
     }
   
-    updateState(context: ActionContext): void {
+    updateState(context: GameContext): void {
       const initMovingStepMeta: InitMovingStepMeta = {
-        clickedCoordinates: context.coordinates,
-        playerCoordinates: context.coordinates,        
+        clickedHex: context.hex,
+        playerHex: context.hex,        
         playerID: context.player?.id,
         playerHasBall: context.playerHasBall,
         reachableHexes: this.reachableHexes,

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
 import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throttleTime } from "rxjs";
 import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
-import { equals, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex } from "honeycomb-grid";
 import { Point } from "pixi.js";
 
 @Injectable({
@@ -31,20 +31,18 @@ export class MouseEventService {
         .subscribe((event) => {
             const eventType: MouseTriggerEventType = event.type as MouseTriggerEventType;
             const position: Point = new Point(event.clientX, event.clientY)
-            const hexCoordinates = this.getHexCoordinatesFromEvent(position);
-            if (hexCoordinates) {
+            const hex = this.getHexFromEvent(position);
+            if (hex) {
                 this.mouseEvents.next({
                     type: eventType,
-                    coordinates: hexCoordinates,
-                    position: position
+                    hex: hex
                 });
             }            
         })
     }  
     
-    getHexCoordinatesFromEvent(point: Point): OffsetCoordinates | undefined {                      
-        const hex = this.grid.findHexByPoint(point) ;
-        return hex ? { col: hex.col, row: hex.row } : undefined; 
+    getHexFromEvent(point: Point): Hex | undefined {                      
+        return this.grid.findHexByPoint(point)
     }
 
     getMouseEvents(): Observable<MouseTriggerEvent> {
@@ -59,7 +57,7 @@ export class MouseEventService {
     }
 
     isTheSameEvent(a: MouseTriggerEvent, b: MouseTriggerEvent) {
-        return a.type == b.type && equals(a.coordinates, b.coordinates);
+        return a.type == b.type && equals(a.hex, b.hex);
     }
     
 
