@@ -1,3 +1,4 @@
+import { Injectable } from "@angular/core";
 import { InitStandardPassingStep } from "../services/action-step/standard-pass/init-standard-passing/init-standard-passing.step.service";
 import { SetStandardPassingPathStep } from "../services/action-step/standard-pass/set-standard-passing-path/set-standard-passing-path.step.service";
 import { StandardPassBallStep } from "../services/action-step/standard-pass/standard-pass-ball/standard-pass-ball.step.service";
@@ -6,6 +7,9 @@ import { IsLeftClick } from "./rules/is-left-click.rule";
 import { IsOwnPlayer } from "./rules/move/is-own-player.rule";
 import { HasThePlayerTheBall } from "./rules/pass/has-the-player-the-ball.rule";
 
+@Injectable({
+    providedIn: 'root',
+})
 export class StandardPassAction extends Action {
 
     constructor() {

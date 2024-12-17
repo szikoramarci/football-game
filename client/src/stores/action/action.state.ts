@@ -11,7 +11,8 @@ export interface ActionState {
   currentAction: Type<Action> | undefined,
   currentStepIndex: number,
   actionContext: GameContext | undefined,
-  availableActions: Type<Action>[]
+  availableActions: Type<Action>[],
+  selectableActions: Type<Action>[]
 }
 
 export const initialState: ActionState = {
@@ -19,5 +20,6 @@ export const initialState: ActionState = {
   currentAction: undefined,
   currentStepIndex: 0,
   actionContext: undefined,
-  availableActions: [MovingAction, StandardPassAction, HighPassAction]
+  availableActions: [MovingAction, StandardPassAction, HighPassAction],
+  selectableActions: []
 };

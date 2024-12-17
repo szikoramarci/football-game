@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialState } from "./action.state";
-import { clearStepMeta, saveStepMeta, setActionContext, setAvailableActions, setCurrentAction, setCurrentStepIndex } from "./action.actions";
+import { clearStepMeta, saveStepMeta, setActionContext, setAvailableActions, setCurrentAction, setCurrentStepIndex, setSelectableActions } from "./action.actions";
 
 export const actionReducer = createReducer(
     initialState,
@@ -20,6 +20,10 @@ export const actionReducer = createReducer(
     on(setAvailableActions, (state, props) => ({
       ...state,
       availableActions: props.actions
+    })),
+    on(setSelectableActions, (state, props) => ({
+      ...state,
+      selectableActions: props.actions
     })),
     on(setActionContext, (state, props) => ({
       ...state,

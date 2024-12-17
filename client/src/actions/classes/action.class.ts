@@ -14,4 +14,8 @@ export abstract class Action extends RuleEvaluator {
     addStep(step: Type<Step>) {
         this.steps.push(step)
     }
+
+    getSteps(): Type<Step>[] {
+        return this.steps
+    }
 }

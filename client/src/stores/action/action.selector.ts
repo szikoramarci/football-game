@@ -9,6 +9,9 @@ export const getLastStepMeta = () =>
 export const getAvailableActions = () => 
     createSelector(getActionState, (state) => state.availableActions)
 
+export const getSelectableActions = () => 
+    createSelector(getActionState, (state) => state.selectableActions)
+
 export const getCurrentAction = () => 
     createSelector(getActionState, (state) => state.currentAction)
 

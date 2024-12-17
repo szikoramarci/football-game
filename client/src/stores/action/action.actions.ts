@@ -16,6 +16,11 @@ export const setAvailableActions = createAction(
     props<{ actions: Type<Action>[] }>()
 );
 
+export const setSelectableActions = createAction(
+    '[Action] Set Selectable Actions',
+    props<{ actions: Type<Action>[] }>()
+);
+
 export const setCurrentAction = createAction(
     '[Action] Set Current Action',
     props<{ action: Type<Action> }>()
