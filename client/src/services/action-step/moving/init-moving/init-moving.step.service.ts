@@ -1,14 +1,11 @@
 import { Injectable, Type } from "@angular/core";
 import { GameContext } from "../../../../actions/classes/game-context.interface";
 import { Step } from "../../../../actions/classes/step.class";
-import { IsOwnPlayer } from "../../../../actions/rules/move/is-own-player.rule";
 import { Store } from "@ngrx/store";
 import { AreAvailableNextStepsEmpty } from "../../../../actions/rules/is-available-next-actions-empty.rule";
-import { IsPlayerSelected } from "../../../../actions/rules/move/is-player-selected.rule";
 import { saveStepMeta } from "../../../../stores/action/action.actions";
 import { GridService } from "../../../grid/grid.service";
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
 import { take } from "rxjs";
 import { getPlayerPositions } from "../../../../stores/player-position/player-position.selector";
 import { InitMovingStepMeta } from "../../../../actions/metas/moving/init-moving.step-meta";
@@ -33,10 +30,7 @@ export class InitMovingStep extends Step {
     }
 
     initRuleSet() {      
-      this.addRule(new IsLeftClick());
       this.addRule(new AreAvailableNextStepsEmpty());
-      this.addRule(new IsPlayerSelected());
-      this.addRule(new IsOwnPlayer());
     }
   
     calculation(context: GameContext): void {      

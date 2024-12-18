@@ -15,8 +15,5 @@ export const getSelectableActions = () =>
 export const getCurrentAction = () => 
     createSelector(getActionState, (state) => state.currentAction)
 
-export const getCurrentStepIndex = () => 
-    createSelector(getActionState, (state) => state.currentStepIndex)
-
-export const getActionContext = () => 
+export const getGameContext = () => 
     createSelector(getActionState, (state) => state.actionContext)

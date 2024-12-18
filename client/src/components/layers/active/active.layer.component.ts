@@ -4,11 +4,11 @@ import { ActionSelectorComponent } from "../../action-selector/action-selector.c
 import { BaseContext } from "../../../actions/classes/base-context.interface";
 import { GameContextService } from "../../../services/game-context/game-context.service";
 import { Store } from "@ngrx/store";
-import { clearStepMeta, setCurrentAction, setSelectableActions } from "../../../stores/action/action.actions";
-import { getCurrentAction } from "../../../stores/action/action.selector";
+import { clearCurrentAction, clearActionContext, clearStepMeta, setCurrentAction, setActionContext, setSelectableActions } from "../../../stores/action/action.actions";
+import { getCurrentAction, getGameContext } from "../../../stores/action/action.selector";
 import { Action } from "../../../actions/classes/action.class";
-import { filter } from "rxjs";
 import { GameContext } from "../../../actions/classes/game-context.interface";
+import { MouseTriggerEventType } from "../../../services/mouse-event/mouse-event.interface";
 
 @Component({
     selector: 'active-layer',
@@ -18,7 +18,8 @@ import { GameContext } from "../../../actions/classes/game-context.interface";
 })
 export class ActiveLayerComponent implements OnInit {
 
-    currentAction!: Type<Action>
+    currentAction: Type<Action> | undefined = undefined
+    currentGameContext: GameContext | undefined = undefined
 
     constructor(
         private mouseEvent: MouseEventService,
@@ -30,28 +31,59 @@ export class ActiveLayerComponent implements OnInit {
     ngOnInit(): void {
         this.initMouseEventSubscriptions();
 
+        this.store.select(getGameContext())
+        .subscribe(gameContext => {  
+            this.currentGameContext = gameContext                         
+        })
+
         this.store.select(getCurrentAction())
-        .pipe(filter(action => !!action))
         .subscribe(currentAction => {  
-            this.currentAction = currentAction
+            this.currentAction = currentAction             
+            this.handleCurrentAction(this.currentGameContext!)        
         })
     }
 
     initMouseEventSubscriptions() {
         this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {     
-            const baseContext: BaseContext = {
-                mouseEventType: mouseEvent.type,
-                hex: mouseEvent.hex,
-            }
-            this.gameContext.generateGameContext(baseContext).subscribe(gameContext => {  
-                this.generateSelectableActions(gameContext) 
-                this.handleCurrentAction(gameContext)
-            })               
+            if (mouseEvent.type === MouseTriggerEventType.RIGHT_CLICK) {
+                this.store.dispatch(clearStepMeta())     
+                this.store.dispatch(setSelectableActions({ actions: [] }))                                           
+                this.store.dispatch(clearActionContext())      
+                this.store.dispatch(clearCurrentAction())  
+                return 
+            } else {
+                const baseContext: BaseContext = {
+                    mouseEventType: mouseEvent.type,
+                    hex: mouseEvent.hex,
+                }
+                this.gameContext.generateGameContext(baseContext).subscribe(gameContext => {  
+                    const selectableActions = gameContext.availableActions.filter(availableAction => {
+                        const action = new availableAction()                    
+                        return action.identify(gameContext)
+                    })
+
+                    if (selectableActions.length) {
+                        const firstSelectableAction: Type<Action> = selectableActions[0]
+                        this.currentAction = firstSelectableAction  
+                        gameContext.lastStepMeta = undefined
+                        this.store.dispatch(clearStepMeta())     
+                        this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
+                        this.store.dispatch(setActionContext({ actionContext: gameContext }))        
+                        this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
+                        console.log('RESTART')  
+                    } else {                                                                                                                
+                        this.handleCurrentAction(gameContext)   
+                    }                                
+                })
+
+                
+            }                         
         });
     } 
     
     handleCurrentAction(gameContext: GameContext) {
         if (this.currentAction) {
+            console.log('HANDLE ACTION')
             const action = this.injector.get(this.currentAction)
 
             const activeStep = action.getSteps()
@@ -63,20 +95,6 @@ export class ActiveLayerComponent implements OnInit {
                 activeStep.updateState(gameContext) 
             }            
         }    
-    }
-       
-    generateSelectableActions(gameContext: GameContext) {
-        const selectableActions = gameContext.availableActions.filter(availableAction => {
-            const action = new availableAction()                    
-            return action.identify(gameContext)
-        })                
-        if (selectableActions.length) {
-            this.store.dispatch(setSelectableActions({ actions: selectableActions }))
-            this.store.dispatch(clearStepMeta())
-            const firstSelectableAction: Type<Action> = selectableActions[0]
-            this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
-            this.currentAction = firstSelectableAction
-        }
     }
 
 }

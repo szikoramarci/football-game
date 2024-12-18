@@ -68,13 +68,12 @@ export class InitHighPassingStep extends Step {
       this.removeSurrundingHexesFromBaseArea(context)
       this.removeUnsightTargets(context)
       this.getTeamMatesInBaseArea()
-      this.generateAvailableNextSteps(context);  
     }  
     
     removeUnsightTargets(context: GameContext) {
       const startHex: Hex | undefined  = context.hex
 
-      const neighborHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedHex, radius: 1 }))
+      const neighborHexes = this.availableTargets.traverse(spiral({ start: context.hex, radius: 1 }))
       const neighborOppositionPositions = this.getFilteredPlayerPositions(this.defensiveTeamPlayersWithPositions, neighborHexes)        
       const oppositonPlayerPositions = this.grid.createGrid().setHexes(neighborOppositionPositions)
 
@@ -83,14 +82,14 @@ export class InitHighPassingStep extends Step {
 
     generateBaseAreaOfDistance(context: GameContext) {
       this.availableTargets = this.traverser.getAreaByDistance(
-        context.lastStepMeta?.clickedHex!, 
+        context.hex!, 
         HIGH_PASS_HEX_DISTANCE,
         HIGH_PASS_PIXEL_DISTANCE
       )
     }
 
     removeSurrundingHexesFromBaseArea(context: GameContext){
-        const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.lastStepMeta?.clickedHex!, radius: 3 }))
+        const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.hex, radius: 3 }))
         this.availableTargets = this.availableTargets.filter(availableTarget => !surroundingHexes.getHex(availableTarget))
     }
 
@@ -119,10 +118,6 @@ export class InitHighPassingStep extends Step {
       })
 
       this.availableTargets = this.grid.createGrid().setHexes(filteredTargetHexes)            
-    }
-
-    generateAvailableNextSteps(context: GameContext) {
-      this.availableNextSteps = [SetHighPassingPathStep, CancelStep];
     }
   
     updateState(context: GameContext): void {

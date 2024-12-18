@@ -26,12 +26,14 @@ export const setCurrentAction = createAction(
     props<{ action: Type<Action> }>()
 );
 
-export const clearCurentAction = createAction('[Action] Clear Current Action');
+export const clearCurrentAction = createAction('[Action] Clear Current Action');
 
 export const setActionContext = createAction(
     '[Action] Set Action Context',
     props<{ actionContext: GameContext }>()
 );
+
+export const clearActionContext = createAction('[Action] Clear Action Context')
 
 export const setCurrentStepIndex = createAction(
     '[Action] Set Current Step Index',

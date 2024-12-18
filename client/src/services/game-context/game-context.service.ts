@@ -17,6 +17,7 @@ export class GameContextService implements OnDestroy {
 
     lastStepMeta!: StepMeta | undefined
     availableActions!: Type<Action>[]
+    currentAction!: Type<Action>
 
     lastStepMetaSubscription!: Subscription
     availableActionsSubscription!: Subscription

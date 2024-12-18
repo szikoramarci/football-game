@@ -9,7 +9,6 @@ import { HighPassAction } from "../../actions/high-pass.action";
 export interface ActionState {
   lastStepMeta: StepMeta | undefined,
   currentAction: Type<Action> | undefined,
-  currentStepIndex: number,
   actionContext: GameContext | undefined,
   availableActions: Type<Action>[],
   selectableActions: Type<Action>[]
@@ -18,7 +17,6 @@ export interface ActionState {
 export const initialState: ActionState = {
   lastStepMeta: undefined,
   currentAction: undefined,
-  currentStepIndex: 0,
   actionContext: undefined,
   availableActions: [MovingAction, StandardPassAction, HighPassAction],
   selectableActions: []

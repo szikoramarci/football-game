@@ -3,7 +3,7 @@ import { Step } from "../../../../actions/classes/step.class";
 import { GameContext } from "../../../../actions/classes/game-context.interface";
 import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
-import { clearStepMeta } from "../../../../stores/action/action.actions";
+import { clearCurrentAction, clearActionContext, clearStepMeta, setSelectableActions } from "../../../../stores/action/action.actions";
 import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
 import { moveBall } from "../../../../stores/ball-position/ball-position.actions";
 import { IsPassTargetHexClicked } from "../../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
@@ -51,6 +51,9 @@ export class StandardPassBallStep extends Step {
             this.store.dispatch(moveBall(context.hex));          
         }        
 
-        this.store.dispatch(clearStepMeta());    
+        this.store.dispatch(setSelectableActions({ actions: [] }))
+        this.store.dispatch(clearStepMeta())                                
+        this.store.dispatch(clearCurrentAction())      
+        this.store.dispatch(clearActionContext())
     }    
 }

@@ -43,12 +43,7 @@ export class InitStandardPassingStep extends Step {
     }
   
     initRuleSet(): void {
-      this.addRule(new IsLeftClick());
       this.addRule(new AreAvailableNextStepsEmpty());  
-      this.addRule(new IsPickedPlayerClicked());
-      this.addRule(new IsPlayerSelected());
-      this.addRule(new HasThePlayerTheBall());
-      this.addRule(new IsOwnPlayer());
     }
 
     initSubscriptions() {
@@ -64,9 +59,9 @@ export class InitStandardPassingStep extends Step {
         this.generateAvailableNextSteps(context);
     }
 
-    generateBaseAreaOfDistance(context: GameContext) {
+    generateBaseAreaOfDistance(context: GameContext) {      
       this.availableTargets = this.traverser.getAreaByDistance(
-        context.lastStepMeta?.clickedHex!, 
+        context.hex, 
         STANDARD_PASS_HEX_DISTANCE,
         STANDARD_PASS_PIXEL_DISTANCE
       )

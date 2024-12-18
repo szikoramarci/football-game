@@ -33,7 +33,7 @@ export class ActionSelectorComponent implements OnInit {
         if (action.name === this.currentAction?.name) return
 
         this.store.dispatch(clearStepMeta())
-        this.store.dispatch(setCurrentAction({ action: action }))
+        this.store.dispatch(setCurrentAction({ action }))
     }
 
 }
