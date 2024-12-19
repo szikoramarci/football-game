@@ -1,7 +1,11 @@
 import { createAction, props } from "@ngrx/store";
-import { RelocationScenario } from "../../relocation/relocation-scenario.interface";
+import { RelocationTurn } from "../../relocation/relocation-turn.interface";
 
-export const setScenario = createAction(
+export const initScenario = createAction(
     '[Relocation] Set Scenario',
-    props<{ scenario: RelocationScenario }>()
+    props<{ turns: RelocationTurn[] }>()
+);
+
+export const unshiftScenarioTurn = createAction(
+    '[Relocation] Unshift Scenario Turn'
 );

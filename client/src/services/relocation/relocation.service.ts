@@ -1,58 +1,48 @@
 import { Injectable } from "@angular/core";
-import { RelocationScenario } from "../../relocation/relocation-scenario.interface";
 import { Player } from "../../models/player.model";
 import { Store } from "@ngrx/store";
-import { setScenario } from "../../stores/relocation/relocation.actions";
+import { initScenario, unshiftScenarioTurn } from "../../stores/relocation/relocation.actions";
+import { RelocationTurn } from "../../relocation/relocation-turn.interface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class RelocationService {
 
+    movementPhase: RelocationTurn[] = [
+        {
+            team: 'barca',
+            movementType: 'steps',
+            movementLimit: 'ownSpeed',
+        },
+        {
+            team: 'barca',
+            movementType: 'steps',
+            movementLimit: 'ownSpeed',
+        },
+        {
+            team: 'real',
+            movementType: 'steps',
+            movementLimit: 'ownSpeed',
+        },
+        {
+            team: 'real',
+            movementType: 'steps',
+            movementLimit: 'ownSpeed',
+        },
+        {
+            team: 'barca',
+            movementType: 'steps',
+            movementLimit: 2,
+        }
+    ]
+
     constructor(
         private store: Store
     ) {}
 
-    startScenario() {
-        const movementPhase: RelocationScenario = {
-            name: 'movementPhase',
-            turns: [
-                {
-                    team: 'barca',
-                    movementType: 'steps',
-                    movementLimit: 'ownSpeed',
-                },
-                {
-                    team: 'barca',
-                    movementType: 'steps',
-                    movementLimit: 'ownSpeed',
-                },
-                {
-                    team: 'real',
-                    movementType: 'steps',
-                    movementLimit: 'ownSpeed',
-                },
-                {
-                    team: 'real',
-                    movementType: 'steps',
-                    movementLimit: 'ownSpeed',
-                },
-                {
-                    team: 'barca',
-                    movementType: 'steps',
-                    movementLimit: 2,
-                }
-            ]
-        }
 
-        this.store.dispatch(setScenario({ scenario: movementPhase }))
-    }
-
-    resetScenario() {
-
-    }
-
-    isScenarioActive() {
-
-    }
+    generateMovementPhase() {
+        return this.movementPhase
+    }    
 }

@@ -1,13 +1,11 @@
-import { RelocationScenario } from "../../relocation/relocation-scenario.interface";
+import { RelocationTurn } from "../../relocation/relocation-turn.interface";
 
 export interface RelocationState {
-  currentRelocationScenario: RelocationScenario | undefined,
-  currentStepIndex: number,
+  relocationTurns: RelocationTurn[]
   usedPlayers: Set<string>
 }
 
 export const initialState: RelocationState = {
-  currentRelocationScenario: undefined,
-  currentStepIndex: 0,
+  relocationTurns: [],
   usedPlayers: new Set()
 };
