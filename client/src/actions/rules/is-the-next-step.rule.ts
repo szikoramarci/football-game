@@ -11,7 +11,7 @@ export class IsTheNextStep implements Rule {
     }
 
     validate(context: GameContext): boolean {
-        return context.lastStepMeta?.availableNextSteps.includes(this.actionStepToCheck) || false;
+        return context.actionMeta?.availableNextSteps.includes(this.actionStepToCheck) || false;
     }
     errorMessage = "action to check is not in the next available action list";
 }

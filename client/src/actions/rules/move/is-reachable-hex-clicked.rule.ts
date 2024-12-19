@@ -1,11 +1,12 @@
-import { StepContext } from "../../../actions/classes/step-context.class";
+
+import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
-import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
+import { MovingActionMeta } from "../../metas/moving.action-meta";
 
 export class IsReachableHexClicked implements Rule {
-    validate(context: StepContext): boolean {
-        const lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
-        return !!lastStepMeta.reachableHexes.getHex(context.coordinates) || false;
+    validate(context: GameContext): boolean {
+        const actionMeta = context.actionMeta as MovingActionMeta;
+        return !!actionMeta.reachableHexes.getHex(context.hex) || false;
     }
     errorMessage = "not a reachable hex";
 }

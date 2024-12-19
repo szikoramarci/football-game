@@ -2,7 +2,7 @@ import { Component, OnInit, Type } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { getCurrentAction, getSelectableActions } from "../../stores/action/action.selector";
 import { filter, Observable } from "rxjs";
-import { clearStepMeta, setCurrentAction } from "../../stores/action/action.actions";
+import { clearActionMeta, setCurrentAction } from "../../stores/action/action.actions";
 import { Action } from "../../actions/classes/action.class";
 import { AsyncPipe } from "@angular/common";
 @Component({
@@ -32,7 +32,7 @@ export class ActionSelectorComponent implements OnInit {
     changeCurrentAction(action: Type<Action>) {
         if (action.name === this.currentAction?.name) return
 
-        this.store.dispatch(clearStepMeta())
+        this.store.dispatch(clearActionMeta())
         this.store.dispatch(setCurrentAction({ action }))
     }
 

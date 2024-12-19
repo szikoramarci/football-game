@@ -1,24 +1,21 @@
 import { Injectable, Type } from "@angular/core";
-import { GameContext } from "../../../../actions/classes/game-context.interface";
-import { Step } from "../../../../actions/classes/step.class";
-import { IsOwnPlayer } from "../../../../actions/rules/move/is-own-player.rule";
-import { IsPlayerSelected } from "../../../../actions/rules/move/is-player-selected.rule";
+import { Step } from "../../../actions/classes/step.class";
+import { IsOwnPlayer } from "../../../actions/rules/move/is-own-player.rule";
+import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
 import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
-import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
-import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
-import { IsPickedPlayerClicked } from "../../../../actions/rules/cancel/is-picked-player-clicked.rule";
-import { saveStepMeta } from "../../../../stores/action/action.actions";
-import { HasThePlayerTheBall } from "../../../../actions/rules/pass/has-the-player-the-ball.rule";
-import { TraverserService } from "../../../traverser/traverser.service";
-import { CancelStep } from "../../cancel/cancel.service";
-import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../../constants";
-import { GridService } from "../../../grid/grid.service";
-import { SectorService } from "../../../sector/sector.service";
-import { SetHighPassingPathStep } from "../set-high-passing-path/set-high-passing-path.step.service";
-import { PlayerWithPosition } from "../../../../interfaces/player-with-position.interface";
-import { InitHighPassingStepMeta } from "../../../../actions/metas/passing/high-passing/init-high-passing.step-meta";
-import { PlayerService } from "../../../player/player.service";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
+import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
+import { saveActionMeta } from "../../../stores/action/action.actions";
+import { HasThePlayerTheBall } from "../../../actions/rules/pass/has-the-player-the-ball.rule";
+import { TraverserService } from "../../traverser/traverser.service";
+import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../constants";
+import { GridService } from "../../grid/grid.service";
+import { SectorService } from "../../sector/sector.service";
+import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
+import { PlayerService } from "../../player/player.service";
 import { Store } from "@ngrx/store";
+import { HighPassActionMeta } from "../../../actions/metas/high-pass.action-meta";
 
 @Injectable({
   providedIn: 'root',
@@ -63,33 +60,33 @@ export class InitHighPassingStep extends Step {
       this.addSubscription(defensiveTeamPlayersWithPositionsSubscriptions)
     }
 
-    calculation(context: GameContext): void {  
-      this.generateBaseAreaOfDistance(context)
-      this.removeSurrundingHexesFromBaseArea(context)
-      this.removeUnsightTargets(context)
+    calculation(): void {  
+      this.generateBaseAreaOfDistance()
+      this.removeSurrundingHexesFromBaseArea()
+      this.removeUnsightTargets()
       this.getTeamMatesInBaseArea()
     }  
     
-    removeUnsightTargets(context: GameContext) {
-      const startHex: Hex | undefined  = context.hex
+    removeUnsightTargets() {
+      const startHex: Hex | undefined  = this.context.hex
 
-      const neighborHexes = this.availableTargets.traverse(spiral({ start: context.hex, radius: 1 }))
+      const neighborHexes = this.availableTargets.traverse(spiral({ start: this.context.hex, radius: 1 }))
       const neighborOppositionPositions = this.getFilteredPlayerPositions(this.defensiveTeamPlayersWithPositions, neighborHexes)        
       const oppositonPlayerPositions = this.grid.createGrid().setHexes(neighborOppositionPositions)
 
       this.availableTargets = this.sector.removeUnsightTargets(startHex!, this.availableTargets, oppositonPlayerPositions)    
     }
 
-    generateBaseAreaOfDistance(context: GameContext) {
+    generateBaseAreaOfDistance() {
       this.availableTargets = this.traverser.getAreaByDistance(
-        context.hex!, 
+        this.context.hex!, 
         HIGH_PASS_HEX_DISTANCE,
         HIGH_PASS_PIXEL_DISTANCE
       )
     }
 
-    removeSurrundingHexesFromBaseArea(context: GameContext){
-        const surroundingHexes = this.availableTargets.traverse(spiral({ start: context.hex, radius: 3 }))
+    removeSurrundingHexesFromBaseArea(){
+        const surroundingHexes = this.availableTargets.traverse(spiral({ start: this.context.hex, radius: 3 }))
         this.availableTargets = this.availableTargets.filter(availableTarget => !surroundingHexes.getHex(availableTarget))
     }
 
@@ -120,14 +117,14 @@ export class InitHighPassingStep extends Step {
       this.availableTargets = this.grid.createGrid().setHexes(filteredTargetHexes)            
     }
   
-    updateState(context: GameContext): void {
-      const initPassingStepMeta: InitHighPassingStepMeta = {     
-        clickedHex: context.hex,
-        playerHex: context.hex,
+    updateState(): void {
+      const initPassingStepMeta: HighPassActionMeta = {     
+        clickedHex: this.context.hex,
+        playerHex: this.context.hex,
         availableNextSteps: this.availableNextSteps,
         availableTargets: this.availableTargets,
         possibleHeadingPlayers: this.possibleHeadingPlayers
       }
-      this.store.dispatch(saveStepMeta(initPassingStepMeta));
+      this.store.dispatch(saveActionMeta(initPassingStepMeta));
     }
   }

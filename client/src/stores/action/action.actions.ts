@@ -4,12 +4,12 @@ import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
 import { Type } from "@angular/core";
 
-export const saveStepMeta = createAction(
-    '[Step] Save Step Meta',
+export const saveActionMeta = createAction(
+    '[Action] Save Action Meta',
     props<ActionMeta>()
 );
 
-export const clearStepMeta = createAction('[Step] Clear Step Meta');
+export const clearActionMeta = createAction('[Step] Clear Action Meta');
 
 export const setAvailableActions = createAction(
     '[Action] Set Available Actions',

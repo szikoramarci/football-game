@@ -4,11 +4,10 @@ import { Grid, Hex } from "honeycomb-grid";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
-import { getLastStepMeta } from "../../../stores/action/action.selector";
-import { SetMovingPathStepMeta } from "../../../actions/metas/moving/set-moving-path.step-meta";
+import { getCurrentActionMeta } from "../../../stores/action/action.selector";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { InitMovingStepMeta } from "../../../actions/metas/moving/init-moving.step-meta";
+import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 @Component({
@@ -43,7 +42,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getLastStepMeta()).subscribe(actionMeta => {     
+        this.store.select(getCurrentActionMeta()).subscribe(actionMeta => {     
             this.resetElements();
 
             this.handleReachableHexes(actionMeta);
@@ -61,7 +60,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
     handleMovingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const initMovingActionMeta = actionMeta as InitMovingStepMeta;
+        const initMovingActionMeta = actionMeta as MovingActionMeta;
         if (initMovingActionMeta.reachableHexes) {
             this.indicators = initMovingActionMeta.reachableHexes
         }
@@ -70,18 +69,18 @@ export class MovingIndicatorLayerComponent implements OnInit {
     handleReachableHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;
-        if (setMovingPathActionMeta.movingPath) {
-            this.movingPath = setMovingPathActionMeta.movingPath
+        const movingActionMeta = actionMeta as MovingActionMeta;
+        if (movingActionMeta.movingPath) {
+            this.movingPath = movingActionMeta.movingPath
         }        
     }
 
     handleChallengeHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;
-        if (setMovingPathActionMeta.challengeHexes) {
-            this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
+        const movingActionMeta = actionMeta as MovingActionMeta;
+        if (movingActionMeta.challengeHexes) {
+            this.challengeHexes.setHexes(movingActionMeta.challengeHexes.values());
         }       
     }    
 

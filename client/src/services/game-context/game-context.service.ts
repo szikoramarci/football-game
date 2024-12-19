@@ -6,7 +6,7 @@ import { GridService } from "../grid/grid.service";
 import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { Store } from "@ngrx/store";
-import { getAvailableActions, getLastStepMeta } from "../../stores/action/action.selector";
+import { getAvailableActions, getCurrentActionMeta } from "../../stores/action/action.selector";
 import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
 
@@ -14,12 +14,12 @@ import { Action } from "../../actions/classes/action.class";
     providedIn: 'root'
 })
 export class GameContextService implements OnDestroy {
-
-    lastStepMeta!: ActionMeta | undefined
+    
     availableActions!: Type<Action>[]
     currentAction!: Type<Action>
+    currentActionMeta!: ActionMeta | undefined
 
-    lastStepMetaSubscription!: Subscription
+    currentActionMetaSubscription!: Subscription
     availableActionsSubscription!: Subscription
 
     constructor(
@@ -31,8 +31,8 @@ export class GameContextService implements OnDestroy {
     }
 
     initSubscriptions() {
-        this.lastStepMetaSubscription = this.store.select(getLastStepMeta()).subscribe(lastStepMeta => {
-            this.lastStepMeta = lastStepMeta
+        this.currentActionMetaSubscription = this.store.select(getCurrentActionMeta()).subscribe(lastStepMeta => {
+            this.currentActionMeta = lastStepMeta
         })
         this.availableActionsSubscription = this.store.select(getAvailableActions()).subscribe(availableActions => {
             this.availableActions = availableActions
@@ -40,7 +40,7 @@ export class GameContextService implements OnDestroy {
     }
 
     getLastStepMeta(): Observable<ActionMeta | undefined> {
-        return this.store.select(getLastStepMeta())
+        return this.store.select(getCurrentActionMeta())
             .pipe(
                 take(1)
             )
@@ -64,7 +64,7 @@ export class GameContextService implements OnDestroy {
                     ...baseContext,
                     player: player,  
                     playerHasBall: playerHasBall,
-                    lastStepMeta: this.lastStepMeta,
+                    actionMeta: this.currentActionMeta,
                     availableActions: this.availableActions,
                     activeTeam: activeTeam
                 }
@@ -73,7 +73,7 @@ export class GameContextService implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.lastStepMetaSubscription.unsubscribe()
+        this.currentActionMetaSubscription.unsubscribe()
         this.availableActionsSubscription.unsubscribe()
     }
 

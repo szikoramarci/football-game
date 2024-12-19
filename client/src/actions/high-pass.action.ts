@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { InitHighPassingStep } from "../services/action-step/high-pass/init-high-passing/init-high-passing.step.service";
-import { SetHighPassingPathStep } from "../services/action-step/high-pass/set-high-passing-path/set-high-passing-path.step.service";
+import { InitHighPassingStep } from "../services/action-step/high-pass/init-high-passing.step";
+import { SetHighPassingPathStep } from "../services/action-step/high-pass/set-high-passing-path.step";
 import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { IsOwnPlayer } from "./rules/move/is-own-player.rule";

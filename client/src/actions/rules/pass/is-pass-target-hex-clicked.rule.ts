@@ -1,11 +1,11 @@
 import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
-import { InitPassingStepMeta } from "../../metas/passing/init-passing.step-meta";
+import { StandardPassActionMeta } from "../../metas/standard-pass.action-meta";
 
 export class IsPassTargetHexClicked implements Rule {
     validate(context: GameContext): boolean {
-        const lastStepMeta = context.lastStepMeta as InitPassingStepMeta;
-        return !!lastStepMeta.availableTargets.getHex(context.hex) || false;
+        const actionMeta = context.actionMeta as StandardPassActionMeta;
+        return !!actionMeta.availableTargets.getHex(context.hex) || false;
     }
     errorMessage = "not a target hex";
 }

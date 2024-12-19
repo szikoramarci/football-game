@@ -4,7 +4,7 @@ import { ActionSelectorComponent } from "../../action-selector/action-selector.c
 import { BaseContext } from "../../../actions/classes/base-context.interface";
 import { GameContextService } from "../../../services/game-context/game-context.service";
 import { Store } from "@ngrx/store";
-import { clearCurrentAction, clearGameContext, clearStepMeta, setCurrentAction, setGameContext, setSelectableActions } from "../../../stores/action/action.actions";
+import { clearCurrentAction, clearGameContext, clearActionMeta, setCurrentAction, setGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { getCurrentAction, getGameContext } from "../../../stores/action/action.selector";
 import { Action } from "../../../actions/classes/action.class";
 import { GameContext } from "../../../actions/classes/game-context.interface";
@@ -46,7 +46,7 @@ export class ActiveLayerComponent implements OnInit {
     initMouseEventSubscriptions() {
         this.mouseEvent.getMouseEvents().subscribe(mouseEvent => {     
             if (mouseEvent.type === MouseTriggerEventType.RIGHT_CLICK) {
-                this.store.dispatch(clearStepMeta())     
+                this.store.dispatch(clearActionMeta())     
                 this.store.dispatch(setSelectableActions({ actions: [] }))                                           
                 this.store.dispatch(clearGameContext())      
                 this.store.dispatch(clearCurrentAction())  
@@ -65,8 +65,8 @@ export class ActiveLayerComponent implements OnInit {
                     if (selectableActions.length) {
                         const firstSelectableAction: Type<Action> = selectableActions[0]
                         this.currentAction = firstSelectableAction  
-                        gameContext.lastStepMeta = undefined
-                        this.store.dispatch(clearStepMeta())     
+                        gameContext.actionMeta = undefined
+                        this.store.dispatch(clearActionMeta())     
                         this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
                         this.store.dispatch(setGameContext({ gameContext }))        
                         this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
@@ -91,8 +91,9 @@ export class ActiveLayerComponent implements OnInit {
                 .find(step => step.identify(gameContext))
 
             if (activeStep) {
-                activeStep.calculation(gameContext)
-                activeStep.updateState(gameContext) 
+                activeStep.setGameContext(gameContext)
+                activeStep.calculation()
+                activeStep.updateState() 
             }            
         }    
     }

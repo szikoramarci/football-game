@@ -3,8 +3,8 @@ import { ActionState } from './action.state';
 
 export const getActionState = createFeatureSelector<ActionState>('action');
 
-export const getLastStepMeta = () =>
-    createSelector(getActionState, (state) => state.lastStepMeta);
+export const getCurrentActionMeta = () =>
+    createSelector(getActionState, (state) => state.currentActionMeta);
 
 export const getAvailableActions = () => 
     createSelector(getActionState, (state) => state.availableActions)

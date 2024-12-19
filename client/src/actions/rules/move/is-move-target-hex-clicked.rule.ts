@@ -1,12 +1,12 @@
 import { equals } from "honeycomb-grid";
 import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
-import { SetMovingPathStepMeta } from "../../metas/moving/set-moving-path.step-meta";
+import { MovingActionMeta } from "../../metas/moving.action-meta";
 
 export class IsMoveTargetHexClicked implements Rule {
     validate(context: GameContext): boolean {
-        const lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
-        return equals(lastStepMeta.targetHex, context.hex);
+        const actionMeta = context.actionMeta as MovingActionMeta;        
+        return equals(actionMeta.targetHex!, context.hex);
     }
     errorMessage = "not the target hex";
 }

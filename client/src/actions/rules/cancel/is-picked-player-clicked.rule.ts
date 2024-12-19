@@ -1,11 +1,11 @@
 import { equals } from "honeycomb-grid";
 import { Rule } from "../../classes/rule";
-import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
+import { MovingActionMeta } from "../../metas/moving.action-meta";
 import { GameContext } from "../../classes/game-context.interface";
 
 export class IsPickedPlayerClicked implements Rule {
     validate(context: GameContext): boolean {
-        const lastStepMeta = context.lastStepMeta as InitMovingStepMeta;
+        const lastStepMeta = context.actionMeta as MovingActionMeta;
         if (lastStepMeta.playerHex) {
             return equals(lastStepMeta.playerHex, context.hex);
         }        

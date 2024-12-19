@@ -7,7 +7,7 @@ import { Action } from "./action.class";
 export interface GameContext extends BaseContext {
     player: Player | undefined,   
     playerHasBall: boolean,
-    lastStepMeta: ActionMeta | undefined,
+    actionMeta: ActionMeta | undefined,
     availableActions: Type<Action>[],
     activeTeam: string
 }

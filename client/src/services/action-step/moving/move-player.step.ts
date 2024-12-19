@@ -1,18 +1,17 @@
 import { Injectable } from "@angular/core";
-import { Step } from "../../../../actions/classes/step.class";
-import { GameContext } from "../../../../actions/classes/game-context.interface";
-import { SetMovingPathStepMeta } from "../../../../actions/metas/moving/set-moving-path.step-meta";
-import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
-import { IsMoveTargetHexClicked } from "../../../../actions/rules/move/is-move-target-hex-clicked.rule";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { Step } from "../../../actions/classes/step.class";
+import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { Store } from "@ngrx/store";
-import { clearCurrentAction, clearGameContext, clearStepMeta, setSelectableActions } from "../../../../stores/action/action.actions";
-import { movePlayer } from "../../../../stores/player-position/player-position.actions";
-import { equals, Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
-import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
+import { ChallengeService } from "../../challenge/challenge.service";
+import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
+import { IsMoveTargetHexClicked } from "../../../actions/rules/move/is-move-target-hex-clicked.rule";
+import { IsTargetHexNotThePlayerHex } from "../../../actions/rules/move/is-target-hex-not-the-player-hex.rule";
+import { equals, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
+import { movePlayer } from "../../../stores/player-position/player-position.actions";
+import { moveBall } from "../../../stores/ball-position/ball-position.actions";
+import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { concatMap, delay, from, of, takeWhile } from "rxjs";
-import { IsTargetHexNotThePlayerHex } from "../../../../actions/rules/move/is-target-hex-not-the-player-hex.rule";
-import { moveBall } from "../../../../stores/ball-position/ball-position.actions";
-import { ChallengeService } from "../../../challenge/challenge.service";
 
 const playerStepDelay: number = 300
 
@@ -20,10 +19,7 @@ const playerStepDelay: number = 300
     providedIn: 'root',
 })
 export class MovePlayerStep extends Step {    
-    lastStepMeta!: SetMovingPathStepMeta
-    playerID!: string
-    movingPath!: Grid<Hex>
-    challengeHexes!: Map<string,Hex>
+    actionMeta!: MovingActionMeta
 
     constructor(
             private store: Store,
@@ -40,28 +36,21 @@ export class MovePlayerStep extends Step {
         this.addRule(new IsTargetHexNotThePlayerHex());    
     }
 
-    calculation(context: GameContext): void {
-        this.lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
-        this.movingPath = this.lastStepMeta.movingPath;
-        this.challengeHexes = this.lastStepMeta.challengeHexes
-        if (this.lastStepMeta.playerID) {
-            this.playerID = this.lastStepMeta.playerID
-        } else {
-            console.log("Invalid player.");
-        }
+    calculation(): void {
+        this.actionMeta = {...this.context.actionMeta as MovingActionMeta}
     }    
 
     isBallStealSuccessfully(position: OffsetCoordinates) {
-        if (!this.lastStepMeta.playerHasBall) {    
+        if (!this.actionMeta.playerHasBall) {    
             return true;
         }
 
-        const challengesOnHex = Array.from(this.challengeHexes.entries())
+        const challengesOnHex = Array.from(this.actionMeta.challengeHexes!.entries())
             .filter(([_, challengePosition]) => equals(challengePosition, position))
             .map(([oppositionPlayerID,_]) => oppositionPlayerID)
 
         for (const oppositionPlayerID of challengesOnHex) {
-            this.challengeHexes.delete(oppositionPlayerID);
+            this.actionMeta.challengeHexes!.delete(oppositionPlayerID);
 
             if (this.challenge.dribbleTackleChallenge()) {                                
                 this.challenge.transferBallToOpponent(oppositionPlayerID, 2*playerStepDelay);
@@ -75,7 +64,7 @@ export class MovePlayerStep extends Step {
 
     movePlayer(coordinates: OffsetCoordinates) {
         this.store.dispatch(movePlayer({
-            playerID: this.playerID, 
+            playerID: this.actionMeta.playerID!, 
             position: coordinates
         }));  
     }
@@ -83,19 +72,19 @@ export class MovePlayerStep extends Step {
     playerStepsAhead(nextHex: Hex) {
         const newCoordinates = hexToOffset(nextHex)                
         this.movePlayer(newCoordinates)      
-        if (this.lastStepMeta.playerHasBall) {
+        if (this.actionMeta.playerHasBall) {
             this.store.dispatch(moveBall(newCoordinates));
         }    
     }
 
     updateState(): void {       
         this.store.dispatch(setSelectableActions({ actions: [] }))
-        this.store.dispatch(clearStepMeta())                                
+        this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext())
         
         
-        from(this.movingPath.toArray())
+        from(this.actionMeta.movingPath!.toArray())
             .pipe(                
                 concatMap((position, index) => 
                     index === 0 

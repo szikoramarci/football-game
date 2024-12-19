@@ -1,20 +1,20 @@
 import { equals } from "honeycomb-grid";
 import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
-import { SetMovingPathStepMeta } from "../../metas/moving/set-moving-path.step-meta";
+import { MovingActionMeta } from "../../metas/moving.action-meta";
 
 export class IsNotTargetHexClicked implements Rule {
     validate(context: GameContext): boolean {
-        const lastStepMeta = context.lastStepMeta as SetMovingPathStepMeta;
-        return this.isTargetHexNotSet(lastStepMeta) || !this.isTargetHexClicked(lastStepMeta, context)
+        const actionMeta = context.actionMeta as MovingActionMeta;
+        return this.isTargetHexNotSet(actionMeta) || !this.isTargetHexClicked(actionMeta, context)
     }
     errorMessage = "already selected hex as target";
 
-    isTargetHexNotSet(lastStepMeta: SetMovingPathStepMeta) {
-        return lastStepMeta.targetHex == undefined
+    isTargetHexNotSet(actionMeta: MovingActionMeta) {
+        return actionMeta.targetHex == undefined
     }
 
-    isTargetHexClicked(lastStepMeta: SetMovingPathStepMeta, context: GameContext) {
-        return equals(lastStepMeta.targetHex, context.hex);
+    isTargetHexClicked(actionMeta: MovingActionMeta, context: GameContext) {
+        return equals(actionMeta.targetHex!, context.hex);
     }
 }

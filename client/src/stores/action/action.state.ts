@@ -7,7 +7,7 @@ import { StandardPassAction } from "../../actions/standard-pass.action";
 import { HighPassAction } from "../../actions/high-pass.action";
 
 export interface ActionState {
-  lastStepMeta: ActionMeta | undefined,
+  currentActionMeta: ActionMeta | undefined,
   currentAction: Type<Action> | undefined,
   gameContext: GameContext | undefined,
   availableActions: Type<Action>[],
@@ -15,7 +15,7 @@ export interface ActionState {
 }
 
 export const initialState: ActionState = {
-  lastStepMeta: undefined,
+  currentActionMeta: undefined,
   currentAction: undefined,
   gameContext: undefined,
   availableActions: [MovingAction, StandardPassAction, HighPassAction],
