@@ -1,5 +1,5 @@
 import { equals } from "honeycomb-grid";
-import { Rule } from "../../classes/step-rule.interface";
+import { Rule } from "../../classes/rule";
 import { InitMovingStepMeta } from "../../metas/moving/init-moving.step-meta";
 import { GameContext } from "../../classes/game-context.interface";
 

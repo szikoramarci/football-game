@@ -5,7 +5,7 @@ import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getLastStepMeta } from "../../../stores/action/action.selector";
 import { InitPassingStepMeta } from "../../../actions/metas/passing/init-passing.step-meta";
-import { StepMeta } from "../../../actions/classes/step-meta.interface";
+import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { SetStandardPassingPathStepMeta } from "../../../actions/metas/passing/standard-passing/set-standard-passing-path.step-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
@@ -58,7 +58,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
         this.availableTargets = null;
     }
 
-    handleAvailableTargets(actionMeta: StepMeta | undefined) {
+    handleAvailableTargets(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const initPassingActionMeta = actionMeta as InitPassingStepMeta;
@@ -68,7 +68,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
         }
     }
 
-    handlePassingPath(actionMeta: StepMeta | undefined) {
+    handlePassingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const setPassingPathActionMeta = actionMeta as SetStandardPassingPathStepMeta;
@@ -79,7 +79,7 @@ export class PasingIndicatorLayerComponent implements OnInit {
         }
     }
 
-    handleChallengeHexes(actionMeta: StepMeta | undefined) {
+    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const setMovingPathActionMeta = actionMeta as SetStandardPassingPathStepMeta;

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Type } from "@angular/core";
 import { BaseContext } from "../../actions/classes/base-context.interface";
 import { forkJoin, map, Observable, Subscription, take } from "rxjs";
-import { StepMeta } from "../../actions/classes/step-meta.interface";
+import { ActionMeta } from "../../actions/classes/action-meta.interface";
 import { GridService } from "../grid/grid.service";
 import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
@@ -15,7 +15,7 @@ import { Action } from "../../actions/classes/action.class";
 })
 export class GameContextService implements OnDestroy {
 
-    lastStepMeta!: StepMeta | undefined
+    lastStepMeta!: ActionMeta | undefined
     availableActions!: Type<Action>[]
     currentAction!: Type<Action>
 
@@ -39,7 +39,7 @@ export class GameContextService implements OnDestroy {
         })
     }
 
-    getLastStepMeta(): Observable<StepMeta | undefined> {
+    getLastStepMeta(): Observable<ActionMeta | undefined> {
         return this.store.select(getLastStepMeta())
             .pipe(
                 take(1)

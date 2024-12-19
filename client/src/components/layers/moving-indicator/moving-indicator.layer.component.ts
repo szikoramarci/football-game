@@ -9,7 +9,7 @@ import { SetMovingPathStepMeta } from "../../../actions/metas/moving/set-moving-
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
 import { InitMovingStepMeta } from "../../../actions/metas/moving/init-moving.step-meta";
-import { StepMeta } from "../../../actions/classes/step-meta.interface";
+import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 @Component({
     selector: 'moving-indicator-layer',
@@ -58,7 +58,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
         this.challengeHexes = this.grid.createGrid();
     }
 
-    handleMovingPath(actionMeta: StepMeta | undefined) {
+    handleMovingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const initMovingActionMeta = actionMeta as InitMovingStepMeta;
@@ -67,7 +67,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
         }
     }
 
-    handleReachableHexes(actionMeta: StepMeta | undefined) {
+    handleReachableHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;
@@ -76,7 +76,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
         }        
     }
 
-    handleChallengeHexes(actionMeta: StepMeta | undefined) {
+    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
         const setMovingPathActionMeta = actionMeta as SetMovingPathStepMeta;

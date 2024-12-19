@@ -16,4 +16,4 @@ export const getCurrentAction = () =>
     createSelector(getActionState, (state) => state.currentAction)
 
 export const getGameContext = () => 
-    createSelector(getActionState, (state) => state.actionContext)
+    createSelector(getActionState, (state) => state.gameContext)

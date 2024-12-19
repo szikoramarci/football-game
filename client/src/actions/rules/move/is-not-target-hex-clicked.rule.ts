@@ -1,6 +1,6 @@
 import { equals } from "honeycomb-grid";
 import { GameContext } from "../../classes/game-context.interface";
-import { Rule } from "../../classes/step-rule.interface";
+import { Rule } from "../../classes/rule";
 import { SetMovingPathStepMeta } from "../../metas/moving/set-moving-path.step-meta";
 
 export class IsNotTargetHexClicked implements Rule {

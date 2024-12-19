@@ -1,7 +1,7 @@
 import { Grid, Hex } from "honeycomb-grid";
-import { StepMeta } from "../../../actions/classes/step-meta.interface";
+import { ActionMeta } from "../../classes/action-meta.interface";
 
-export interface InitPassingStepMeta extends StepMeta {
+export interface InitPassingStepMeta extends ActionMeta {
     playerHex: Hex,
     availableTargets: Grid<Hex>
 }

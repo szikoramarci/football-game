@@ -1,15 +1,15 @@
 import { Type } from "@angular/core";
 import { GameContext } from "../../actions/classes/game-context.interface";
-import { StepMeta } from "../../actions/classes/step-meta.interface";
+import { ActionMeta } from "../../actions/classes/action-meta.interface";
 import { Action } from "../../actions/classes/action.class";
 import { MovingAction } from "../../actions/moving.action";
 import { StandardPassAction } from "../../actions/standard-pass.action";
 import { HighPassAction } from "../../actions/high-pass.action";
 
 export interface ActionState {
-  lastStepMeta: StepMeta | undefined,
+  lastStepMeta: ActionMeta | undefined,
   currentAction: Type<Action> | undefined,
-  actionContext: GameContext | undefined,
+  gameContext: GameContext | undefined,
   availableActions: Type<Action>[],
   selectableActions: Type<Action>[]
 }
@@ -17,7 +17,7 @@ export interface ActionState {
 export const initialState: ActionState = {
   lastStepMeta: undefined,
   currentAction: undefined,
-  actionContext: undefined,
+  gameContext: undefined,
   availableActions: [MovingAction, StandardPassAction, HighPassAction],
   selectableActions: []
 };

@@ -1,6 +1,6 @@
 
 import { GameContext } from "../classes/game-context.interface";
-import { Rule } from "../classes/step-rule.interface";
+import { Rule } from "../classes/rule";
 
 export class AtLeastOneRule implements Rule {
     rules: Rule[] = [];

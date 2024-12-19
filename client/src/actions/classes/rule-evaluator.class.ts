@@ -1,5 +1,5 @@
 import { GameContext } from "./game-context.interface";
-import { Rule, RuleSet } from "./step-rule.interface";
+import { Rule, RuleSet } from "./rule";
 
 export abstract class RuleEvaluator {
     private ruleSet: RuleSet = new RuleSet();

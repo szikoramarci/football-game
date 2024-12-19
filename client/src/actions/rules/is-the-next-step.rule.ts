@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { Rule } from "../classes/step-rule.interface";
+import { Rule } from "../classes/rule";
 import { Step } from "../classes/step.class";
 import { GameContext } from "../classes/game-context.interface";
 

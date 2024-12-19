@@ -4,7 +4,7 @@ import { ActionSelectorComponent } from "../../action-selector/action-selector.c
 import { BaseContext } from "../../../actions/classes/base-context.interface";
 import { GameContextService } from "../../../services/game-context/game-context.service";
 import { Store } from "@ngrx/store";
-import { clearCurrentAction, clearActionContext, clearStepMeta, setCurrentAction, setActionContext, setSelectableActions } from "../../../stores/action/action.actions";
+import { clearCurrentAction, clearGameContext, clearStepMeta, setCurrentAction, setGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { getCurrentAction, getGameContext } from "../../../stores/action/action.selector";
 import { Action } from "../../../actions/classes/action.class";
 import { GameContext } from "../../../actions/classes/game-context.interface";
@@ -48,7 +48,7 @@ export class ActiveLayerComponent implements OnInit {
             if (mouseEvent.type === MouseTriggerEventType.RIGHT_CLICK) {
                 this.store.dispatch(clearStepMeta())     
                 this.store.dispatch(setSelectableActions({ actions: [] }))                                           
-                this.store.dispatch(clearActionContext())      
+                this.store.dispatch(clearGameContext())      
                 this.store.dispatch(clearCurrentAction())  
                 return 
             } else {
@@ -68,7 +68,7 @@ export class ActiveLayerComponent implements OnInit {
                         gameContext.lastStepMeta = undefined
                         this.store.dispatch(clearStepMeta())     
                         this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
-                        this.store.dispatch(setActionContext({ actionContext: gameContext }))        
+                        this.store.dispatch(setGameContext({ gameContext }))        
                         this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
                         console.log('RESTART')  
                     } else {                                                                                                                

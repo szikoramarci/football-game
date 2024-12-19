@@ -5,7 +5,7 @@ import { SetMovingPathStepMeta } from "../../../../actions/metas/moving/set-movi
 import { IsTheNextStep } from "../../../../actions/rules/is-the-next-step.rule";
 import { IsMoveTargetHexClicked } from "../../../../actions/rules/move/is-move-target-hex-clicked.rule";
 import { Store } from "@ngrx/store";
-import { clearCurrentAction, clearActionContext, clearStepMeta, setSelectableActions } from "../../../../stores/action/action.actions";
+import { clearCurrentAction, clearGameContext, clearStepMeta, setSelectableActions } from "../../../../stores/action/action.actions";
 import { movePlayer } from "../../../../stores/player-position/player-position.actions";
 import { equals, Grid, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
 import { IsLeftClick } from "../../../../actions/rules/is-left-click.rule";
@@ -92,7 +92,7 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(setSelectableActions({ actions: [] }))
         this.store.dispatch(clearStepMeta())                                
         this.store.dispatch(clearCurrentAction())      
-        this.store.dispatch(clearActionContext())
+        this.store.dispatch(clearGameContext())
         
         
         from(this.movingPath.toArray())
