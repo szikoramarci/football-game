@@ -1,4 +1,4 @@
-import { Injectable, Type } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { equals, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Step } from "../../../actions/classes/step.class";

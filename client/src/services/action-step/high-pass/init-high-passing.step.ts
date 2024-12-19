@@ -1,13 +1,7 @@
 import { Injectable, Type } from "@angular/core";
 import { Step } from "../../../actions/classes/step.class";
-import { IsOwnPlayer } from "../../../actions/rules/move/is-own-player.rule";
-import { IsPlayerSelected } from "../../../actions/rules/move/is-player-selected.rule";
 import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
-import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
-import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
-import { IsPickedPlayerClicked } from "../../../actions/rules/cancel/is-picked-player-clicked.rule";
 import { saveActionMeta } from "../../../stores/action/action.actions";
-import { HasThePlayerTheBall } from "../../../actions/rules/pass/has-the-player-the-ball.rule";
 import { TraverserService } from "../../traverser/traverser.service";
 import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../constants";
 import { GridService } from "../../grid/grid.service";
@@ -16,6 +10,7 @@ import { PlayerWithPosition } from "../../../interfaces/player-with-position.int
 import { PlayerService } from "../../player/player.service";
 import { Store } from "@ngrx/store";
 import { HighPassActionMeta } from "../../../actions/metas/high-pass.action-meta";
+import { AreAvailableNextStepsEmpty } from "../../../actions/rules/is-available-next-actions-empty.rule";
 
 @Injectable({
   providedIn: 'root',
@@ -40,13 +35,8 @@ export class InitHighPassingStep extends Step {
       this.initSubscriptions()
     }
   
-    initRuleSet(): void {
-      this.addRule(new IsLeftClick());
-      this.addRule(new IsTheNextStep(InitHighPassingStep));    
-      this.addRule(new IsPickedPlayerClicked());
-      this.addRule(new IsPlayerSelected());
-      this.addRule(new HasThePlayerTheBall());
-      this.addRule(new IsOwnPlayer());
+    initRuleSet(): void {      
+      this.addRule(new AreAvailableNextStepsEmpty());    
     }
 
     initSubscriptions() {

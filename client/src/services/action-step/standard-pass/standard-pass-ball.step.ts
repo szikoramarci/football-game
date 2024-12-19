@@ -3,7 +3,6 @@ import { Step } from "../../../actions/classes/step.class";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
 import { clearCurrentAction, clearGameContext, clearActionMeta, setSelectableActions } from "../../../stores/action/action.actions";
-import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { IsPassTargetHexClicked } from "../../../actions/rules/pass/is-pass-target-hex-clicked.rule";
 import { StandardPassActionMeta } from "../../../actions/metas/standard-pass.action-meta";
@@ -23,8 +22,7 @@ export class StandardPassBallStep extends Step {
         this.initRuleSet()
     }
 
-    initRuleSet(): void {
-        this.addRule(new IsLeftClick());
+    initRuleSet(): void {        
         this.addRule(new IsTheNextStep(StandardPassBallStep));    
         this.addRule(new IsPassTargetHexClicked()); 
     }

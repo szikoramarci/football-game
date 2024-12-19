@@ -12,6 +12,7 @@ import { movePlayer } from "../../../stores/player-position/player-position.acti
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { concatMap, delay, from, of, takeWhile } from "rxjs";
+import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 
 const playerStepDelay: number = 300
 
@@ -20,20 +21,28 @@ const playerStepDelay: number = 300
 })
 export class MovePlayerStep extends Step {    
     actionMeta!: MovingActionMeta
+    ballPosition!: OffsetCoordinates
 
     constructor(
             private store: Store,
             private challenge: ChallengeService
         ) {
         super()
-        this.initRuleSet()        
+        this.initRuleSet()  
+        this.initSubscriptions()      
     }
 
-    initRuleSet(): void {
-        this.addRule(new IsLeftClick());
+    initRuleSet(): void {        
         this.addRule(new IsTheNextStep(MovePlayerStep));    
         this.addRule(new IsMoveTargetHexClicked()); 
         this.addRule(new IsTargetHexNotThePlayerHex());    
+    }
+
+    initSubscriptions() {
+        const ballPositionSubscriptions = this.store.select(getBallPosition()).subscribe(ballPosition => {                        
+            this.ballPosition = ballPosition as OffsetCoordinates
+        })
+        this.addSubscription(ballPositionSubscriptions)
     }
 
     calculation(): void {
@@ -62,19 +71,29 @@ export class MovePlayerStep extends Step {
         return true;
     }     
 
-    movePlayer(coordinates: OffsetCoordinates) {
+    movePlayer(coordinates: Hex) {
         this.store.dispatch(movePlayer({
             playerID: this.actionMeta.playerID!, 
             position: coordinates
         }));  
     }
+    
+    checkAndPickUpBall(coordinates: Hex) {
+        if (!this.actionMeta.playerHasBall && equals(coordinates, this.ballPosition)) {
+            this.actionMeta.playerHasBall = true
+        }
+    }
 
-    playerStepsAhead(nextHex: Hex) {
-        const newCoordinates = hexToOffset(nextHex)                
-        this.movePlayer(newCoordinates)      
+    moveBall(coordinates: Hex) {
         if (this.actionMeta.playerHasBall) {
-            this.store.dispatch(moveBall(newCoordinates));
-        }    
+            this.store.dispatch(moveBall(coordinates));
+        }
+    }
+
+    playerStepsAhead(nextHex: Hex) {                            
+        this.movePlayer(nextHex)
+        this.checkAndPickUpBall(nextHex)
+        this.moveBall(nextHex)
     }
 
     updateState(): void {       
@@ -82,8 +101,7 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext())
-        
-        
+                
         from(this.actionMeta.movingPath!.toArray())
             .pipe(                
                 concatMap((position, index) => 

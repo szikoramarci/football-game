@@ -57,23 +57,25 @@ export class ActiveLayerComponent implements OnInit {
                     hex: mouseEvent.hex,
                 }
                 this.gameContext.generateGameContext(baseContext).subscribe(gameContext => {  
-                    const selectableActions = gameContext.availableActions.filter(availableAction => {
-                        const action = new availableAction()                    
-                        return action.identify(gameContext)
-                    })
-
-                    if (selectableActions.length) {
-                        const firstSelectableAction: Type<Action> = selectableActions[0]
-                        this.currentAction = firstSelectableAction  
-                        gameContext.actionMeta = undefined
-                        this.store.dispatch(clearActionMeta())     
-                        this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
-                        this.store.dispatch(setGameContext({ gameContext }))        
-                        this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
-                        console.log('RESTART')  
-                    } else {                                                                                                                
+                    if (this.currentAction) {
                         this.handleCurrentAction(gameContext)   
-                    }                                
+                    } else {
+                        const selectableActions = gameContext.availableActions.filter(availableAction => {
+                            const action = new availableAction()                    
+                            return action.identify(gameContext)
+                        })
+
+                        if (selectableActions.length) {
+                            const firstSelectableAction: Type<Action> = selectableActions[0]
+                            this.currentAction = firstSelectableAction  
+                            gameContext.actionMeta = undefined
+                            this.store.dispatch(clearActionMeta())     
+                            this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
+                            this.store.dispatch(setGameContext({ gameContext }))        
+                            this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
+                            console.log('RESTART')  
+                        } 
+                    }                            
                 })
 
                 
