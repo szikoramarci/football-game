@@ -6,6 +6,7 @@ import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { IsOwnPlayer } from "./rules/move/is-own-player.rule";
 import { HasThePlayerTheBall } from "./rules/pass/has-the-player-the-ball.rule";
+import { RelocationIsInactive } from "./rules/relocation-is-inactive.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -28,5 +29,6 @@ export class StandardPassAction extends Action {
         this.addRule(new IsLeftClick())
         this.addRule(new IsOwnPlayer())
         this.addRule(new HasThePlayerTheBall())
+        this.addRule(new RelocationIsInactive())
       }
 }

@@ -14,7 +14,7 @@ import { concatMap, delay, from, of, takeWhile } from "rxjs";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { getRelocationState } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
-import { initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
+import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
 import { RelocationService } from "../../relocation/relocation.service";
 
 const playerStepDelay: number = 300
@@ -106,14 +106,15 @@ export class MovePlayerStep extends Step {
         this.moveBall(nextHex)
     }
 
-    countMovementStep() {
-        console.log(this.scenarioTurns)
+    countMovementStep() {        
+        const playerID = this.actionMeta?.playerID || ""
         if (this.scenarioTurns.length > 0) {
             this.store.dispatch(unshiftScenarioTurn())
         } else {
             const movementPhase = this.relocation.generateMovementPhase()
             this.store.dispatch(initScenario({ turns: movementPhase }))
         }
+        this.store.dispatch(addUsedPlayer({ playerID }))
     }
 
     updateState(): void {       

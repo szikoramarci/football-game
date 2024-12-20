@@ -5,6 +5,7 @@ import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { IsOwnPlayer } from "./rules/move/is-own-player.rule";
 import { MovePlayerStep } from "../services/action-step/moving/move-player.step";
+import { IsRelocatable } from "./rules/move/is-relocatable.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +25,7 @@ export class MovingAction extends Action {
     }
 
     initRuleSet() {      
-        this.addRule(new IsLeftClick())
-        this.addRule(new IsOwnPlayer())
+        this.addRule(new IsLeftClick())        
+        this.addRule(new IsRelocatable())
       }
 }

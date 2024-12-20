@@ -9,18 +9,25 @@ import { Store } from "@ngrx/store";
 import { getAvailableActions, getCurrentActionMeta } from "../../stores/action/action.selector";
 import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
+import { getRelocationState } from "../../stores/relocation/relocation.selector";
+import { RelocationTurn } from "../../relocation/relocation-turn.interface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class GameContextService implements OnDestroy {
     
+    attackingTeam!: string
     availableActions!: Type<Action>[]
     currentAction!: Type<Action>
     currentActionMeta!: ActionMeta | undefined
+    relocationTurns: RelocationTurn[] = []
+    usedPlayers: Set<string> = new Set()
 
+    attackingTeamSubscription!: Subscription
     currentActionMetaSubscription!: Subscription
     availableActionsSubscription!: Subscription
+    curentScenarioSubscription!: Subscription
 
     constructor(
         private grid: GridService,
@@ -31,22 +38,23 @@ export class GameContextService implements OnDestroy {
     }
 
     initSubscriptions() {
-        this.currentActionMetaSubscription = this.store.select(getCurrentActionMeta()).subscribe(lastStepMeta => {
-            this.currentActionMeta = lastStepMeta
+        this.attackingTeamSubscription = this.store.select(getAttackingTeam()).subscribe(attackingTeam => {
+            this.attackingTeam = attackingTeam
+        })
+        this.currentActionMetaSubscription = this.store.select(getCurrentActionMeta()).subscribe(currentActionMeta => {
+            this.currentActionMeta = currentActionMeta
         })
         this.availableActionsSubscription = this.store.select(getAvailableActions()).subscribe(availableActions => {
             this.availableActions = availableActions
         })
+        this.curentScenarioSubscription = this.store.select(getRelocationState).subscribe(currentScenario => {
+            console.log(currentScenario)
+            this.relocationTurns = currentScenario.relocationTurns
+            this.usedPlayers = currentScenario.usedPlayers
+        })
     }
 
-    getLastStepMeta(): Observable<ActionMeta | undefined> {
-        return this.store.select(getCurrentActionMeta())
-            .pipe(
-                take(1)
-            )
-    }
-
-    getActiveTeam(): Observable<string> {
+    getAttackingTeam(): Observable<string> {
         return this.store.select(getAttackingTeam())
             .pipe(
                 take(1)
@@ -56,25 +64,28 @@ export class GameContextService implements OnDestroy {
     generateGameContext(baseContext: BaseContext): Observable<GameContext> {
         return forkJoin({            
             player: this.player.getPlayerOnCoordinates(baseContext.hex),
-            playerHasBall: this.player.playerHasBall(baseContext.hex),            
-            activeTeam: this.getActiveTeam()
+            playerHasBall: this.player.playerHasBall(baseContext.hex)
         }).pipe(
-            map(({player, playerHasBall, activeTeam }) => {
+            map(({player, playerHasBall }) => {
                 return {
                     ...baseContext,
                     player: player,  
                     playerHasBall: playerHasBall,
                     actionMeta: this.currentActionMeta,
                     availableActions: this.availableActions,
-                    activeTeam: activeTeam
+                    attackingTeam: this.attackingTeam,
+                    relocationTurns: this.relocationTurns,
+                    usedPlayers: this.usedPlayers
                 }
             })
         )
     }
 
     ngOnDestroy(): void {
+        this.attackingTeamSubscription.unsubscribe()
         this.currentActionMetaSubscription.unsubscribe()
         this.availableActionsSubscription.unsubscribe()
+        this.curentScenarioSubscription.unsubscribe()
     }
 
 }
