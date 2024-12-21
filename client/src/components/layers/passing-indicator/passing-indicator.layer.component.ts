@@ -7,7 +7,6 @@ import { getCurrentActionMeta } from "../../../stores/action/action.selector";
 import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { StandardPassActionMeta } from "../../../actions/metas/standard-pass.action-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
-import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
 import { HighPassActionMeta } from "../../../actions/metas/high-pass.action-meta";
@@ -15,10 +14,10 @@ import { HighPassActionMeta } from "../../../actions/metas/high-pass.action-meta
 @Component({
     selector: 'passing-indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent, PlayerStrokeComponent, PassingPathComponent],
+    imports: [IndicatorComponent, PassingPathComponent],
     templateUrl: './passing-indicator.layer.component.html',
 })
-export class PasingIndicatorLayerComponent implements OnInit {
+export class PassingIndicatorLayerComponent implements OnInit {
     passerPosition!: OffsetCoordinates | null
     passingPath!: Hex[] | null
     challengeHexes!: Grid<Hex>

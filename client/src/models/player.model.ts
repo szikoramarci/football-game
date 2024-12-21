@@ -1,4 +1,3 @@
-import { OffsetCoordinates } from "honeycomb-grid";
 
 export class Player {
     id!: string;

@@ -38,14 +38,14 @@ export class PlayerService {
     }
 
     getAttackingPlayersWithPositions(): Observable<PlayerWithPosition[]> {
-        return this.getPlayersWithPositions(true)
+        return this.getPlayersWithPositionsByTeam(true)
     }
 
     getDefendingPlayersWithPositions(): Observable<PlayerWithPosition[]> {
-        return this.getPlayersWithPositions(false)
+        return this.getPlayersWithPositionsByTeam(false)
     }
 
-    getPlayersWithPositions(isAttackingTeam: boolean): Observable<PlayerWithPosition[]> {
+    getPlayersWithPositionsByTeam(isAttackingTeam: boolean): Observable<PlayerWithPosition[]> {
         return combineLatest([
             this.store.select(getPlayerPositions),
             this.store.select(getAllPlayers),
@@ -54,13 +54,26 @@ export class PlayerService {
             map(([playerPositions, players, gameplayState]) => {            
                 const attackingTeam = gameplayState.attackingTeam;
     
-                const attackingTeamPlayers = Object.values(players).filter(player => isAttackingTeam ? player.team === attackingTeam : player.team !== attackingTeam);
+                const teamPlayers = Object.values(players).filter(player => isAttackingTeam ? player.team === attackingTeam : player.team !== attackingTeam);
         
-                return attackingTeamPlayers.map(player => ({
+                return teamPlayers.map(player => ({
                     player: player,
                     position: playerPositions[player.id] 
                 }));
             }))                    
+    }
+
+    getPlayersWithPositions(): Observable<PlayerWithPosition[]> {
+        return combineLatest([
+            this.store.select(getPlayerPositions),
+            this.store.select(getAllPlayers)
+        ]).pipe(
+            map(([playerPositions, players]) => Object.values(players)
+                .map(player => ({
+                    player: player,
+                    position: playerPositions[player.id] 
+                }))
+            ))                    
     }
 
 }

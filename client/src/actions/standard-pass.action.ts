@@ -4,7 +4,6 @@ import { SetStandardPassingPathStep } from "../services/action-step/standard-pas
 import { StandardPassBallStep } from "../services/action-step/standard-pass/standard-pass-ball.step";
 import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
-import { IsOwnPlayer } from "./rules/move/is-own-player.rule";
 import { HasThePlayerTheBall } from "./rules/pass/has-the-player-the-ball.rule";
 import { RelocationIsInactive } from "./rules/relocation-is-inactive.rule";
 
@@ -27,7 +26,6 @@ export class StandardPassAction extends Action {
 
     initRuleSet() {      
         this.addRule(new IsLeftClick())
-        this.addRule(new IsOwnPlayer())
         this.addRule(new HasThePlayerTheBall())
         this.addRule(new RelocationIsInactive())
       }

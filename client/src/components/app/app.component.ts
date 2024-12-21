@@ -4,9 +4,10 @@ import { AppService } from '../../services/app/app.service';
 import { BaseLayerComponent } from '../layers/base/base.layer.component';
 import { StateLayerComponent } from '../layers/state/state.layer.component';
 import { ActiveLayerComponent } from '../layers/active/active.layer.component';
-import { PasingIndicatorLayerComponent } from '../layers/pasing-indicator/passing-indicator.layer.component';
+import { PassingIndicatorLayerComponent } from '../layers/passing-indicator/passing-indicator.layer.component';
 import { MovingIndicatorLayerComponent } from '../layers/moving-indicator/moving-indicator.layer.component';
 import { MouseEventService } from '../../services/mouse-event/mouse-event.service';
+import { SelectionIndicatorLayerComponent } from '../layers/selection-indicator/selection-indicator.layer.component';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,8 @@ import { MouseEventService } from '../../services/mouse-event/mouse-event.servic
     BaseLayerComponent,
     StateLayerComponent,
     MovingIndicatorLayerComponent,
-    PasingIndicatorLayerComponent,
+    PassingIndicatorLayerComponent,
+    SelectionIndicatorLayerComponent,
     ActiveLayerComponent
   ],
   templateUrl: './app.component.html',

@@ -1,0 +1,3 @@
+@for (selectablePosition of selectablePositions; track selectablePosition.center) {
+    <player-stroke color="blue" [hex]="selectablePosition" (onGraphicsChanged)="handleGraphics($event)"></player-stroke>
+}

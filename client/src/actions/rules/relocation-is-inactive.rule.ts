@@ -3,7 +3,7 @@ import { Rule } from "../classes/rule";
 
 export class RelocationIsInactive implements Rule {
     validate(context: GameContext): boolean {
-        return context.relocationTurns.length == 0
+        return context.relocationIsActive === false
     }
     errorMessage = "relocation is active";
 }

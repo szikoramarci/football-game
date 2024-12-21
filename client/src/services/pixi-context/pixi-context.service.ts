@@ -4,7 +4,7 @@ import DarkFieldContext from "../../contexts/DarkFieldContext.class";
 import { Point } from "honeycomb-grid";
 import MovementIndicatorContext from "../../contexts/MovementIndicatorContext.cass";
 import PassingIndicatorContext from "../../contexts/PassingIndicatorContext.class";
-import ChallengeIndicatorContext from "../../contexts/ChallengeIndicatorContext.class copy";
+import ChallengeIndicatorContext from "../../contexts/ChallengeIndicatorContext.class";
 
 @Injectable({
     providedIn: 'root'

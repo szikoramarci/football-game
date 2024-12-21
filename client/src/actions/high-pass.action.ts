@@ -3,7 +3,6 @@ import { InitHighPassingStep } from "../services/action-step/high-pass/init-high
 import { SetHighPassingPathStep } from "../services/action-step/high-pass/set-high-passing-path.step";
 import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
-import { IsOwnPlayer } from "./rules/move/is-own-player.rule";
 import { HasThePlayerTheBall } from "./rules/pass/has-the-player-the-ball.rule";
 import { RelocationIsInactive } from "./rules/relocation-is-inactive.rule";
 
@@ -25,7 +24,6 @@ export class HighPassAction extends Action {
 
     initRuleSet() {      
         this.addRule(new IsLeftClick())
-        this.addRule(new IsOwnPlayer())
         this.addRule(new HasThePlayerTheBall())
         this.addRule(new RelocationIsInactive())
       }
