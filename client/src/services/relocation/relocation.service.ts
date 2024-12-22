@@ -23,34 +23,6 @@ export class RelocationService implements OnDestroy {
     attackingTeamSubscription!: Subscription
     currentScenarioSubscription!: Subscription
 
-    movementPhase: RelocationTurn[] = [
-        {
-            team: 'barca',
-            movementType: 'steps',
-            movementLimit: 'ownSpeed',
-        },
-        {
-            team: 'barca',
-            movementType: 'steps',
-            movementLimit: 'ownSpeed',
-        },
-        {
-            team: 'real',
-            movementType: 'steps',
-            movementLimit: 'ownSpeed',
-        },
-        {
-            team: 'real',
-            movementType: 'steps',
-            movementLimit: 'ownSpeed',
-        },
-        {
-            team: 'barca',
-            movementType: 'steps',
-            movementLimit: 2,
-        }
-    ]
-
     constructor(
         private store: Store,
         private player: PlayerService,
@@ -109,10 +81,6 @@ export class RelocationService implements OnDestroy {
             })
         )
     }
-
-    generateMovementPhase() {
-        return this.movementPhase
-    } 
     
     ngOnDestroy(): void {
         this.attackingTeamSubscription.unsubscribe()

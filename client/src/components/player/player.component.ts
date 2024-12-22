@@ -8,6 +8,7 @@ import { HexCoordinates } from "honeycomb-grid";
 import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
 import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
+import { Team } from "../../models/team.enum";
 
 @Component({
     selector: 'player',
@@ -45,13 +46,13 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     defineKitColors(){
         switch(this.player.team) {
-            case 'barca':
+            case Team.TEAM_A:
                 this.mainColor = "#a50044";
                 this.outlineColor = "black"
                 this.numberColor = "#ffed02";
                 this.numberOutlineColor = "#a50044"
                 break;
-            case 'real':
+            case Team.TEAM_B:
                 this.mainColor = "white";
                 this.outlineColor = "black"
                 this.numberColor = "white";

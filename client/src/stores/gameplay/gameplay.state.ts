@@ -1,8 +1,9 @@
+import { Team } from "../../models/team.enum";
 
 export interface GameplayState {
-  attackingTeam: string
+  attackingTeam: Team
 }
 
 export const initialState: GameplayState = {
-  attackingTeam: 'barca'
+  attackingTeam: Team.TEAM_A
 };

@@ -2,12 +2,13 @@ import { Store } from "@ngrx/store";
 import { OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../models/player.model";
 import { getPlayerByPosition, getPlayerPositions } from "../../stores/player-position/player-position.selector";
-import { combineLatest, map, Observable, of, switchMap, take } from "rxjs";
+import { combineLatest, generate, map, Observable, of, switchMap, take } from "rxjs";
 import { getAllPlayers, getPlayer } from "../../stores/player/player.selector";
 import { IsBallInPosition } from "../../stores/ball-position/ball-position.selector";
 import { Injectable } from "@angular/core";
 import { getGameplay } from "../../stores/gameplay/gameplay.selector";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
+import { getOppositeTeam } from "../../models/team.enum";
 
 @Injectable({
     providedIn: 'root'
@@ -52,9 +53,9 @@ export class PlayerService {
             this.store.select(getGameplay)
         ]).pipe(
             map(([playerPositions, players, gameplayState]) => {            
-                const attackingTeam = gameplayState.attackingTeam;
+                const teamForSearch = isAttackingTeam ? gameplayState.attackingTeam : getOppositeTeam(gameplayState.attackingTeam);
     
-                const teamPlayers = Object.values(players).filter(player => isAttackingTeam ? player.team === attackingTeam : player.team !== attackingTeam);
+                const teamPlayers = Object.values(players).filter(player => player.team === teamForSearch);
         
                 return teamPlayers.map(player => ({
                     player: player,

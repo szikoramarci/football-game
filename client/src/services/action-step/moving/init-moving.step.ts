@@ -9,7 +9,7 @@ import { take } from "rxjs";
 import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
 import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { TraverserService } from "../../traverser/traverser.service";
-import { SetMovingPathStep } from "./set-moving-path.step";
+import { FindMovingPathStep } from "./find-moving-path.step";
 
 @Injectable({
   providedIn: 'root',
@@ -47,16 +47,17 @@ export class InitMovingStep extends Step {
     }
 
     generateAvailableNextSteps() {
-      this.availableNextSteps = [SetMovingPathStep];
+      this.availableNextSteps = [FindMovingPathStep];
     }
   
     updateState(): void {
       const movingActionMeta: MovingActionMeta = {
         clickedHex: this.context.hex,
         playerHex: this.context.hex,        
-        playerID: this.context.player?.id,
+        player: this.context.player!,
         playerHasBall: this.context.playerHasBall,
         reachableHexes: this.reachableHexes,
+        pathPoints: [],
         availableNextSteps: this.availableNextSteps
       }      
       this.store.dispatch(saveActionMeta(movingActionMeta));      

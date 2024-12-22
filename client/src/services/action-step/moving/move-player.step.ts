@@ -4,8 +4,6 @@ import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { Store } from "@ngrx/store";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
-import { IsMoveTargetHexClicked } from "../../../actions/rules/move/is-move-target-hex-clicked.rule";
-import { IsTargetHexNotThePlayerHex } from "../../../actions/rules/move/is-target-hex-not-the-player-hex.rule";
 import { equals, Hex,  OffsetCoordinates } from "honeycomb-grid";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
@@ -16,6 +14,10 @@ import { getRelocationState } from "../../../stores/relocation/relocation.select
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
 import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
 import { RelocationService } from "../../relocation/relocation.service";
+import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
+import { Team } from "../../../models/team.enum";
+import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { IsLastPathPointClicked } from "../../../actions/rules/move/is-last-path-point-clicked.rule";
 
 const playerStepDelay: number = 300
 
@@ -39,9 +41,8 @@ export class MovePlayerStep extends Step {
     }
 
     initRuleSet(): void {        
-        this.addRule(new IsTheNextStep(MovePlayerStep));    
-        this.addRule(new IsMoveTargetHexClicked()); 
-        this.addRule(new IsTargetHexNotThePlayerHex());    
+        this.addRule(new IsLeftClick);      
+        this.addRule(new IsTheNextStep(MovePlayerStep));   
     }
 
     initSubscriptions() {
@@ -83,7 +84,7 @@ export class MovePlayerStep extends Step {
 
     movePlayer(coordinates: Hex) {
         this.store.dispatch(movePlayer({
-            playerID: this.actionMeta.playerID!, 
+            playerID: this.actionMeta.player.id!, 
             position: coordinates
         }));  
     }
@@ -107,11 +108,13 @@ export class MovePlayerStep extends Step {
     }
 
     countMovementStep() {        
-        const playerID = this.actionMeta?.playerID || ""
+        const playerID = this.actionMeta.player?.id || ""
+        const playerTeam = this.actionMeta.player?.team || "" as Team
+
         if (this.scenarioTurns.length > 0) {
             this.store.dispatch(unshiftScenarioTurn())
         } else {
-            const movementPhase = this.relocation.generateMovementPhase()
+            const movementPhase = generateMovementPhase(playerTeam)            
             this.store.dispatch(initScenario({ turns: movementPhase }))
         }
         this.store.dispatch(addUsedPlayer({ playerID }))
