@@ -56,7 +56,7 @@ export class SetMovingPathPointStep extends Step {
         this.store.select(getPlayerPositions).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
             const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
-            const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());
+            const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame()).setHexes(this.actionMeta.movingPath!.toArray());
             this.actionMeta.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
         })
     }
