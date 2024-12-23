@@ -44,6 +44,8 @@ export class SetMovingPathPointStep extends Step {
         this.actionMeta = {...this.context.actionMeta as MovingActionMeta}
 
         this.actionMeta.pathPoints = [...this.actionMeta.pathPoints, this.context.hex]
+        console.log(this.actionMeta.possibleMovingPath)
+        this.actionMeta.finalMovingPath = this.grid.createGrid().setHexes(this.actionMeta.possibleMovingPath?.toArray() || [])
 
         this.generateReachableHexes();
         this.generateAvailableNextSteps();
@@ -52,11 +54,14 @@ export class SetMovingPathPointStep extends Step {
     generateReachableHexes() {
         const centralPoint = this.context.hex;
         const playerSpeed = this.actionMeta.player?.speed || 0;   
-        const distance = playerSpeed - (this.actionMeta.movingPath!.toArray().length - 1);
+        const distance = playerSpeed - (this.actionMeta.finalMovingPath!.toArray().length - 1);
         this.store.select(getPlayerPositions).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
             const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
-            const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame()).setHexes(this.actionMeta.movingPath!.toArray());
+            const occupiedHexes = this.grid.createGrid()
+                .setHexes(offsetCoordinates)
+                .setHexes(this.grid.getFrame())
+                .setHexes(this.actionMeta.finalMovingPath!.toArray());
             this.actionMeta.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
         })
     }

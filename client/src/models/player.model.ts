@@ -5,7 +5,7 @@ export class Player {
     kitNumber!: string;
     name!: string;
     team!: Team;
-    speed: number = 4;
+    speed: number = 6;
 
     constructor(id: string, name: string, kitNumber: string, team: Team) {
         this.id = id;

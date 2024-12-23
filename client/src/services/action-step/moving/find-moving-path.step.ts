@@ -59,17 +59,21 @@ export class FindMovingPathStep extends Step {
     generateMovingPath() { 
         const playerPosition: OffsetCoordinates = this.actionMeta.playerHex;
         const hoveredPosition: OffsetCoordinates = this.context.hex;  
-        const pathPoints: OffsetCoordinates[] = [playerPosition, ...this.actionMeta.pathPoints, hoveredPosition];              
+        const pathPoints: OffsetCoordinates[] = [playerPosition, ...this.actionMeta.pathPoints, hoveredPosition];
+        const finalMovingPath = this.actionMeta.finalMovingPath?.toArray() || [];              
         this.store.select(getPlayerPositions).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
             const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
-            const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());     
-            this.actionMeta.movingPath = this.grid.createGrid();        
-            for (let i = 0; i < pathPoints.length - 1; i++) {
-                const startPoint = pathPoints[i];
-                const endPoint = pathPoints[i + 1];
-                this.actionMeta.movingPath?.setHexes(this.traverser.getPathHexes(startPoint, endPoint, occupiedHexes));
-            }            
+            const occupiedHexes = this.grid.createGrid()
+                .setHexes(offsetCoordinates)
+                .setHexes(this.grid.getFrame())
+                .setHexes(finalMovingPath);
+            
+
+            this.actionMeta.possibleMovingPath = this.grid.createGrid().setHexes(finalMovingPath)
+            const startPoint = pathPoints.at(-2);
+            const endPoint = pathPoints.at(-1);            
+            this.actionMeta.possibleMovingPath?.setHexes(this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes));       
         })
     }
 
@@ -80,11 +84,12 @@ export class FindMovingPathStep extends Step {
             return
         }
 
-        this.actionMeta.challengeHexes = this.challenge.generateChallengeHexes(this.actionMeta.movingPath!.toArray(), 1)         
+        const movingPath = this.actionMeta.possibleMovingPath?.toArray() || [];
+        this.actionMeta.challengeHexes = this.challenge.generateChallengeHexes(movingPath, 1)         
     }
 
     resetMovingPath() {
-        this.actionMeta.movingPath = this.grid.createGrid();
+        this.actionMeta.possibleMovingPath = this.actionMeta.finalMovingPath
     }
 
     resetChallengeHexes() {

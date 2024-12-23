@@ -58,6 +58,7 @@ export class MovePlayerStep extends Step {
 
     calculation(): void {
         this.actionMeta = {...this.context.actionMeta as MovingActionMeta}
+        this.actionMeta.finalMovingPath = this.actionMeta.possibleMovingPath
     }    
 
     isBallStealSuccessfully(position: OffsetCoordinates) {
@@ -128,7 +129,7 @@ export class MovePlayerStep extends Step {
         
         this.countMovementStep()
 
-        from(this.actionMeta.movingPath!.toArray())
+        from(this.actionMeta.finalMovingPath!.toArray())
             .pipe(                
                 concatMap((position, index) => 
                     index === 0 

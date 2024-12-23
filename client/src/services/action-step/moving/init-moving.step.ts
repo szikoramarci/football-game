@@ -42,7 +42,7 @@ export class InitMovingStep extends Step {
         .subscribe((occupiedCoordinates) => {
           const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
           const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());
-          this.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
+          this.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes).filter(hex => hex !== centralPoint);  
         })
     }
 
@@ -58,6 +58,8 @@ export class InitMovingStep extends Step {
         playerHasBall: this.context.playerHasBall,
         reachableHexes: this.reachableHexes,
         pathPoints: [],
+        possibleMovingPath: this.grid.createGrid(),
+        finalMovingPath: this.grid.createGrid(),
         availableNextSteps: this.availableNextSteps
       }      
       this.store.dispatch(saveActionMeta(movingActionMeta));      

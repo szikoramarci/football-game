@@ -70,8 +70,8 @@ export class MovingIndicatorLayerComponent implements OnInit {
         if (!actionMeta) return;
 
         const movingActionMeta = actionMeta as MovingActionMeta;
-        if (movingActionMeta.movingPath) {
-            this.movingPath = movingActionMeta.movingPath
+        if (movingActionMeta.possibleMovingPath) {
+            this.movingPath = movingActionMeta.possibleMovingPath
         }        
     }
 

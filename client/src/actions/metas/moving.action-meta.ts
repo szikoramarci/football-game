@@ -8,6 +8,7 @@ export interface MovingActionMeta extends ActionMeta {
     player: Player
     playerHasBall: boolean
     pathPoints: Hex[]
-    movingPath?: Grid<Hex>    
+    finalMovingPath: Grid<Hex> 
+    possibleMovingPath: Grid<Hex>
     challengeHexes?: Map<string,Hex>
 }
