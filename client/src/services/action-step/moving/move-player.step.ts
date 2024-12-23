@@ -13,11 +13,9 @@ import { getBallPosition } from "../../../stores/ball-position/ball-position.sel
 import { getRelocationState } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
 import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
-import { RelocationService } from "../../relocation/relocation.service";
 import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
 import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
-import { IsLastPathPointClicked } from "../../../actions/rules/move/is-last-path-point-clicked.rule";
 
 const playerStepDelay: number = 300
 
@@ -32,8 +30,7 @@ export class MovePlayerStep extends Step {
 
     constructor(
             private store: Store,
-            private challenge: ChallengeService,  
-            private relocation: RelocationService          
+            private challenge: ChallengeService        
         ) {
         super()
         this.initRuleSet()  

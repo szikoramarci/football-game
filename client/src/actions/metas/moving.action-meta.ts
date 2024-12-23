@@ -10,5 +10,6 @@ export interface MovingActionMeta extends ActionMeta {
     pathPoints: Hex[]
     finalMovingPath: Grid<Hex> 
     possibleMovingPath: Grid<Hex>
+    ballerAttackerHex?: Hex
     challengeHexes?: Map<string,Hex>
 }

@@ -73,7 +73,6 @@ export class ActiveLayerComponent implements OnInit {
                             this.store.dispatch(setSelectableActions({ actions: selectableActions }))                                                                                                                      
                             this.store.dispatch(setGameContext({ gameContext }))        
                             this.store.dispatch(setCurrentAction({ action: firstSelectableAction }))    
-                            console.log('RESTART')  
                         } 
                     }                            
                 })
@@ -85,7 +84,6 @@ export class ActiveLayerComponent implements OnInit {
     
     handleCurrentAction(gameContext: GameContext) {
         if (this.currentAction) {
-            console.log('HANDLE ACTION')
             const action = this.injector.get(this.currentAction)
 
             const activeStep = action.getSteps()

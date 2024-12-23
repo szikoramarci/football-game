@@ -11,7 +11,7 @@ import { MovePlayerStep } from "./move-player.step";
 import { IsNotLastPathPointClicked } from "../../../actions/rules/move/is-not-last-path-point-clicked.rule";
 import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { equals, Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { TraverserService } from "../../traverser/traverser.service";
 import { GridService } from "../../grid/grid.service";
 import { IsMovingPathNotComplete } from "../../../actions/rules/move/is-moving-path-not-complete.rule";
@@ -44,7 +44,6 @@ export class SetMovingPathPointStep extends Step {
         this.actionMeta = {...this.context.actionMeta as MovingActionMeta}
 
         this.actionMeta.pathPoints = [...this.actionMeta.pathPoints, this.context.hex]
-        console.log(this.actionMeta.possibleMovingPath)
         this.actionMeta.finalMovingPath = this.grid.createGrid().setHexes(this.actionMeta.possibleMovingPath?.toArray() || [])
 
         this.generateReachableHexes();
@@ -52,6 +51,8 @@ export class SetMovingPathPointStep extends Step {
     }
 
     generateReachableHexes() {
+        // TODO - refactor this is the same as we have in init-moving-step
+        // TODO - extend with tacklable baller
         const centralPoint = this.context.hex;
         const playerSpeed = this.actionMeta.player?.speed || 0;   
         const distance = playerSpeed - (this.actionMeta.finalMovingPath!.toArray().length - 1);
@@ -66,6 +67,18 @@ export class SetMovingPathPointStep extends Step {
         })
     }
     
+
+    extendReachableHexesWithTacklableBaller(occupiedHexes: Grid<Hex>, reachableHexes: Grid<Hex>, centralPoint: Hex, distance: number) {
+        if (!this.actionMeta.ballerAttackerHex) return reachableHexes
+        
+        const occupiedHexesWithoutBaller = occupiedHexes.filter(hex => !equals(hex, this.actionMeta.ballerAttackerHex!))
+        const reachableHexesWithBaller = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexesWithoutBaller)
+        if (reachableHexesWithBaller.hasHex(this.actionMeta.ballerAttackerHex)) {
+            reachableHexes.setHexes([this.actionMeta.ballerAttackerHex])
+        }
+
+        return reachableHexes
+    }
 
     generateAvailableNextSteps() {        
         this.actionMeta.availableNextSteps = [FindMovingPathStep, SetMovingPathPointStep, MovePlayerStep];
