@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialState } from "./relocation.state";
-import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "./relocation.actions";
+import { addUsedPlayer, clearScenario, initScenario, unshiftScenarioTurn } from "./relocation.actions";
 
 export const relocationReducer = createReducer(
   initialState, 
@@ -9,6 +9,11 @@ export const relocationReducer = createReducer(
     relocationTurns: turns,
     usedPlayers: new Set<string>()   
   })),  
+  on(clearScenario, (state) => ({
+    ...state,
+    relocationTurns: [],
+    usedPlayers: new Set<string>()
+  })),
   on(unshiftScenarioTurn, (state) => {
     const updatedRelocationTurns = state.relocationTurns?.slice(1) || []
     return {    

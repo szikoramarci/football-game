@@ -6,6 +6,10 @@ export const initScenario = createAction(
     props<{ turns: RelocationTurn[] }>()
 );
 
+export const clearScenario = createAction(
+    '[Relocation] Clear Scenario'
+);
+
 export const unshiftScenarioTurn = createAction(
     '[Relocation] Unshift Scenario Turn'
 );

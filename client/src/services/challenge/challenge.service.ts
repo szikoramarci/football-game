@@ -10,6 +10,8 @@ import { setAttackingTeam } from "../../stores/gameplay/gameplay.actions";
 import { moveBall } from "../../stores/ball-position/ball-position.actions";
 import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 import { PlayerService } from "../player/player.service";
+import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../stores/action/action.actions";
+import { clearScenario } from "../../stores/relocation/relocation.actions";
 
 @Injectable({
     providedIn: 'root'
@@ -84,13 +86,15 @@ export class ChallengeService implements  OnDestroy {
             })        
     }   
 
-    switchActiveTeam(oppositionPlayerID: string) {
-        this.store.select(getPlayer(oppositionPlayerID))
-            .pipe(
-                take(1)
-            )
-            .subscribe(player => {
+    switchActiveTeam(oppositionPlayerID: string) {         
+        this.store.select(getPlayer(oppositionPlayerID)).pipe(take(1))
+            .subscribe(player => {                
                 this.store.dispatch(setAttackingTeam({ attackingTeam: player.team }))
+                this.store.dispatch(clearScenario())
+                this.store.dispatch(setSelectableActions({ actions: [] }))
+                this.store.dispatch(clearActionMeta())                                
+                this.store.dispatch(clearCurrentAction())      
+                this.store.dispatch(clearGameContext()) 
             })
     }
 
