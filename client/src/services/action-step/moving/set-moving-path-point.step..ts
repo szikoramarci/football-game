@@ -9,12 +9,9 @@ import { FindMovingPathStep } from "./find-moving-path.step";
 import { IsReachableHexClicked } from "../../../actions/rules/move/is-reachable-hex-clicked.rule";
 import { MovePlayerStep } from "./move-player.step";
 import { IsNotLastPathPointClicked } from "../../../actions/rules/move/is-not-last-path-point-clicked.rule";
-import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
-import { take } from "rxjs";
-import { equals, Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { TraverserService } from "../../traverser/traverser.service";
 import { GridService } from "../../grid/grid.service";
 import { IsMovingPathNotComplete } from "../../../actions/rules/move/is-moving-path-not-complete.rule";
+import { MovingHelperService } from "../../action-helper/moving-helper.service";
 
 
 @Injectable({
@@ -26,7 +23,7 @@ export class SetMovingPathPointStep extends Step {
     constructor(
         private store: Store,
         private grid: GridService,
-        private traverser: TraverserService
+        private movingHelper: MovingHelperService
     ) {
         super()
         this.initRuleSet()
@@ -51,33 +48,10 @@ export class SetMovingPathPointStep extends Step {
     }
 
     generateReachableHexes() {
-        // TODO - refactor this is the same as we have in init-moving-step
-        // TODO - extend with tacklable baller
         const centralPoint = this.context.hex;
         const playerSpeed = this.actionMeta.player?.speed || 0;   
         const distance = playerSpeed - (this.actionMeta.finalMovingPath!.toArray().length - 1);
-        this.store.select(getPlayerPositions).pipe(take(1))
-        .subscribe((occupiedCoordinates) => {
-            const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
-            const occupiedHexes = this.grid.createGrid()
-                .setHexes(offsetCoordinates)
-                .setHexes(this.grid.getFrame())
-                .setHexes(this.actionMeta.finalMovingPath!.toArray());
-            this.actionMeta.reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
-        })
-    }
-    
-
-    extendReachableHexesWithTacklableBaller(occupiedHexes: Grid<Hex>, reachableHexes: Grid<Hex>, centralPoint: Hex, distance: number) {
-        if (!this.actionMeta.ballerAttackerHex) return reachableHexes
-        
-        const occupiedHexesWithoutBaller = occupiedHexes.filter(hex => !equals(hex, this.actionMeta.ballerAttackerHex!))
-        const reachableHexesWithBaller = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexesWithoutBaller)
-        if (reachableHexesWithBaller.hasHex(this.actionMeta.ballerAttackerHex)) {
-            reachableHexes.setHexes([this.actionMeta.ballerAttackerHex])
-        }
-
-        return reachableHexes
+        this.actionMeta.reachableHexes = this.movingHelper.generateReachableHexes(centralPoint, distance, this.actionMeta.ballerAttackerHex!, this.actionMeta.finalMovingPath)      
     }
 
     generateAvailableNextSteps() {        

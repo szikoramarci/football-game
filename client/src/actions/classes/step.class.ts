@@ -2,7 +2,6 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { GameContext } from "./game-context.interface";
 import { RuleEvaluator } from "./rule-evaluator.class";
-import { ActionMeta } from "./action-meta.interface";
 
 @Injectable()
 export abstract class Step extends RuleEvaluator implements OnDestroy {        

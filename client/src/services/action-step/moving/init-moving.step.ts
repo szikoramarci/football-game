@@ -5,14 +5,12 @@ import { AreAvailableNextStepsEmpty } from "../../../actions/rules/is-available-
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
 import { equals, Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { take } from "rxjs";
-import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
 import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
-import { TraverserService } from "../../traverser/traverser.service";
 import { FindMovingPathStep } from "./find-moving-path.step";
 import { PlayerService } from "../../player/player.service";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
+import { MovingHelperService } from "../../action-helper/moving-helper.service";
 
 @Injectable({
   providedIn: 'root',
@@ -27,8 +25,8 @@ export class InitMovingStep extends Step {
     constructor(
       private store: Store,
       private grid: GridService,
-      private traverser: TraverserService,
-      private player: PlayerService
+      private player: PlayerService,
+      private movingHelper: MovingHelperService
     ) {
       super()     
       this.initSubscriptions()
@@ -57,28 +55,10 @@ export class InitMovingStep extends Step {
 
     generateReachableHexes() {
       const centralPoint = this.context.hex;
-      const distance = this.context.player?.speed || 0;      
-      this.store.select(getPlayerPositions).pipe(take(1))
-        .subscribe((occupiedCoordinates) => {
-          const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
-          const occupiedHexes = this.grid.createGrid().setHexes(offsetCoordinates).setHexes(this.grid.getFrame());
-          let reachableHexes = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexes)
-          reachableHexes = this.extendReachableHexesWithTacklableBaller(occupiedHexes, reachableHexes, centralPoint, distance)
-          this.reachableHexes = reachableHexes.filter(hex => hex !== centralPoint);  
-        })
-    }
-
-    extendReachableHexesWithTacklableBaller(occupiedHexes: Grid<Hex>, reachableHexes: Grid<Hex>, centralPoint: Hex, distance: number) {
-      if (!this.ballerAttackerHex) return reachableHexes
-      
-      const occupiedHexesWithoutBaller = occupiedHexes.filter(hex => !equals(hex, this.ballerAttackerHex))
-      const reachableHexesWithBaller = this.traverser.getReachableHexes(centralPoint, distance, occupiedHexesWithoutBaller)
-      if (reachableHexesWithBaller.hasHex(this.ballerAttackerHex)) {
-        reachableHexes.setHexes([this.ballerAttackerHex])
-      }
-
-      return reachableHexes
-    }
+      const distance = this.context.player?.speed || 0;  
+      this.reachableHexes = this.movingHelper.generateReachableHexes(centralPoint, distance, this.ballerAttackerHex, null)
+      this.reachableHexes = this.reachableHexes.filter(hex => hex !== centralPoint)     
+    }    
 
     determineAttackerBallerHex() {
       const playerWithBall = this.attackingTeamPlayersWithPositions.find(playerWithPosition => equals(playerWithPosition.position, this.ballPosition))      
