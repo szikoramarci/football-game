@@ -18,3 +18,8 @@ export const addUsedPlayer = createAction(
     '[Relocation] Add Used Player',
     props<{ playerID: string }>()
 );
+
+export const setReadyToTacklePlayerID = createAction(
+    '[Relocation] Set Ready To Tackle Player ID',
+    props<{ playerID: string | null }>()
+);

@@ -53,22 +53,22 @@ export class FindMovingPathStep extends Step {
 
     isSelectedHexReachable() {
         const selectedPoint: OffsetCoordinates = this.context.hex;
-        return this.actionMeta.reachableHexes.getHex(selectedPoint) || false
+        return !!this.actionMeta.reachableHexes.getHex(selectedPoint) || false
     }
 
     generateMovingPath() { 
         const playerPosition: OffsetCoordinates = this.actionMeta.playerHex;
         const hoveredPosition: OffsetCoordinates = this.context.hex;  
         const pathPoints: OffsetCoordinates[] = [playerPosition, ...this.actionMeta.pathPoints, hoveredPosition];
-        const finalMovingPath = this.actionMeta.finalMovingPath?.toArray() || [];              
+        const finalMovingPath = this.actionMeta.finalMovingPath?.toArray() || [];    
+               
         this.store.select(getPlayerPositions).pipe(take(1))
         .subscribe((occupiedCoordinates) => {
-            const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)        
+            const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)      
             const occupiedHexes = this.grid.createGrid()
                 .setHexes(offsetCoordinates)
                 .setHexes(this.grid.getFrame())
-                .setHexes(finalMovingPath);
-            
+                .setHexes(finalMovingPath)   
 
             this.actionMeta.possibleMovingPath = this.grid.createGrid().setHexes(finalMovingPath)
             const startPoint = pathPoints.at(-2);

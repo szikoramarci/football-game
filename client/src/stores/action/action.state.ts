@@ -5,6 +5,7 @@ import { Action } from "../../actions/classes/action.class";
 import { MovingAction } from "../../actions/moving.action";
 import { StandardPassAction } from "../../actions/standard-pass.action";
 import { HighPassAction } from "../../actions/high-pass.action";
+import { TacklingAction } from "../../actions/tackling.action";
 
 export interface ActionState {
   currentActionMeta: ActionMeta | undefined,

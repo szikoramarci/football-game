@@ -8,6 +8,7 @@ import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
 import { Hex } from "honeycomb-grid";
 import { GridService } from "../grid/grid.service";
+import { Player } from "../../models/player.model";
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +20,7 @@ export class RelocationService implements OnDestroy {
 
     relocationTurns: RelocationTurn[] = []
     usedPlayers: Set<string> = new Set()    
+    readyToTacklePlayerId: string | null = null
 
     attackingTeamSubscription!: Subscription
     currentScenarioSubscription!: Subscription
@@ -38,11 +40,16 @@ export class RelocationService implements OnDestroy {
         this.currentScenarioSubscription = this.store.select(getRelocationState).subscribe(currentScenario => {
             this.relocationTurns = currentScenario.relocationTurns
             this.usedPlayers = currentScenario.usedPlayers
+            this.readyToTacklePlayerId = currentScenario.readyToTacklePlayerId
         })
     }
 
     isRelocationScenarioActive(): boolean {
         return this.relocationTurns.length > 0
+    }
+
+    isPlayerReadyToTackle(player: Player): boolean {
+        return this.readyToTacklePlayerId == player?.id || false 
     }
 
     getSelectablePlayersIds(): Observable<Set<string>> {
@@ -66,6 +73,8 @@ export class RelocationService implements OnDestroy {
             map(playersWithPosition => {
                 return playersWithPosition.filter(playerWithPosition => {               
                     if (playerWithPosition.player == undefined) return false
+
+                    if (playerWithPosition.player.id == this.readyToTacklePlayerId) return true
 
                     if (this.relocationTurns.length == 0) {
                         return playerWithPosition.player.team == this.attackingTeam

@@ -51,7 +51,7 @@ export class SetMovingPathPointStep extends Step {
         const centralPoint = this.context.hex;
         const playerSpeed = this.actionMeta.player?.speed || 0;   
         const distance = playerSpeed - (this.actionMeta.finalMovingPath!.toArray().length - 1);
-        this.actionMeta.reachableHexes = this.movingHelper.generateReachableHexes(centralPoint, distance, this.actionMeta.ballerAttackerHex!, this.actionMeta.finalMovingPath)      
+        this.actionMeta.reachableHexes = this.movingHelper.generateReachableHexes(centralPoint, distance, this.actionMeta.finalMovingPath)      
     }
 
     generateAvailableNextSteps() {        

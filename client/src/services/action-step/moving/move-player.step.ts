@@ -12,10 +12,13 @@ import { concatMap, delay, from, of, takeWhile } from "rxjs";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { getRelocationState } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
-import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
+import { addUsedPlayer, initScenario, setReadyToTacklePlayerID, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
 import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
 import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
+import { PlayerService } from "../../player/player.service";
+import { TraverserService } from "../../traverser/traverser.service";
 
 const playerStepDelay: number = 300
 
@@ -26,11 +29,14 @@ export class MovePlayerStep extends Step {
     actionMeta!: MovingActionMeta
     ballPosition!: OffsetCoordinates
     scenarioTurns!: RelocationTurn[]
-
+    attackingTeamPlayersWithPositions: PlayerWithPosition[] = []
+    readyToTacklePlayerID: string | null = null
 
     constructor(
             private store: Store,
-            private challenge: ChallengeService        
+            private challenge: ChallengeService,
+            private player: PlayerService,
+            private traverser: TraverserService
         ) {
         super()
         this.initRuleSet()  
@@ -43,12 +49,16 @@ export class MovePlayerStep extends Step {
     }
 
     initSubscriptions() {
+        const attackingTeamPlayersWithPositionsSubscriptions = this.player.getAttackingPlayersWithPositions().subscribe(attackingTeamPlayersWithPositions => {
+            this.attackingTeamPlayersWithPositions = attackingTeamPlayersWithPositions        
+        }) 
         const ballPositionSubscriptions = this.store.select(getBallPosition()).subscribe(ballPosition => {                        
             this.ballPosition = ballPosition as OffsetCoordinates
         })
         const relocationSubscriptions = this.store.select(getRelocationState).subscribe(scenario => {                        
             this.scenarioTurns = scenario.relocationTurns
         })
+        this.addSubscription(attackingTeamPlayersWithPositionsSubscriptions)
         this.addSubscription(relocationSubscriptions)
         this.addSubscription(ballPositionSubscriptions)
     }
@@ -56,6 +66,7 @@ export class MovePlayerStep extends Step {
     calculation(): void {
         this.actionMeta = {...this.context.actionMeta as MovingActionMeta}
         this.actionMeta.finalMovingPath = this.actionMeta.possibleMovingPath
+        this.readyToTacklePlayerID = this.determinePlayerIsReadyToTackle()
     }    
 
     isBallStealSuccessfully(position: OffsetCoordinates) {
@@ -118,13 +129,30 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(addUsedPlayer({ playerID }))
     }
 
-    updateState(): void {       
+    determinePlayerIsReadyToTackle(): string | null {
+        if (this.actionMeta.player.id == undefined) return null
+
+        const ballIsInAdjacentHex = this.traverser.getNeighbors(this.context.hex).toArray().some(hex => equals(hex, this.ballPosition))
+        if (!ballIsInAdjacentHex) return null
+
+        const playerWithBall = this.attackingTeamPlayersWithPositions.find(playerWithPosition => equals(playerWithPosition.position, this.ballPosition))              
+        const ballerIsOppositeTeam = !!playerWithBall && playerWithBall?.player.team !== this.actionMeta?.player?.team
+        
+        if (!ballerIsOppositeTeam) return null
+
+        return this.actionMeta.player.id
+    }
+
+    updateState(): void {           
+
         this.store.dispatch(setSelectableActions({ actions: [] }))
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext())      
         
-        this.countMovementStep()
+        this.countMovementStep()      
+        
+        this.store.dispatch(setReadyToTacklePlayerID({ playerID: this.readyToTacklePlayerID }))
 
         from(this.actionMeta.finalMovingPath!.toArray())
             .pipe(                

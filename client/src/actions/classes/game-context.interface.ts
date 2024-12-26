@@ -7,8 +7,9 @@ import { Action } from "./action.class";
 export interface GameContext extends BaseContext {
     player: Player | undefined,   
     playerHasBall: boolean,
+    playerIsReadyToTackle: boolean,
     actionMeta: ActionMeta | undefined,
     availableActions: Type<Action>[],
     selectablePlayers: Set<string>,
-    relocationIsActive: boolean
+    relocationIsActive: boolean    
 }
