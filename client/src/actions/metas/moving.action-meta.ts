@@ -4,7 +4,6 @@ import { Player } from "../../models/player.model";
 
 export interface MovingActionMeta extends ActionMeta {
     reachableHexes: Grid<Hex>
-    playerHex: Hex
     player: Player
     playerHasBall: boolean
     pathPoints: Hex[]

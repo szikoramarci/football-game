@@ -7,6 +7,7 @@ import { Grid, Hex } from "honeycomb-grid";
 import { Store } from "@ngrx/store";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
+import { SetTacklingHexStep } from "./set-tackling-hex.step";
 
 @Injectable({
   providedIn: 'root',
@@ -42,9 +43,10 @@ export class InitTacklingStep extends Step {
   
   updateState(): void {
     const tacklingActionMeta: TacklingActionMeta = {
+      playerHex: this.context.hex,
       clickedHex: this.context.hex,
       possibleTacklingHexes: this.possibleTacklingHexes,
-      availableNextSteps: []  
+      availableNextSteps: [SetTacklingHexStep]  
     }      
     this.store.dispatch(saveActionMeta(tacklingActionMeta));      
   }

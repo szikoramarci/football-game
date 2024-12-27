@@ -1,8 +1,7 @@
 import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid"
 import { ActionMeta } from "../classes/action-meta.interface"
 
-export interface HighPassActionMeta extends ActionMeta {
-    playerHex: Hex,
+export interface HighPassActionMeta extends ActionMeta {    
     availableTargets: Grid<Hex>
     passingPath?: Hex[] 
     targetHex?: OffsetCoordinates, 

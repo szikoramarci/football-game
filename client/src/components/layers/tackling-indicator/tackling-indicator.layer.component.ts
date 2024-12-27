@@ -56,18 +56,19 @@ export class TacklingIndicatorLayerComponent implements OnInit {
     handleMovingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const initMovingActionMeta = actionMeta as TacklingActionMeta;
-        if (initMovingActionMeta.finalMovingPath) {
-            this.movingPath = initMovingActionMeta.finalMovingPath
+        const tacklingActionMeta = actionMeta as TacklingActionMeta;
+        if (tacklingActionMeta.finalMovingPath) {
+            console.log(tacklingActionMeta.finalMovingPath)
+            this.movingPath = tacklingActionMeta.finalMovingPath
         }
     }
 
     handlePossibleTacklingHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const movingActionMeta = actionMeta as TacklingActionMeta;
-        if (movingActionMeta.possibleTacklingHexes) {
-            this.indicators = movingActionMeta.possibleTacklingHexes
+        const tacklingActionMeta = actionMeta as TacklingActionMeta;
+        if (tacklingActionMeta.possibleTacklingHexes) {
+            this.indicators = tacklingActionMeta.possibleTacklingHexes
         }        
     }    
 
