@@ -7,22 +7,21 @@ import { AppService } from "../../../services/app/app.service";
 import { getCurrentActionMeta } from "../../../stores/action/action.selector";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
+import { TacklingActionMeta } from "../../../actions/metas/tackling.action-meta";
+
 @Component({
-    selector: 'moving-indicator-layer',
+    selector: 'tackling-indicator-layer',
     standalone: true,
     imports: [IndicatorComponent, MovementPathComponent],
-    templateUrl: './moving-indicator.layer.component.html',
+    templateUrl: './tackling-indicator.layer.component.html',
 })
-export class MovingIndicatorLayerComponent implements OnInit {
+export class TacklingIndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>;
     movingPath!: Grid<Hex>;
-    challengeHexes!: Grid<Hex>;
 
     movementGraphicsContext!: GraphicsContext
-    challengeGraphicsContext!: GraphicsContext
 
     container: Container = new Container({
         interactiveChildren: false,
@@ -38,50 +37,38 @@ export class MovingIndicatorLayerComponent implements OnInit {
     
     ngOnInit(): void {
         this.movementGraphicsContext = this.context.getMovementIndicatorContext();
-        this.challengeGraphicsContext = this.context.getChallengeIndicatorContext();
 
         this.app.addChild(this.container);
                 
         this.store.select(getCurrentActionMeta()).subscribe(actionMeta => {     
             this.resetElements();
 
-            this.handleReachableHexes(actionMeta);
+            this.handlePossibleTacklingHexes(actionMeta);
             this.handleMovingPath(actionMeta);       
-            this.handleChallengeHexes(actionMeta);   
         });        
     }
 
     resetElements() {
         this.indicators = this.grid.createGrid();
         this.movingPath = this.grid.createGrid();
-        this.challengeHexes = this.grid.createGrid();
     }
 
     handleMovingPath(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const movingActionMeta = actionMeta as MovingActionMeta;
-        if (movingActionMeta.possibleMovingPath) {
-            this.movingPath = movingActionMeta.possibleMovingPath
-        }          
-    }
-
-    handleReachableHexes(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const initMovingActionMeta = actionMeta as MovingActionMeta;
-        if (initMovingActionMeta.reachableHexes) {
-            this.indicators = initMovingActionMeta.reachableHexes
+        const initMovingActionMeta = actionMeta as TacklingActionMeta;
+        if (initMovingActionMeta.finalMovingPath) {
+            this.movingPath = initMovingActionMeta.finalMovingPath
         }
     }
 
-    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
+    handlePossibleTacklingHexes(actionMeta: ActionMeta | undefined) {
         if (!actionMeta) return;
 
-        const movingActionMeta = actionMeta as MovingActionMeta;
-        if (movingActionMeta.challengeHexes) {
-            this.challengeHexes.setHexes(movingActionMeta.challengeHexes.values());
-        }       
+        const movingActionMeta = actionMeta as TacklingActionMeta;
+        if (movingActionMeta.possibleTacklingHexes) {
+            this.indicators = movingActionMeta.possibleTacklingHexes
+        }        
     }    
 
     handleGraphics(indicatorGraphics: Graphics) {

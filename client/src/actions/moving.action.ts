@@ -4,7 +4,7 @@ import { FindMovingPathStep } from "../services/action-step/moving/find-moving-p
 import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { MovePlayerStep } from "../services/action-step/moving/move-player.step";
-import { IsRelocatable } from "./rules/move/is-relocatable.rule";
+import { IsPlayerMovable } from "./rules/move/is-player-movable.rule";
 import { SetMovingPathPointStep } from "../services/action-step/moving/set-moving-path-point.step.";
 
 @Injectable({
@@ -27,6 +27,6 @@ export class MovingAction extends Action {
 
     initRuleSet() {      
         this.addRule(new IsLeftClick())        
-        this.addRule(new IsRelocatable())
+        this.addRule(new IsPlayerMovable())
       }
 }

@@ -2,8 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { Hex } from "honeycomb-grid";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
-import { RelocationService } from "../../../services/relocation/relocation.service";
 import { PlayerStrokeComponent } from "../../player-stroke/player-stroke.component";
+import { ActionService } from "../../../services/action/action.service";
 
 @Component({
     selector: 'selection-indicator-layer',
@@ -20,14 +20,14 @@ export class SelectionIndicatorLayerComponent implements OnInit {
     }); 
 
     constructor(
-        private relocation: RelocationService,
+        private action: ActionService,
         private app: AppService
     ) {}
     
     ngOnInit(): void {
         this.app.addChild(this.container);
 
-        this.relocation.getSelectableHexes().subscribe(selectablePositions => {
+        this.action.getSelectableHexes().subscribe(selectablePositions => {
             this.selectablePositions = selectablePositions
         })                   
     }

@@ -8,6 +8,7 @@ import { PassingIndicatorLayerComponent } from '../layers/passing-indicator/pass
 import { MovingIndicatorLayerComponent } from '../layers/moving-indicator/moving-indicator.layer.component';
 import { MouseEventService } from '../../services/mouse-event/mouse-event.service';
 import { SelectionIndicatorLayerComponent } from '../layers/selection-indicator/selection-indicator.layer.component';
+import { TacklingIndicatorLayerComponent } from '../layers/tackling-indicator/tackling-indicator.layer.component';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { SelectionIndicatorLayerComponent } from '../layers/selection-indicator/
     StateLayerComponent,
     MovingIndicatorLayerComponent,
     PassingIndicatorLayerComponent,
+    TacklingIndicatorLayerComponent,
     SelectionIndicatorLayerComponent,
     ActiveLayerComponent
   ],

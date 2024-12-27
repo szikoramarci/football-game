@@ -1,10 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Action } from "./classes/action.class";
-import { IsLeftClick } from "./rules/is-left-click.rule";
-import { HasThePlayerTheBall } from "./rules/pass/has-the-player-the-ball.rule";
-import { RelocationIsInactive } from "./rules/relocation-is-inactive.rule";
 import { InitTacklingStep } from "../services/action-step/tackling/init-tackling.step";
-import { RelocationIsActive } from "./rules/relocation-is-active.rule";
+import { CanPlayerTackle } from "./rules/tackle/can-player-tackle.rule";
+import { IsLeftClick } from "./rules/is-left-click.rule";
 
 @Injectable({
     providedIn: 'root',
@@ -21,7 +19,8 @@ export class TacklingAction extends Action {
         this.addStep(InitTacklingStep)
     }
 
-    initRuleSet() {              
-        this.addRule(new RelocationIsActive())
+    initRuleSet() {             
+        this.addRule(new IsLeftClick()) 
+        this.addRule(new CanPlayerTackle())
       }
 }

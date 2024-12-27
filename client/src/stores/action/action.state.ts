@@ -19,6 +19,6 @@ export const initialState: ActionState = {
   currentActionMeta: undefined,
   currentAction: undefined,
   gameContext: undefined,
-  availableActions: [MovingAction, StandardPassAction, HighPassAction],
+  availableActions: [MovingAction, TacklingAction, StandardPassAction, HighPassAction],
   selectableActions: []
 };

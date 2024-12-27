@@ -2,7 +2,6 @@ import { Injectable, OnDestroy, Type } from "@angular/core";
 import { BaseContext } from "../../actions/classes/base-context.interface";
 import { forkJoin, map, Observable, Subscription, take } from "rxjs";
 import { ActionMeta } from "../../actions/classes/action-meta.interface";
-import { GridService } from "../grid/grid.service";
 import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { Store } from "@ngrx/store";
@@ -10,6 +9,8 @@ import { getAvailableActions, getCurrentActionMeta } from "../../stores/action/a
 import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
 import { RelocationService } from "../relocation/relocation.service";
+import { TacklingHelperService } from "../action-helper/tackling-helper.service";
+import { ActionService } from "../action/action.service";
 
 @Injectable({
     providedIn: 'root'
@@ -26,10 +27,11 @@ export class GameContextService implements OnDestroy {
     selectablePlayersSubscription!: Subscription 
 
     constructor(
-        private grid: GridService,
+        private tacklingHelper: TacklingHelperService,
         private store: Store,
         private player: PlayerService,
-        private relocation: RelocationService
+        private relocation: RelocationService,
+        private action: ActionService
     ){
         this.initSubscriptions()
     }
@@ -41,7 +43,7 @@ export class GameContextService implements OnDestroy {
         this.availableActionsSubscription = this.store.select(getAvailableActions()).subscribe(availableActions => {
             this.availableActions = availableActions
         })
-        this.selectablePlayersSubscription = this.relocation.getSelectablePlayersIds().subscribe(selectablePlayers => {
+        this.selectablePlayersSubscription = this.action.getSelectablePlayersIds().subscribe(selectablePlayers => {
             this.selectablePlayers = selectablePlayers
         }) 
     }
@@ -62,12 +64,12 @@ export class GameContextService implements OnDestroy {
                 return {
                     ...baseContext,
                     player: player,  
-                    playerHasBall: playerHasBall,
-                    playerIsReadyToTackle: this.relocation.isPlayerReadyToTackle(player!),
+                    playerHasBall: playerHasBall,                    
                     actionMeta: this.currentActionMeta,
                     availableActions: this.availableActions,
                     selectablePlayers: this.selectablePlayers,
-                    relocationIsActive: this.relocation.isRelocationScenarioActive()
+                    playerIsMovable: this.relocation.isPlayerMovable(player!),
+                    playerCanTackle: this.tacklingHelper.canPlayerTackle(player!)
                 }
             })
         )
