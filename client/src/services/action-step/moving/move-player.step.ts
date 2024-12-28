@@ -73,7 +73,7 @@ export class MovePlayerStep extends Step {
             
             this.tackleHelper.triggerTackleTrying(oppositionPlayerID, position)
 
-            if (this.challenge.dribbleTackleChallenge()) {                                
+            if (this.challenge.ballStealingChallange()) {                                
                 this.challenge.transferBallToOpponent(oppositionPlayerID, playerStepDelay/2);
                 this.challenge.switchActiveTeam(oppositionPlayerID)
                 return false;
@@ -127,7 +127,7 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext()) 
-        
+
         this.countMovementStep()      
      
         from(this.actionMeta.finalMovingPath!.toArray())

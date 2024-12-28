@@ -10,7 +10,6 @@ import { take } from "rxjs";
 import { OffsetCoordinates } from "honeycomb-grid";
 import { GridService } from "../../grid/grid.service";
 import { TraverserService } from "../../traverser/traverser.service";
-import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { TackleStep } from "./tackle.step";
 
 @Injectable({
@@ -18,7 +17,6 @@ import { TackleStep } from "./tackle.step";
 })
 export class SetTacklingHexStep extends Step {
     actionMeta!: TacklingActionMeta;
-    ballPosition!: OffsetCoordinates
 
     constructor(
         private store: Store,
@@ -27,21 +25,13 @@ export class SetTacklingHexStep extends Step {
     ) {
         super()
         this.initRuleSet()
-        this.initSubsriptions()
     }
     
 
     initRuleSet() {
         this.addRule(new IsMouseOver())
         this.addRule(new IsTheNextStep(SetTacklingHexStep))
-    }
-
-    initSubsriptions() {
-        const ballPositionSubscription = this.store.select(getBallPosition()).subscribe(ballPosition => {
-            this.ballPosition = ballPosition
-        })
-        this.addSubscription(ballPositionSubscription)
-    }
+    }    
 
     calculation(): void {
         this.actionMeta = {...this.context.actionMeta as TacklingActionMeta}
@@ -63,8 +53,6 @@ export class SetTacklingHexStep extends Step {
         const startPoint: OffsetCoordinates = this.actionMeta.playerHex;
         const endPoint: OffsetCoordinates = this.context.hex;  
 
-        const ballHex = this.grid.getHex(this.ballPosition)
-
         this.store.select(getPlayerPositions).pipe(take(1))
             .subscribe((occupiedCoordinates) => {
                 const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)      
@@ -72,7 +60,7 @@ export class SetTacklingHexStep extends Step {
                     .setHexes(offsetCoordinates)
                     .setHexes(this.grid.getFrame())
             
-                this.actionMeta.movingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes).setHexes([ballHex!])     
+                this.actionMeta.movingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes).setHexes([this.actionMeta.ballHex!])     
         })
     }
 

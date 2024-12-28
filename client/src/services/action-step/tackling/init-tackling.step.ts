@@ -8,6 +8,10 @@ import { Store } from "@ngrx/store";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";
 import { SetTacklingHexStep } from "./set-tackling-hex.step";
+import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
+import { Player } from "../../../models/player.model";
+import { GridService } from "../../grid/grid.service";
+import { PlayerService } from "../../player/player.service";
 
 @Injectable({
   providedIn: 'root',
@@ -15,18 +19,33 @@ import { SetTacklingHexStep } from "./set-tackling-hex.step";
 export class InitTacklingStep extends Step {
 
   possibleTacklingHexes!: Grid<Hex>
+  ballHex!: Hex
+  ballerPlayer!: Player
 
   constructor(
     private store: Store,
-    private tacklingHelper: TacklingHelperService
+    private tacklingHelper: TacklingHelperService,
+    private grid: GridService,
+    private player: PlayerService
   ) {
       super()
       this.initRuleSet()
+      this.initSubsriptions()
   }
 
   initRuleSet() {
       this.addRule(new AreAvailableNextStepsEmpty());
   }
+
+  initSubsriptions() {
+    const ballPositionSubscription = this.store.select(getBallPosition()).subscribe(ballPosition => {
+      this.ballHex = this.grid.getHex(ballPosition)!
+      this.player.getPlayerOnCoordinates(ballPosition).subscribe(player => {
+        this.ballerPlayer = player!
+      })
+    })
+    this.addSubscription(ballPositionSubscription)
+}
 
   calculation(): void {
     this.generatePossibleTacklingHexes()
@@ -45,6 +64,8 @@ export class InitTacklingStep extends Step {
     const tacklingActionMeta: TacklingActionMeta = {
       player: this.context.player!,
       playerHex: this.context.hex,
+      ballerPlayer: this.ballerPlayer,
+      ballHex: this.ballHex,
       clickedHex: this.context.hex,
       possibleTacklingHexes: this.possibleTacklingHexes,
       availableNextSteps: [SetTacklingHexStep]  

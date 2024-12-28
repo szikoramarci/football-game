@@ -9,6 +9,8 @@ import { concatMap, delay, from, map, of } from "rxjs";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { Hex } from "honeycomb-grid";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
+import { ChallengeService } from "../../challenge/challenge.service";
+import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 
 const playerStepDelay: number = 300
 
@@ -20,7 +22,8 @@ export class TackleStep extends Step {
 
     constructor(
         private store: Store,
-        private tackleHelper: TacklingHelperService
+        private tackleHelper: TacklingHelperService,
+        private challange: ChallengeService
     ) {
         super()
         this.initRuleSet()
@@ -43,11 +46,21 @@ export class TackleStep extends Step {
         }));  
     }
 
-    tacklePlayer(coordinates: Hex) {
+    tacklePlayer(coordinates: Hex) {        
         this.tackleHelper.triggerTackleTrying(
             this.actionMeta.player.id!,
             coordinates
         )
+    }
+
+    handlingTacklingChallange() {
+        const tackler = this.actionMeta.player
+        const dribler = this.actionMeta.ballerPlayer
+        const challangeResult = this.challange.tacklingChallange(tackler, dribler)
+
+        if (challangeResult) {
+            this.store.dispatch(moveBall(this.context.hex))
+        }
     }
 
     updateState(): void {
@@ -70,6 +83,7 @@ export class TackleStep extends Step {
             .subscribe(({position, index}) => {
                 if (index === movingPath.length - 1) {
                     this.tacklePlayer(position); // Handle the last hex differently
+                    this.handlingTacklingChallange()
                 } else {
                     this.movePlayer(position);
                 }

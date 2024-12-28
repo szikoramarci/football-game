@@ -12,11 +12,12 @@ import { getPlayerPosition } from "../../stores/player-position/player-position.
 import { PlayerService } from "../player/player.service";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../stores/action/action.actions";
 import { clearScenario } from "../../stores/relocation/relocation.actions";
+import { Player } from "../../models/player.model";
 
 @Injectable({
     providedIn: 'root'
 })
-export class ChallengeService implements  OnDestroy {
+export class ChallengeService implements OnDestroy {
 
     defensiveTeamPlayersWithPositions: PlayerWithPosition[] = []
 
@@ -36,7 +37,7 @@ export class ChallengeService implements  OnDestroy {
         })
     }
 
-    dribbleTackleChallenge(): boolean {
+    ballStealingChallange(): boolean {
         return this.rollDice() == 6
     }
 
@@ -45,6 +46,23 @@ export class ChallengeService implements  OnDestroy {
         console.log(diceValue)
         return diceValue
     }
+
+    tacklingChallange(tackler: Player, dribbler: Player): boolean | null {
+        const tacklingRoll = this.rollDice()
+        const dribblingRoll = this.rollDice()  
+        const tacklingResult = tackler.tackling + tacklingRoll
+        const dribblingResult = dribbler.dribbling + dribblingRoll      
+
+        console.log('TACKLING: ' + tackler.tackling + ' + ' + tacklingRoll + ' = ' + tacklingResult)
+        console.log('DRIBBLING: ' + dribbler.dribbling + ' + ' + dribblingRoll + ' = ' + dribblingResult)
+
+        if (tacklingResult == dribblingResult) {
+            return null
+        }
+
+        return tacklingResult > dribblingResult
+    }
+
 
     generateChallengeHexes(pathHexes: Hex[], skipHex: number = 0): Map<string,Hex> {
         return pathHexes

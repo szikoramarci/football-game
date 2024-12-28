@@ -33,7 +33,7 @@ export class StandardPassBallStep extends Step {
 
     updateState(): void {  
         const ballWasStolen = Array.from(this.actionMeta.challengeHexes!.entries()).some(([oppositionPlayerID]) => {
-            if (this.challenge.dribbleTackleChallenge()) {
+            if (this.challenge.ballStealingChallange()) {
                 this.challenge.transferBallToOpponent(oppositionPlayerID);                         
                 this.challenge.switchActiveTeam(oppositionPlayerID)
                 return true;

@@ -5,5 +5,7 @@ import { Player } from "../../models/player.model"
 export interface TacklingActionMeta extends ActionMeta {
     possibleTacklingHexes: Grid<Hex>
     movingPath?: Grid<Hex>
-    player: Player
+    player: Player,
+    ballHex: Hex,
+    ballerPlayer: Player
 }
