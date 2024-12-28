@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
-import { Subscription } from "rxjs";
+import { filter, map, Observable, Subject, Subscription } from "rxjs";
 import { PlayerService } from "../player/player.service";
 import { Store } from "@ngrx/store";
 import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
@@ -23,6 +23,8 @@ export class TacklingHelperService implements OnDestroy {
     attackingPlayersSubscription!: Subscription
     defendingPlayersSubscription!: Subscription
     ballPositionSubscription!: Subscription
+
+    tacklingTrying: Subject<{playerID: string, coordinates: OffsetCoordinates}> = new Subject()
 
     constructor(
         private player: PlayerService,
@@ -80,8 +82,18 @@ export class TacklingHelperService implements OnDestroy {
 
         return possibleTacklingHexes
     }
-    
 
+    triggerTackleTrying(playerID: string, coordinates: OffsetCoordinates) {
+        this.tacklingTrying.next({ playerID, coordinates })
+    }
+
+    getTackleTryingEvents(playerID: string): Observable<OffsetCoordinates> {
+        return this.tacklingTrying.pipe(
+            filter(tackleTrying => tackleTrying.playerID == playerID),  
+            map(tacklingTrying => tacklingTrying.coordinates)
+        )
+    }
+    
     ngOnDestroy(): void {
         this.attackingPlayersSubscription.unsubscribe()
         this.defendingPlayersSubscription.unsubscribe()

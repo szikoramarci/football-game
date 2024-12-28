@@ -43,6 +43,7 @@ export class InitTacklingStep extends Step {
   
   updateState(): void {
     const tacklingActionMeta: TacklingActionMeta = {
+      player: this.context.player!,
       playerHex: this.context.hex,
       clickedHex: this.context.hex,
       possibleTacklingHexes: this.possibleTacklingHexes,

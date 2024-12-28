@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from "@angular/core";
 import { Graphics, Point } from "pixi.js";
 import { DrawService } from "../../services/draw/draw.service";
-import { Hex, HexCoordinates } from "honeycomb-grid";
+import { Hex } from "honeycomb-grid";
 
 @Component({
     selector: 'passing-path',

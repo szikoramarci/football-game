@@ -4,6 +4,7 @@ import { InitTacklingStep } from "../services/action-step/tackling/init-tackling
 import { CanPlayerTackle } from "./rules/tackle/can-player-tackle.rule";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { SetTacklingHexStep } from "../services/action-step/tackling/set-tackling-hex.step";
+import { TackleStep } from "../services/action-step/tackling/tackle.step";
 
 @Injectable({
     providedIn: 'root',
@@ -19,6 +20,7 @@ export class TacklingAction extends Action {
     initSteps() {
         this.addStep(InitTacklingStep)
         this.addStep(SetTacklingHexStep)
+        this.addStep(TackleStep)
     }
 
     initRuleSet() {             

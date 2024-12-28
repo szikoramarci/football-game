@@ -7,6 +7,13 @@ import { Sector } from "../../interfaces/sector.interface";
 })
 export class GeometryService {
 
+    halfLine(start: Point, end: Point): Point {
+        return {
+            x: (start.x + end.x) / 2,
+            y: (start.y + end.y) / 2,
+        };
+    }
+
     calculatePointDistance(point1: Point, point2: Point): number {
         const dx = point2.x - point1.x;
         const dy = point2.y - point1.y;

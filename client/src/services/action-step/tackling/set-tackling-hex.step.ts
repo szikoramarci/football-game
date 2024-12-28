@@ -10,13 +10,15 @@ import { take } from "rxjs";
 import { OffsetCoordinates } from "honeycomb-grid";
 import { GridService } from "../../grid/grid.service";
 import { TraverserService } from "../../traverser/traverser.service";
-import { IsPossibleTacklingHexClicked } from "../../../actions/rules/tackle/is-possible-tackling-hex-clicked.rule";
+import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
+import { TackleStep } from "./tackle.step";
 
 @Injectable({
   providedIn: 'root',
 })
 export class SetTacklingHexStep extends Step {
     actionMeta!: TacklingActionMeta;
+    ballPosition!: OffsetCoordinates
 
     constructor(
         private store: Store,
@@ -25,23 +27,43 @@ export class SetTacklingHexStep extends Step {
     ) {
         super()
         this.initRuleSet()
+        this.initSubsriptions()
     }
+    
 
     initRuleSet() {
-        this.addRule(new IsMouseOver());  
-        this.addRule(new IsTheNextStep(SetTacklingHexStep));
-        this.addRule(new IsPossibleTacklingHexClicked())
+        this.addRule(new IsMouseOver())
+        this.addRule(new IsTheNextStep(SetTacklingHexStep))
+    }
+
+    initSubsriptions() {
+        const ballPositionSubscription = this.store.select(getBallPosition()).subscribe(ballPosition => {
+            this.ballPosition = ballPosition
+        })
+        this.addSubscription(ballPositionSubscription)
     }
 
     calculation(): void {
         this.actionMeta = {...this.context.actionMeta as TacklingActionMeta}
 
-        this.generateMovingPath()
+        if (this.isHexClickable()) {
+            this.generateMovingPath()
+        } else{
+            this.resetMovingPath()
+        }
+        
+        this.generateAvailableNextSteps()
+    }
+
+    isHexClickable(){
+        return this.actionMeta.possibleTacklingHexes.hasHex(this.context.hex)
     }
 
     generateMovingPath(){
         const startPoint: OffsetCoordinates = this.actionMeta.playerHex;
         const endPoint: OffsetCoordinates = this.context.hex;  
+
+        const ballHex = this.grid.getHex(this.ballPosition)
 
         this.store.select(getPlayerPositions).pipe(take(1))
             .subscribe((occupiedCoordinates) => {
@@ -50,8 +72,16 @@ export class SetTacklingHexStep extends Step {
                     .setHexes(offsetCoordinates)
                     .setHexes(this.grid.getFrame())
             
-                this.actionMeta.finalMovingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes)     
+                this.actionMeta.movingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes).setHexes([ballHex!])     
         })
+    }
+
+    resetMovingPath() {
+        this.actionMeta.movingPath = undefined
+    }
+
+    generateAvailableNextSteps() {        
+        this.actionMeta.availableNextSteps = [SetTacklingHexStep, TackleStep];
     }
 
     updateState(): void {

@@ -10,8 +10,10 @@ import { DrawService } from "../../services/draw/draw.service";
 })
 export class MovementPathComponent implements OnInit, OnDestroy, OnChanges {
 
-    @Input() grid!: Grid<Hex>;
+    @Input() grid!: Grid<Hex>
     
+    @Input() tackling: boolean = false
+
     @Output() onGraphicsChanged = new EventEmitter<Graphics>()
     
     path: Graphics = new Graphics();  
@@ -55,7 +57,7 @@ export class MovementPathComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     drawLines(){
-        this.draw.drawMovingPathArrowLine(this.path, this.lines)
+        this.draw.drawMovingPathArrowLine(this.path, this.lines, this.tackling)
     }
 
     sendGraphics() {

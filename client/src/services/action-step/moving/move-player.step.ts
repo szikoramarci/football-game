@@ -16,6 +16,7 @@ import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../store
 import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
 import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
+import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 
 const playerStepDelay: number = 300
 
@@ -29,7 +30,8 @@ export class MovePlayerStep extends Step {
 
     constructor(
             private store: Store,
-            private challenge: ChallengeService
+            private challenge: ChallengeService,
+            private tackleHelper: TacklingHelperService
         ) {
         super()
         this.initRuleSet()  
@@ -68,9 +70,11 @@ export class MovePlayerStep extends Step {
 
         for (const oppositionPlayerID of challengesOnHex) {
             this.actionMeta.challengeHexes!.delete(oppositionPlayerID);
+            
+            this.tackleHelper.triggerTackleTrying(oppositionPlayerID, position)
 
             if (this.challenge.dribbleTackleChallenge()) {                                
-                this.challenge.transferBallToOpponent(oppositionPlayerID, 2*playerStepDelay);
+                this.challenge.transferBallToOpponent(oppositionPlayerID, playerStepDelay/2);
                 this.challenge.switchActiveTeam(oppositionPlayerID)
                 return false;
             }
@@ -117,12 +121,12 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(addUsedPlayer({ playerID }))
     }
 
-    updateState(): void {           
-
+    updateState(): void {        
+        
         this.store.dispatch(setSelectableActions({ actions: [] }))
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
-        this.store.dispatch(clearGameContext())      
+        this.store.dispatch(clearGameContext()) 
         
         this.countMovementStep()      
      
@@ -135,6 +139,6 @@ export class MovePlayerStep extends Step {
                 ),
                 takeWhile(newPosition => this.isBallStealSuccessfully(newPosition), true),            
             )
-            .subscribe(nextHex => this.playerStepsAhead(nextHex))                  
+            .subscribe(nextHex => this.playerStepsAhead(nextHex))                     
     }    
 }    

@@ -18,20 +18,36 @@ export class DrawService {
         this.drawArrowHeadForLine(graphics, line, color, PASSING_PATH_WITH * 10);   
     }    
 
-    drawMovingPathArrowLine(graphics: Graphics, lines: Point[][]) {
+    drawMovingPathArrowLine(graphics: Graphics, lines: Point[][], tackling: boolean) {        
         if (lines.length == 0) return;
 
-        const lastLine = lines[lines.length - 1]
+        let lastLine = lines[lines.length - 1]
+
+        if (tackling) {
+            lastLine = this.halfLine(lastLine)
+            lines[lines.length - 1] = lastLine
+        }
+
         lines.forEach(line => {
             this.drawDashedLine(graphics, line);            
-        })
-        this.drawArrowHeadForLine(graphics, lastLine);
+        })  
+              
+        const fillColor = tackling ? 'red' : 'white'
+        this.drawArrowHeadForLine(graphics, lastLine, fillColor);
+    }
+
+    halfLine(line: Point[]): Point[] {
+        const halfPoint = this.geometry.halfLine(line[0], line[1])
+        return [
+            line[0],
+            new Point(halfPoint.x, halfPoint.y)
+        ]
     }
     
     drawArrowHeadForLine(graphics: Graphics, line: Point[], fillColor: string = 'white', size: number = MOVEMENT_PATH_WIDTH * 7) {
-        const halfBase = size / 2;
+        const halfBase = size / 2;        
 
-        const endPoint: Point = line[1];
+        const endPoint: Point = line[1]
 
         const angle = this.geometry.calculateAngle(line[0],line[1]);
         
@@ -45,14 +61,13 @@ export class DrawService {
         const p1 = { x: x, y: y };
         const p2 = { x: x - Math.cos(angle - Math.PI / 6) * size, y: y - Math.sin(angle - Math.PI / 6) * size };
         const p3 = { x: x - Math.cos(angle + Math.PI / 6) * size, y: y - Math.sin(angle + Math.PI / 6) * size };
-
-        // Draw the triangle        
+        
+        // Draw the triangle     
         graphics.moveTo(p1.x, p1.y);
         graphics.lineTo(p2.x, p2.y);
         graphics.lineTo(p3.x, p3.y);
         graphics.lineTo(p1.x, p1.y);
-        graphics.fill(fillColor);
-        
+        graphics.fill(fillColor);   
     }
 
     drawLine(graphics: Graphics, line: Point[], strokeStyle: StrokeStyle = { width: MOVEMENT_PATH_WIDTH, color: 'white' }) {

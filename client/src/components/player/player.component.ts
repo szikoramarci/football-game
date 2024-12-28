@@ -9,6 +9,7 @@ import { getPlayerPosition } from "../../stores/player-position/player-position.
 import { AnimateService } from "../../services/animate/animate.service";
 import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
 import { Team } from "../../models/team.enum";
+import { TacklingHelperService } from "../../services/action-helper/tackling-helper.service";
 
 @Component({
     selector: 'player',
@@ -24,6 +25,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     graphics: Container = new Container();  
 
     playerMovementSubscription!: Subscription;
+    tackleTryingEventSubscription!: Subscription;
 
     mainColor!: string;
     outlineColor!: string;
@@ -33,7 +35,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
     constructor(
         private store: Store,
         private grid: GridService,
-        private animate: AnimateService
+        private animate: AnimateService,
+        private tacklingHelper: TacklingHelperService
     ) {}
 
     ngOnInit(): void { 
@@ -41,7 +44,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
         this.generateToken();
         this.generateText();
         this.sendGraphics();        
-        this.initPlayerPositionSubscription();       
+        this.initPlayerPositionSubscription();   
+        this.initTackleTryingSubscription();    
     }
 
     defineKitColors(){
@@ -65,7 +69,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
         this.playerMovementSubscription = this.store.select(getPlayerPosition(this.player.id))
             .subscribe(position => {                
                 this.movePlayer(position);
-            })
+            })        
     }
 
     async movePlayer(newCoordinates: HexCoordinates) {
@@ -74,7 +78,20 @@ export class PlayerComponent implements OnInit, OnDestroy {
             this.animate.move(this.graphics, hex)
         }
     }
+
+    initTackleTryingSubscription() {
+        this.tackleTryingEventSubscription = this.tacklingHelper.getTackleTryingEvents(this.player.id)
+            .subscribe(coordinates => {
+                this.tacklePlayer(coordinates)
+            })
+    }
     
+    async tacklePlayer(newCoordinates: HexCoordinates) {
+        const hex = this.grid.getHex(newCoordinates);                
+        if (hex) {            
+            this.animate.bounce(this.graphics, hex)
+        }
+    }
 
     generateText(){
         const text = new Text({
@@ -109,5 +126,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.graphics.destroy();
         this.playerMovementSubscription?.unsubscribe();
+        this.tackleTryingEventSubscription?.unsubscribe()
     }
 }

@@ -57,9 +57,8 @@ export class TacklingIndicatorLayerComponent implements OnInit {
         if (!actionMeta) return;
 
         const tacklingActionMeta = actionMeta as TacklingActionMeta;
-        if (tacklingActionMeta.finalMovingPath) {
-            console.log(tacklingActionMeta.finalMovingPath)
-            this.movingPath = tacklingActionMeta.finalMovingPath
+        if (tacklingActionMeta.movingPath) {
+            this.movingPath = tacklingActionMeta.movingPath
         }
     }
 

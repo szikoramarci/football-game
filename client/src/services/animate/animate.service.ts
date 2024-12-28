@@ -24,6 +24,13 @@ export class AnimateService {
         graphics.y = targetPosition.y;
     }
 
+    async bounce(graphics: Graphics | Container, targetPosition: Point) {
+        const originalPosition: Point = { x: graphics.x, y: graphics.y }
+        this.move(graphics, targetPosition, 150).then(() => {
+            this.move(graphics, originalPosition, 150)
+        })        
+    }
+
     delay(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
