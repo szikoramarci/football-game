@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
-import { Grid, Hex, HexCoordinates, pathFind, reachable, ring, spiral } from "honeycomb-grid";
+import { Direction, Grid, Hex, HexCoordinates, line, pathFind, reachable, ring, spiral } from "honeycomb-grid";
 import { GeometryService } from "../geometry/geometry.service";
 import { Point } from "pixi.js";
 
@@ -47,5 +47,10 @@ export class TraverserService {
     getNeighbors(centerPoint: HexCoordinates) {
         const neighborTraverse = ring({ radius: 1, center: centerPoint })
         return this.grid.getGrid().traverse(neighborTraverse);
+    }
+
+    getDirectLine(start: HexCoordinates, direction: Direction, length: number) {
+        const lineTraverser = line({ start, direction, length })
+        return this.grid.getGrid().traverse(lineTraverser);
     }
 }

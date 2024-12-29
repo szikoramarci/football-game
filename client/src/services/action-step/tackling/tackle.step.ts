@@ -11,6 +11,7 @@ import { Hex } from "honeycomb-grid";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
+import { LooseBallService } from "../../loose-ball/loose-ball.service";
 
 const playerStepDelay: number = 300
 
@@ -23,7 +24,8 @@ export class TackleStep extends Step {
     constructor(
         private store: Store,
         private tackleHelper: TacklingHelperService,
-        private challange: ChallengeService
+        private challange: ChallengeService,
+        private looseBall: LooseBallService
     ) {
         super()
         this.initRuleSet()
@@ -57,10 +59,19 @@ export class TackleStep extends Step {
         const tackler = this.actionMeta.player
         const dribler = this.actionMeta.ballerPlayer
         const challangeResult = this.challange.tacklingChallange(tackler, dribler)
-
-        if (challangeResult) {
-            this.store.dispatch(moveBall(this.context.hex))
-        }
+        this.looseBall.loosingBall(this.actionMeta.ballHex)
+       /* if (challangeResult == null) {
+            console.log('LOOSING BALL')
+            this.looseBall.loosingBall(this.actionMeta.ballHex)
+        } else {
+            if (challangeResult) {
+                console.log('TACKLER WINS')
+                this.store.dispatch(moveBall(this.context.hex))
+            } else {
+                console.log('DRIBBLER WINS')
+            }
+        }*/
+        
     }
 
     updateState(): void {

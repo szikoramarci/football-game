@@ -3,9 +3,7 @@ import { Store } from "@ngrx/store";
 import { RelocationTurn } from "../../relocation/relocation-turn.interface";
 import { Subscription } from "rxjs";
 import { getRelocationState } from "../../stores/relocation/relocation.selector";
-import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
-import { GridService } from "../grid/grid.service";
 import { Player } from "../../models/player.model";
 
 @Injectable({
@@ -22,9 +20,7 @@ export class RelocationService implements OnDestroy {
     currentScenarioSubscription!: Subscription
 
     constructor(
-        private store: Store,
-        private player: PlayerService,
-        private grid: GridService
+        private store: Store
     ){
         this.initSubscriptions()
     }
