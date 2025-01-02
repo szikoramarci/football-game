@@ -28,5 +28,5 @@ export class MovingAction extends Action {
     initRuleSet() {      
         this.addRule(new IsLeftClick())        
         this.addRule(new IsPlayerMovable())
-      }
+    }
 }

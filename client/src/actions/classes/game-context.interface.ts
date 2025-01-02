@@ -11,5 +11,6 @@ export interface GameContext extends BaseContext {
     availableActions: Type<Action>[],
     selectablePlayers: Set<string>,
     playerIsMovable: boolean,
+    playerIsRelocatable: boolean,
     playerCanTackle: boolean
 }

@@ -1,14 +1,16 @@
 import { Store } from "@ngrx/store";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { equals, Grid, Hex, HexCoordinates, OffsetCoordinates } from "honeycomb-grid";
 import { Player } from "../../models/player.model";
 import { getPlayerByPosition, getPlayerPositions } from "../../stores/player-position/player-position.selector";
-import { combineLatest, generate, map, Observable, of, switchMap, take } from "rxjs";
+import { combineLatest, map, Observable, of, switchMap, take } from "rxjs";
 import { getAllPlayers, getPlayer } from "../../stores/player/player.selector";
 import { IsBallInPosition } from "../../stores/ball-position/ball-position.selector";
 import { Injectable } from "@angular/core";
 import { getGameplay } from "../../stores/gameplay/gameplay.selector";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
 import { getOppositeTeam } from "../../models/team.enum";
+import { TraverserService } from "../traverser/traverser.service";
+import { GridService } from "../grid/grid.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +18,9 @@ import { getOppositeTeam } from "../../models/team.enum";
 export class PlayerService {
 
     constructor(
-        private store: Store
+        private store: Store,
+        private traverser: TraverserService,
+        private grid: GridService
     ) {}
     
     getPlayerOnCoordinates(coordinates: OffsetCoordinates): Observable<Player | undefined> {
@@ -75,6 +79,27 @@ export class PlayerService {
                     position: playerPositions[player.id] 
                 }))
             ))                    
+    }
+
+    getFreeAdjacentHexesByPlayerID(playerID: string): Observable<Grid<Hex>> {
+        return this.getPlayersWithPositions().pipe(
+            map(playersWithPosition => {
+                const playerPosition = playersWithPosition.find(playerWithPosition => playerWithPosition.player.id == playerID)?.position
+                return this.getFreeAdjacentHexes(playersWithPosition, playerPosition!)
+            })
+        )
+    }
+
+    getFreeAdjacentHexesByHex(hex: Hex): Observable<Grid<Hex>> {
+        return this.getPlayersWithPositions().pipe(
+            map(playersWithPosition => this.getFreeAdjacentHexes(playersWithPosition, hex))
+        )
+    }
+
+    getFreeAdjacentHexes(playersWithPosition: PlayerWithPosition[], position: HexCoordinates): Grid<Hex> {
+        return this.traverser.getNeighbors(position).filter(hex => {
+            return !playersWithPosition.some(playerWithPosition => equals(playerWithPosition.position, hex))
+        })
     }
 
 }

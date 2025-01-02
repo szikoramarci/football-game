@@ -1,10 +1,10 @@
 import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
 
-export class IsPlayerMovable implements Rule {
+export class IsPlayerRelocatable implements Rule {
     validate(context: GameContext): boolean {
-        return context.playerIsMovable
+        return context.playerIsRelocatable
                 
     }
-    errorMessage = "not movable";
+    errorMessage = "not relocatable";
 }

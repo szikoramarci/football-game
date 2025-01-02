@@ -56,6 +56,11 @@ export class ChallengeService implements OnDestroy {
         console.log('TACKLING: ' + tackler.tackling + ' + ' + tacklingRoll + ' = ' + tacklingResult)
         console.log('DRIBBLING: ' + dribbler.dribbling + ' + ' + dribblingRoll + ' = ' + dribblingResult)
 
+        if (tacklingResult == 1) {
+            // FOUL
+            return null
+        }
+
         if (tacklingResult == dribblingResult) {
             return null
         }

@@ -10,8 +10,13 @@ export const clearScenario = createAction(
     '[Relocation] Clear Scenario'
 );
 
+export const shiftScenarioTurn = createAction(
+    '[Relocation] Shift Scenario Turn'
+);
+
 export const unshiftScenarioTurn = createAction(
-    '[Relocation] Unshift Scenario Turn'
+    '[Relocation] Unshift Scenario Turn',
+    props<{ relocationTurn: RelocationTurn }>()
 );
 
 export const addUsedPlayer = createAction(

@@ -44,8 +44,12 @@ export class ActionService {
                     if (this.tacklingHelper.canPlayerTackle(playerWithPosition.player)) {
                         return true
                     }
-
+                    
                     if (this.relocation.isPlayerMovable(playerWithPosition.player)) {
+                        return true
+                    }
+
+                    if (this.relocation.isPlayerRelocatable(playerWithPosition.player)) {
                         return true
                     }
 

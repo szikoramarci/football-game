@@ -12,7 +12,7 @@ import { concatMap, delay, from, of, takeWhile } from "rxjs";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { getRelocationState } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
-import { addUsedPlayer, initScenario, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
+import { addUsedPlayer, initScenario, shiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
 import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
 import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
@@ -113,7 +113,7 @@ export class MovePlayerStep extends Step {
         const playerTeam = this.actionMeta.player?.team || "" as Team
 
         if (this.scenarioTurns.length > 0) {
-            this.store.dispatch(unshiftScenarioTurn())
+            this.store.dispatch(shiftScenarioTurn())
         } else {
             const movementPhase = generateMovementPhase(playerTeam)            
             this.store.dispatch(initScenario({ turns: movementPhase }))

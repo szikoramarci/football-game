@@ -19,6 +19,7 @@ import { PlayerService } from "../../player/player.service";
 export class InitTacklingStep extends Step {
 
   possibleTacklingHexes!: Grid<Hex>
+  ballerAdjacentHexes!: Grid<Hex>
   ballHex!: Hex
   ballerPlayer!: Player
 
@@ -49,6 +50,7 @@ export class InitTacklingStep extends Step {
 
   calculation(): void {
     this.generatePossibleTacklingHexes()
+    this.generateBallerAdjacentHexes()
   }
 
   generatePossibleTacklingHexes() {
@@ -59,6 +61,12 @@ export class InitTacklingStep extends Step {
 
     this.possibleTacklingHexes = this.tacklingHelper.generatePossibleTacklingHexes(playerWithPosition)
   }   
+
+  generateBallerAdjacentHexes() {
+    this.player.getFreeAdjacentHexesByPlayerID(this.ballerPlayer.id).subscribe(ballerAdjacentHexes => {
+      this.ballerAdjacentHexes = ballerAdjacentHexes
+    })
+  }
   
   updateState(): void {
     const tacklingActionMeta: TacklingActionMeta = {
@@ -66,8 +74,9 @@ export class InitTacklingStep extends Step {
       playerHex: this.context.hex,
       ballerPlayer: this.ballerPlayer,
       ballHex: this.ballHex,
+      ballerAdjacentHexes: this.ballerAdjacentHexes,
       clickedHex: this.context.hex,
-      possibleTacklingHexes: this.possibleTacklingHexes,
+      possibleTacklingHexes: this.possibleTacklingHexes,      
       availableNextSteps: [SetTacklingHexStep]  
     }      
     this.store.dispatch(saveActionMeta(tacklingActionMeta));      

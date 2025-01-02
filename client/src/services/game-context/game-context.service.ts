@@ -69,6 +69,7 @@ export class GameContextService implements OnDestroy {
                     availableActions: this.availableActions,
                     selectablePlayers: this.selectablePlayers,
                     playerIsMovable: this.relocation.isPlayerMovable(player!),
+                    playerIsRelocatable: this.relocation.isPlayerRelocatable(player!),
                     playerCanTackle: this.tacklingHelper.canPlayerTackle(player!)
                 }
             })
