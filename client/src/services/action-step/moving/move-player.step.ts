@@ -39,7 +39,7 @@ export class MovePlayerStep extends Step {
     }
 
     initRuleSet(): void {        
-        this.addRule(new IsLeftClick);      
+        this.addRule(new IsLeftClick());      
         this.addRule(new IsTheNextStep(MovePlayerStep));   
     }
 

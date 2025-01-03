@@ -61,7 +61,7 @@ export class ActiveLayerComponent implements OnInit {
                         this.handleCurrentAction(gameContext)   
                     } else {
                         const selectableActions = gameContext.availableActions.filter(availableAction => {
-                            const action = new availableAction()                    
+                            const action = new availableAction()    
                             return action.identify(gameContext)
                         })
 

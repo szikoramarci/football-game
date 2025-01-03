@@ -2,11 +2,13 @@ import { Injectable } from "@angular/core";
 import { Action } from "./classes/action.class";
 import { IsLeftClick } from "./rules/is-left-click.rule";
 import { IsPlayerRelocatable } from "./rules/relocate/is-player-relocatable.rule";
+import { InitRelocationStep } from "../services/action-step/relocation/init-relocation";
+import { RelocatePlayerStep } from "../services/action-step/relocation/relocate-player";
 
 @Injectable({
     providedIn: 'root',
 })
-export class RelocateAction extends Action {
+export class RelocationAction extends Action {
 
     constructor() {
         super()
@@ -15,6 +17,8 @@ export class RelocateAction extends Action {
     }
 
     initSteps() {
+        this.addStep(InitRelocationStep)
+        this.addStep(RelocatePlayerStep)
     }
 
     initRuleSet() {      

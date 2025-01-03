@@ -6,6 +6,7 @@ import { MovingAction } from "../../actions/moving.action";
 import { StandardPassAction } from "../../actions/standard-pass.action";
 import { HighPassAction } from "../../actions/high-pass.action";
 import { TacklingAction } from "../../actions/tackling.action";
+import { RelocationAction } from "../../actions/relocation.action";
 
 export interface ActionState {
   currentActionMeta: ActionMeta | undefined,
@@ -19,6 +20,6 @@ export const initialState: ActionState = {
   currentActionMeta: undefined,
   currentAction: undefined,
   gameContext: undefined,
-  availableActions: [MovingAction, TacklingAction, StandardPassAction, HighPassAction],
+  availableActions: [RelocationAction, MovingAction, TacklingAction, StandardPassAction, HighPassAction],
   selectableActions: []
 };

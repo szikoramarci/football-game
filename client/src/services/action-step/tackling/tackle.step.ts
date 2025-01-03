@@ -24,6 +24,7 @@ import { SnapshotAction } from "../../../actions/snapshot.action";
 import { generateAfterTackleRelocation } from "../../../relocation/after-tackle.relocation-turn";
 import { TraverserService } from "../../traverser/traverser.service";
 import { PlayerService } from "../../player/player.service";
+import { RelocationAction } from "../../../actions/relocation.action";
 
 const playerStepDelay: number = 300
 
@@ -93,6 +94,7 @@ export class TackleStep extends Step {
                 this.store.dispatch(clearScenario())
                 this.store.dispatch(setAvailableActions({
                     actions: [
+                        RelocationAction,
                         MovingAction, 
                         TacklingAction, 
                         StandardPassAction, 
