@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core"
-import { map, Observable } from "rxjs"
+import { combineLatest, map, Observable } from "rxjs"
 import { RelocationService } from "../relocation/relocation.service"
 import { GridService } from "../grid/grid.service"
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface"
 import { PlayerService } from "../player/player.service"
 import { TacklingHelperService } from "../action-helper/tackling-helper.service"
 import { Hex } from "honeycomb-grid"
+import { getRelocationState } from "../../stores/relocation/relocation.selector"
+import { Store } from "@ngrx/store"
 
 @Injectable({
     providedIn: 'root'
@@ -16,7 +18,8 @@ export class ActionService {
         private relocation: RelocationService,
         private grid: GridService,
         private player: PlayerService,
-        private tacklingHelper: TacklingHelperService
+        private tacklingHelper: TacklingHelperService,
+        private store: Store
     ) {}
 
     getSelectablePlayersIds(): Observable<Set<string>> {
@@ -36,8 +39,11 @@ export class ActionService {
     }
 
     getSelectablePlayersWithPosition(): Observable<PlayerWithPosition[]> {
-        return this.player.getPlayersWithPositions().pipe(
-            map(playersWithPosition => {
+        return combineLatest([
+            this.player.getPlayersWithPositions(),
+            this.store.select(getRelocationState)   // FOR TRIGGERING THE STREAM REGENERATION
+        ]).pipe(
+            map(([playersWithPosition, _]) => {
                 return playersWithPosition.filter(playerWithPosition => {               
                     if (playerWithPosition.player == undefined) return false
 

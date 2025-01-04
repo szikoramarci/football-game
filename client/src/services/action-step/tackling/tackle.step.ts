@@ -7,24 +7,17 @@ import { Store } from "@ngrx/store";
 import { IsPossibleTacklingHexClicked } from "../../../actions/rules/tackle/is-possible-tackling-hex-clicked.rule";
 import { concatMap, delay, from, map, of } from "rxjs";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
-import { Hex } from "honeycomb-grid";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { LooseBallService } from "../../loose-ball/loose-ball.service";
 import { setAttackingTeam } from "../../../stores/gameplay/gameplay.actions";
 import { addUsedPlayer, clearScenario, shiftScenarioTurn, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
-import { clearActionMeta, clearCurrentAction, clearGameContext, setAvailableActions, setSelectableActions } from "../../../stores/action/action.actions";
-import { StandardPassAction } from "../../../actions/standard-pass.action";
-import { HighPassAction } from "../../../actions/high-pass.action";
-import { MovingAction } from "../../../actions/moving.action";
-import { TacklingAction } from "../../../actions/tackling.action";
-import { LongBallAction } from "../../../actions/long-ball.action";
-import { SnapshotAction } from "../../../actions/snapshot.action";
+import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { generateAfterTackleRelocation } from "../../../relocation/after-tackle.relocation-turn";
-import { TraverserService } from "../../traverser/traverser.service";
 import { PlayerService } from "../../player/player.service";
-import { RelocationAction } from "../../../actions/relocation.action";
+import { Hex } from "honeycomb-grid";
+import { GridService } from "../../grid/grid.service";
 
 const playerStepDelay: number = 300
 
@@ -33,13 +26,14 @@ const playerStepDelay: number = 300
 })
 export class TackleStep extends Step {
     actionMeta!: TacklingActionMeta;
+    successfulTackle!: boolean | null
 
     constructor(
         private store: Store,
         private tackleHelper: TacklingHelperService,
         private challange: ChallengeService,
         private looseBall: LooseBallService,
-        private traverser: TraverserService,
+        private grid: GridService,
         private player: PlayerService
     ) {
         super()
@@ -54,14 +48,7 @@ export class TackleStep extends Step {
 
     calculation(): void {
         this.actionMeta = {...this.context.actionMeta as TacklingActionMeta}
-        this.generateTacklerAdjacentHexes()
     }
-
-    generateTacklerAdjacentHexes() {
-        this.player.getFreeAdjacentHexesByHex(this.context.hex).subscribe(adjacentHexes => {
-          this.actionMeta.tacklerAdjacentHexes = adjacentHexes
-        })
-      }
 
     movePlayer(coordinates: Hex) {
         this.store.dispatch(movePlayer({
@@ -77,50 +64,45 @@ export class TackleStep extends Step {
         )
     }
 
-    isTacklingChallangeSuccessful() {
+    performTacklingChallange() {
         const tackler = this.actionMeta.player
         const dribbler = this.actionMeta.ballerPlayer
-        const challangeResult = this.challange.tacklingChallange(tackler, dribbler)
-        // TODO - foul 
+        this.successfulTackle = this.challange.tacklingChallange(tackler, dribbler)        
+        // TODO handling fouls
+    }
 
-       if (challangeResult == null) {
+    generateRelocationTurn() {
+        if (this.successfulTackle === null) return
+
+        const tackler = this.actionMeta.player
+        const dribbler = this.actionMeta.ballerPlayer
+        const ballerPlayer = this.successfulTackle ? tackler : dribbler
+        const opponentPlayer = this.successfulTackle ? dribbler : tackler
+        this.player.getFreeAdjacentHexesByPlayerID(opponentPlayer.id).subscribe(adjacentHexes => {   
+            const relocationTurn = generateAfterTackleRelocation(ballerPlayer, adjacentHexes)
+            this.store.dispatch(unshiftScenarioTurn({ relocationTurn }))
+        })
+        
+    }
+
+    handleLooseBall() {
+        if (this.successfulTackle === null) {
             console.log('LOOSING BALL')
             this.looseBall.loosingBall(this.actionMeta.ballHex)
-            return null
-        } else {
-            if (challangeResult) {
-                console.log('TACKLER WINS')                
-                this.store.dispatch(setAttackingTeam({ attackingTeam: tackler.team }))
-                this.store.dispatch(clearScenario())
-                this.store.dispatch(setAvailableActions({
-                    actions: [
-                        RelocationAction,
-                        MovingAction, 
-                        TacklingAction, 
-                        StandardPassAction, 
-                        HighPassAction, 
-                        LongBallAction, 
-                        SnapshotAction
-                    ]
-                }))
-                this.store.dispatch(unshiftScenarioTurn({ 
-                    relocationTurn: generateAfterTackleRelocation(
-                        tackler,
-                        this.actionMeta.ballerAdjacentHexes
-                    )
-                }))
-                return true
-            } else {
-                this.store.dispatch(unshiftScenarioTurn({ 
-                    relocationTurn: generateAfterTackleRelocation(
-                        dribbler,
-                        this.actionMeta.tacklerAdjacentHexes!
-                    )
-                }))
-                return false
-            }
         }
-        
+    }
+
+    handleTacklingOutcome() {
+        if (this.successfulTackle === null) return
+
+        if (this.successfulTackle) {
+            console.log('TACKLER WINS')     
+            const tackler = this.actionMeta.player           
+            this.store.dispatch(setAttackingTeam({ attackingTeam: tackler.team }))
+            this.store.dispatch(clearScenario())
+        } else {
+            console.log('DRIBBLER WINS')  
+        }
     }
 
     updateState(): void {
@@ -129,7 +111,9 @@ export class TackleStep extends Step {
         this.store.dispatch(shiftScenarioTurn())
         this.store.dispatch(addUsedPlayer({ playerID: this.actionMeta.player.id })) 
         
-        const tacklingSuccessful = this.isTacklingChallangeSuccessful()
+        this.performTacklingChallange()        
+        this.handleLooseBall()
+        this.handleTacklingOutcome()
 
         this.store.dispatch(setSelectableActions({ actions: [] }))                                   
         this.store.dispatch(clearCurrentAction())      
@@ -153,9 +137,10 @@ export class TackleStep extends Step {
             .subscribe(({position, index}) => {
                 if (index === movingPath.length - 1) {
                     this.tacklePlayer(position); // Handle the last hex differently 
-                    if (tacklingSuccessful) {
+                    if (this.successfulTackle) {
                         this.store.dispatch(moveBall(position))
                     }                   
+                    this.generateRelocationTurn()
                 } else {
                     this.movePlayer(position);
                 }                

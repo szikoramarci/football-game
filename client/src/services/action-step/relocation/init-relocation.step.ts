@@ -9,7 +9,7 @@ import { getCurrentRelocationTurn } from "../../../stores/relocation/relocation.
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
 import { GridService } from "../../grid/grid.service";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
-import { RelocatePlayerStep } from "./relocate-player";
+import { SetRelocationHexStep } from "./set-relocation-hex.step";
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +56,7 @@ export class InitRelocationStep extends Step {
         playerHex: this.context.hex,   
         player: this.context.player!,
         playerHasBall: this.context.playerHasBall,
-        availableNextSteps: [RelocatePlayerStep],
+        availableNextSteps: [SetRelocationHexStep],
         reachableHexes: this.reachableHexes
       }      
       this.store.dispatch(saveActionMeta(relocationActionMeta));      

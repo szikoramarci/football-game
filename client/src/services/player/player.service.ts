@@ -4,7 +4,7 @@ import { Player } from "../../models/player.model";
 import { getPlayerByPosition, getPlayerPositions } from "../../stores/player-position/player-position.selector";
 import { combineLatest, map, Observable, of, switchMap, take } from "rxjs";
 import { getAllPlayers, getPlayer } from "../../stores/player/player.selector";
-import { IsBallInPosition } from "../../stores/ball-position/ball-position.selector";
+import { getBallPosition, IsBallInPosition } from "../../stores/ball-position/ball-position.selector";
 import { Injectable } from "@angular/core";
 import { getGameplay } from "../../stores/gameplay/gameplay.selector";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
@@ -42,6 +42,28 @@ export class PlayerService {
             )
     }
 
+    getPlayerWithBall(): Observable<PlayerWithPosition | undefined> {
+        return combineLatest([
+            this.store.select(getPlayerPositions),
+            this.store.select(getBallPosition()),
+            this.store.select(getAllPlayers),
+        ]).pipe(
+            map(([playerPositions, ballPosition, players]) => {
+                const playerWithBallID = (Object.keys(playerPositions).find(playerID => equals(playerPositions[playerID], ballPosition)))
+
+                if (playerWithBallID) {
+                    const player = Object.values(players).find(player => player.id === playerWithBallID)
+                    return {
+                        player: player!,
+                        position: playerPositions[playerWithBallID]
+                    }
+                }
+                    
+                return undefined
+            })   
+        )
+    }
+
     getAttackingPlayersWithPositions(): Observable<PlayerWithPosition[]> {
         return this.getPlayersWithPositionsByTeam(true)
     }
@@ -72,7 +94,7 @@ export class PlayerService {
         return combineLatest([
             this.store.select(getPlayerPositions),
             this.store.select(getAllPlayers)
-        ]).pipe(
+        ]).pipe(            
             map(([playerPositions, players]) => Object.values(players)
                 .map(player => ({
                     player: player,
@@ -83,6 +105,7 @@ export class PlayerService {
 
     getFreeAdjacentHexesByPlayerID(playerID: string): Observable<Grid<Hex>> {
         return this.getPlayersWithPositions().pipe(
+            take(1),
             map(playersWithPosition => {
                 const playerPosition = playersWithPosition.find(playerWithPosition => playerWithPosition.player.id == playerID)?.position
                 return this.getFreeAdjacentHexes(playersWithPosition, playerPosition!)
@@ -92,6 +115,7 @@ export class PlayerService {
 
     getFreeAdjacentHexesByHex(hex: Hex): Observable<Grid<Hex>> {
         return this.getPlayersWithPositions().pipe(
+            take(1),
             map(playersWithPosition => this.getFreeAdjacentHexes(playersWithPosition, hex))
         )
     }

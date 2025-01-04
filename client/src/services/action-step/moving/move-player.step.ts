@@ -4,7 +4,7 @@ import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { Store } from "@ngrx/store";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
-import { equals, Hex,  OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex,  hexToOffset,  OffsetCoordinates } from "honeycomb-grid";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
@@ -86,7 +86,7 @@ export class MovePlayerStep extends Step {
     movePlayer(coordinates: Hex) {
         this.store.dispatch(movePlayer({
             playerID: this.actionMeta.player.id!, 
-            position: coordinates
+            position: hexToOffset(coordinates)
         }));  
     }
     
@@ -98,7 +98,7 @@ export class MovePlayerStep extends Step {
 
     moveBall(coordinates: Hex) {
         if (this.actionMeta.playerHasBall) {
-            this.store.dispatch(moveBall(coordinates));
+            this.store.dispatch(moveBall(hexToOffset(coordinates)));
         }
     }
 
