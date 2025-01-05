@@ -49,6 +49,7 @@ export class MovementPathComponent implements OnInit, OnDestroy, OnChanges {
         let previousPoint: Point | null = null;
         this.grid.forEach(hex => {
             const point: Point = new Point(hex.x, hex.y);
+            
             if (previousPoint) {
                 this.lines.push([previousPoint, point]);
             }

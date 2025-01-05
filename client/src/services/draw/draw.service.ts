@@ -18,7 +18,7 @@ export class DrawService {
         this.drawArrowHeadForLine(graphics, line, color, PASSING_PATH_WITH * 10);   
     }    
 
-    drawMovingPathArrowLine(graphics: Graphics, lines: Point[][], tackling: boolean) {        
+    drawMovingPathArrowLine(graphics: Graphics, lines: Point[][], tackling: boolean) {    
         if (lines.length == 0) return;
 
         let lastLine = lines[lines.length - 1]

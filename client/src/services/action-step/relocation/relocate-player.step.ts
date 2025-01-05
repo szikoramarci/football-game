@@ -7,11 +7,15 @@ import { RelocationActionMeta } from "../../../actions/metas/relocation.meta";
 import { Store } from "@ngrx/store";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { shiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
+import { Hex, hexToOffset } from "honeycomb-grid";
+import { movePlayer } from "../../../stores/player-position/player-position.actions";
+import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 
 @Injectable({
   providedIn: 'root',
 })
 export class RelocatePlayerStep extends Step {
+    actionMeta!: RelocationActionMeta
 
     constructor(
         private store: Store
@@ -26,13 +30,31 @@ export class RelocatePlayerStep extends Step {
         this.addRule(new IsReachableHexClicked()); 
     }
 
-    calculation(): void {}     
+    movePlayer(coordinates: Hex) {
+        this.store.dispatch(movePlayer({
+            playerID: this.actionMeta.player.id!, 
+            position: hexToOffset(coordinates)
+        }));  
+    }
+
+    moveBall(coordinates: Hex) {
+        if (this.actionMeta.playerHasBall) {            
+            this.store.dispatch(moveBall(hexToOffset(coordinates)));
+        }
+    }
+
+    calculation(): void {
+        this.actionMeta = {...this.context.actionMeta as RelocationActionMeta}
+    }     
 
     updateState(): void {
         this.store.dispatch(setSelectableActions({ actions: [] }))
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext()) 
+
+        this.movePlayer(this.actionMeta.targetHex!)
+        this.moveBall(this.actionMeta.targetHex!)        
 
         this.store.dispatch(shiftScenarioTurn())       
     }

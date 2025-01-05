@@ -111,8 +111,7 @@ export class TackleStep extends Step {
         this.store.dispatch(shiftScenarioTurn())
         this.store.dispatch(addUsedPlayer({ playerID: this.actionMeta.player.id })) 
         
-        this.performTacklingChallange()        
-        this.handleLooseBall()
+        this.performTacklingChallange()                
         this.handleTacklingOutcome()
 
         this.store.dispatch(setSelectableActions({ actions: [] }))                                   
@@ -140,6 +139,7 @@ export class TackleStep extends Step {
                     if (this.successfulTackle) {
                         this.store.dispatch(moveBall(position))
                     }                   
+                    this.handleLooseBall()
                     this.generateRelocationTurn()
                 } else {
                     this.movePlayer(position);

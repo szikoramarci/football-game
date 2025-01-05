@@ -7,7 +7,7 @@ import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { equals, OffsetCoordinates } from "honeycomb-grid";
 import { GridService } from "../../grid/grid.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { TackleStep } from "./tackle.step";
@@ -53,15 +53,19 @@ export class SetTacklingHexStep extends Step {
         const startPoint: OffsetCoordinates = this.actionMeta.playerHex;
         const endPoint: OffsetCoordinates = this.context.hex;  
 
-        this.store.select(getPlayerPositions).pipe(take(1))
+        if (equals(startPoint,endPoint)) {
+            this.actionMeta.movingPath = this.grid.createGrid().setHexes([startPoint, this.actionMeta.ballHex])
+        } else {
+            this.store.select(getPlayerPositions).pipe(take(1))
             .subscribe((occupiedCoordinates) => {
                 const offsetCoordinates: OffsetCoordinates[] = Object.values(occupiedCoordinates)      
                 const occupiedHexes = this.grid.createGrid()
                     .setHexes(offsetCoordinates)
                     .setHexes(this.grid.getFrame())
             
-                this.actionMeta.movingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes).setHexes([this.actionMeta.ballHex!])     
-        })
+                this.actionMeta.movingPath = this.traverser.getPathHexes(startPoint!, endPoint!, occupiedHexes).setHexes([this.actionMeta.ballHex!])                     
+            })
+        }        
     }
 
     resetMovingPath() {

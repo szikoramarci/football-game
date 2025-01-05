@@ -4,6 +4,7 @@ import { ActionMeta } from "../classes/action-meta.interface";
 
 export interface RelocationActionMeta extends ActionMeta {
     reachableHexes: Grid<Hex>
+    targetHex?: Hex
     player: Player
     playerHasBall: boolean
 }
