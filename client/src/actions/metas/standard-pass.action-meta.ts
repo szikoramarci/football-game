@@ -1,9 +1,18 @@
 import {  Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
-import { ActionMeta } from "../classes/action-meta.interface";
+import { ActionMeta, IsActionMeta } from "../classes/action-meta.interface";
 
 export interface StandardPassActionMeta extends ActionMeta {    
     availableTargets: Grid<Hex>
     passingPath?: Hex[] 
     targetHex?: OffsetCoordinates
     challengeHexes?: Map<string,Hex>
+}
+
+export function IsStandardPassActionMeta(actionMeta: ActionMeta): boolean {
+    return (
+        IsActionMeta(actionMeta) && 
+        'availableTargets' in actionMeta &&
+        'targetHex' in actionMeta &&
+        'challengeHexes' in actionMeta
+    );
 }

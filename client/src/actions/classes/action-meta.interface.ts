@@ -7,3 +7,10 @@ export interface ActionMeta {
     clickedHex: Hex,
     availableNextSteps: Type<Step>[]
 }
+
+export function IsActionMeta(obj: any): boolean {
+    return (
+        typeof obj === 'object' &&
+        obj !== null
+      );
+}

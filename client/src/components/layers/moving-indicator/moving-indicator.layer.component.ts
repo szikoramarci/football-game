@@ -7,9 +7,9 @@ import { AppService } from "../../../services/app/app.service";
 import { getCurrentActionMeta } from "../../../stores/action/action.selector";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
-import { ActionMeta } from "../../../actions/classes/action-meta.interface";
+import { IsMovingActionMeta, MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
+import { filter, tap } from "rxjs";
 @Component({
     selector: 'moving-indicator-layer',
     standalone: true,
@@ -42,9 +42,14 @@ export class MovingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getCurrentActionMeta()).subscribe(actionMeta => {     
-            this.resetElements();
-
+        this.store.select(getCurrentActionMeta())
+        .pipe(
+            tap(() => this.resetElements()),
+            filter(actionMeta => actionMeta != undefined),
+            filter((actionMeta): actionMeta is MovingActionMeta => IsMovingActionMeta(actionMeta))
+            
+        )
+        .subscribe(actionMeta => { 
             this.handleReachableHexes(actionMeta);
             this.handleMovingPath(actionMeta);       
             this.handleChallengeHexes(actionMeta);   
@@ -57,28 +62,19 @@ export class MovingIndicatorLayerComponent implements OnInit {
         this.challengeHexes = this.grid.createGrid();
     }
 
-    handleMovingPath(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const movingActionMeta = actionMeta as MovingActionMeta;
+    handleMovingPath(movingActionMeta: MovingActionMeta) {
         if (movingActionMeta.possibleMovingPath) {
             this.movingPath = movingActionMeta.possibleMovingPath
         }          
     }
 
-    handleReachableHexes(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const initMovingActionMeta = actionMeta as MovingActionMeta;
-        if (initMovingActionMeta.reachableHexes) {
-            this.indicators = initMovingActionMeta.reachableHexes
+    handleReachableHexes(movingActionMeta: MovingActionMeta) {
+        if (movingActionMeta.reachableHexes) {
+            this.indicators = movingActionMeta.reachableHexes
         }
     }
 
-    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const movingActionMeta = actionMeta as MovingActionMeta;
+    handleChallengeHexes(movingActionMeta: MovingActionMeta) {
         if (movingActionMeta.challengeHexes) {
             this.challengeHexes.setHexes(movingActionMeta.challengeHexes.values());
         }       

@@ -4,7 +4,7 @@ import { Store } from "@ngrx/store";
 import { AreAvailableNextStepsEmpty } from "../../../actions/rules/is-available-next-actions-empty.rule";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { Grid, Hex } from "honeycomb-grid";
-import { RelocationActionMeta } from "../../../actions/metas/relocation.meta";
+import { RelocationActionMeta } from "../../../actions/metas/relocation.action-meta";
 import { getCurrentRelocationTurn } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
 import { GridService } from "../../grid/grid.service";

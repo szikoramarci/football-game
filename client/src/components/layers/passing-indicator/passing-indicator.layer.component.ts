@@ -4,12 +4,12 @@ import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { getCurrentActionMeta } from "../../../stores/action/action.selector";
-import { ActionMeta } from "../../../actions/classes/action-meta.interface";
-import { StandardPassActionMeta } from "../../../actions/metas/standard-pass.action-meta";
+import { IsStandardPassActionMeta, StandardPassActionMeta } from "../../../actions/metas/standard-pass.action-meta";
 import { PassingPathComponent } from "../../passing-path/passing-path.component";
 import { IndicatorComponent } from "../../indicator/indicator.component";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
-import { HighPassActionMeta } from "../../../actions/metas/high-pass.action-meta";
+import { HighPassActionMeta, IsHighPassActionMeta } from "../../../actions/metas/high-pass.action-meta";
+import { filter, tap } from "rxjs";
 
 @Component({
     selector: 'passing-indicator-layer',
@@ -43,9 +43,13 @@ export class PassingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getCurrentActionMeta()).subscribe(actionMeta => {     
-            this.resetElements();
-
+        this.store.select(getCurrentActionMeta())
+        .pipe(
+            tap(() => this.resetElements()),
+            filter(actionMeta => actionMeta != undefined),
+            filter((actionMeta): actionMeta is StandardPassActionMeta | HighPassActionMeta => IsStandardPassActionMeta(actionMeta) || IsHighPassActionMeta(actionMeta))
+        )
+        .subscribe(actionMeta => {   
             this.handleAvailableTargets(actionMeta);
             this.handlePassingPath(actionMeta);       
         });        
@@ -57,33 +61,24 @@ export class PassingIndicatorLayerComponent implements OnInit {
         this.availableTargets = null;
     }
 
-    handleAvailableTargets(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const initPassingActionMeta = actionMeta as StandardPassActionMeta | HighPassActionMeta;
-        if (initPassingActionMeta.availableTargets) {
-            this.passerPosition = initPassingActionMeta.playerHex  
-            this.availableTargets = initPassingActionMeta.availableTargets
+    handleAvailableTargets(passingActionMeta: StandardPassActionMeta | HighPassActionMeta) {
+        if (passingActionMeta.availableTargets) {
+            this.passerPosition = passingActionMeta.playerHex  
+            this.availableTargets = passingActionMeta.availableTargets
         }
     }
 
-    handlePassingPath(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const setPassingPathActionMeta = actionMeta as StandardPassActionMeta;
-        if (setPassingPathActionMeta.availableTargets && setPassingPathActionMeta.passingPath) {
-            this.passerPosition = setPassingPathActionMeta.playerHex  
-            this.passingPath = setPassingPathActionMeta.passingPath             
-            this.availableTargets = setPassingPathActionMeta.availableTargets
+    handlePassingPath(passingActionMeta: StandardPassActionMeta) {
+        if (passingActionMeta.availableTargets && passingActionMeta.passingPath) {
+            this.passerPosition = passingActionMeta.playerHex  
+            this.passingPath = passingActionMeta.passingPath             
+            this.availableTargets = passingActionMeta.availableTargets
         }
     }
 
-    handleChallengeHexes(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const setMovingPathActionMeta = actionMeta as StandardPassActionMeta;
-        if (setMovingPathActionMeta.challengeHexes) {
-            this.challengeHexes.setHexes(setMovingPathActionMeta.challengeHexes.values());
+    handleChallengeHexes(passingActionMeta: StandardPassActionMeta) {
+        if (passingActionMeta.challengeHexes) {
+            this.challengeHexes.setHexes(passingActionMeta.challengeHexes.values());
         }       
     }  
 

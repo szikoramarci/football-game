@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { RelocationActionMeta } from "../../../actions/metas/relocation.meta";
+import { RelocationActionMeta } from "../../../actions/metas/relocation.action-meta";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { Step } from "../../../actions/classes/step.class";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";

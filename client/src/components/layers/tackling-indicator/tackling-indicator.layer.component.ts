@@ -7,9 +7,9 @@ import { AppService } from "../../../services/app/app.service";
 import { getCurrentActionMeta } from "../../../stores/action/action.selector";
 import { MovementPathComponent } from "../../movement-path/movement-path.component";
 import { GridService } from "../../../services/grid/grid.service";
-import { ActionMeta } from "../../../actions/classes/action-meta.interface";
 import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
-import { TacklingActionMeta } from "../../../actions/metas/tackling.action-meta";
+import { IsTacklingActionMeta, TacklingActionMeta } from "../../../actions/metas/tackling.action-meta";
+import { filter, tap } from "rxjs";
 
 @Component({
     selector: 'tackling-indicator-layer',
@@ -40,9 +40,13 @@ export class TacklingIndicatorLayerComponent implements OnInit {
 
         this.app.addChild(this.container);
                 
-        this.store.select(getCurrentActionMeta()).subscribe(actionMeta => {     
-            this.resetElements();
-
+        this.store.select(getCurrentActionMeta())
+        .pipe(
+            tap(() => this.resetElements()),
+            filter(actionMeta => actionMeta != undefined),
+            filter((actionMeta): actionMeta is TacklingActionMeta => IsTacklingActionMeta(actionMeta))
+        )
+        .subscribe(actionMeta => {   
             this.handlePossibleTacklingHexes(actionMeta);
             this.handleMovingPath(actionMeta);       
         });        
@@ -53,19 +57,13 @@ export class TacklingIndicatorLayerComponent implements OnInit {
         this.movingPath = this.grid.createGrid();
     }
 
-    handleMovingPath(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const tacklingActionMeta = actionMeta as TacklingActionMeta;
+    handleMovingPath(tacklingActionMeta: TacklingActionMeta) {
         if (tacklingActionMeta.movingPath) {
             this.movingPath = tacklingActionMeta.movingPath
         }
     }
 
-    handlePossibleTacklingHexes(actionMeta: ActionMeta | undefined) {
-        if (!actionMeta) return;
-
-        const tacklingActionMeta = actionMeta as TacklingActionMeta;
+    handlePossibleTacklingHexes(tacklingActionMeta: TacklingActionMeta) {
         if (tacklingActionMeta.possibleTacklingHexes) {
             this.indicators = tacklingActionMeta.possibleTacklingHexes
         }        

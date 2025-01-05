@@ -1,5 +1,5 @@
 import { Grid, Hex } from "honeycomb-grid"
-import { ActionMeta } from "../classes/action-meta.interface"
+import { ActionMeta, IsActionMeta } from "../classes/action-meta.interface"
 import { Player } from "../../models/player.model"
 
 export interface TacklingActionMeta extends ActionMeta {
@@ -10,4 +10,11 @@ export interface TacklingActionMeta extends ActionMeta {
     ballerPlayer: Player
     ballerAdjacentHexes: Grid<Hex> 
     tacklerAdjacentHexes?: Grid<Hex>
+}
+
+export function IsTacklingActionMeta(actionMeta: ActionMeta): boolean {
+    return (
+        IsActionMeta(actionMeta) && 
+        'possibleTacklingHexes' in actionMeta
+    );
 }
