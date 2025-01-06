@@ -57,7 +57,8 @@ export class InitRelocationStep extends Step {
         player: this.context.player!,
         playerHasBall: this.context.playerHasBall,
         availableNextSteps: [SetRelocationHexStep],
-        reachableHexes: this.reachableHexes
+        reachableHexes: this.reachableHexes,
+        targetHex: undefined
       }      
       this.store.dispatch(saveActionMeta(relocationActionMeta));      
     }

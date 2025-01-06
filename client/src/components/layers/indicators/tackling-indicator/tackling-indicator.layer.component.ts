@@ -1,14 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Grid, Hex } from "honeycomb-grid";
-import { IndicatorComponent } from "../../indicator/indicator.component";
+import { IndicatorComponent } from "../../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
-import { AppService } from "../../../services/app/app.service";
-import { getCurrentActionMeta } from "../../../stores/action/action.selector";
-import { MovementPathComponent } from "../../movement-path/movement-path.component";
-import { GridService } from "../../../services/grid/grid.service";
-import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
-import { IsTacklingActionMeta, TacklingActionMeta } from "../../../actions/metas/tackling.action-meta";
+import { AppService } from "../../../../services/app/app.service";
+import { getCurrentActionMeta } from "../../../../stores/action/action.selector";
+import { MovementPathComponent } from "../../../movement-path/movement-path.component";
+import { GridService } from "../../../../services/grid/grid.service";
+import { PIXIContextService } from "../../../../services/pixi-context/pixi-context.service";
+import { IsTacklingActionMeta, TacklingActionMeta } from "../../../../actions/metas/tackling.action-meta";
 import { filter, tap } from "rxjs";
 
 @Component({

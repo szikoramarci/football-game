@@ -4,11 +4,12 @@ import { AppService } from '../../services/app/app.service';
 import { BaseLayerComponent } from '../layers/base/base.layer.component';
 import { StateLayerComponent } from '../layers/state/state.layer.component';
 import { ActiveLayerComponent } from '../layers/active/active.layer.component';
-import { PassingIndicatorLayerComponent } from '../layers/passing-indicator/passing-indicator.layer.component';
-import { MovingIndicatorLayerComponent } from '../layers/moving-indicator/moving-indicator.layer.component';
+import { PassingIndicatorLayerComponent } from '../layers/indicators/passing-indicator/passing-indicator.layer.component';
+import { MovingIndicatorLayerComponent } from '../layers/indicators/moving-indicator/moving-indicator.layer.component';
 import { MouseEventService } from '../../services/mouse-event/mouse-event.service';
-import { SelectionIndicatorLayerComponent } from '../layers/selection-indicator/selection-indicator.layer.component';
-import { TacklingIndicatorLayerComponent } from '../layers/tackling-indicator/tackling-indicator.layer.component';
+import { SelectionIndicatorLayerComponent } from '../layers/indicators/selection-indicator/selection-indicator.layer.component';
+import { TacklingIndicatorLayerComponent } from '../layers/indicators/tackling-indicator/tackling-indicator.layer.component';
+import { IndicatorsLayerComponent } from '../layers/indicators/indicators.layer.component';
 
 @Component({
   selector: 'app-root',
@@ -17,10 +18,7 @@ import { TacklingIndicatorLayerComponent } from '../layers/tackling-indicator/ta
     RouterOutlet,
     BaseLayerComponent,
     StateLayerComponent,
-    MovingIndicatorLayerComponent,
-    PassingIndicatorLayerComponent,
-    TacklingIndicatorLayerComponent,
-    SelectionIndicatorLayerComponent,
+    IndicatorsLayerComponent,
     ActiveLayerComponent
   ],
   templateUrl: './app.component.html',

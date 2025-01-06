@@ -4,7 +4,7 @@ import { ActionMeta, IsActionMeta } from "../classes/action-meta.interface";
 
 export interface RelocationActionMeta extends ActionMeta {
     reachableHexes: Grid<Hex>
-    targetHex?: Hex
+    targetHex: Hex | undefined
     player: Player
     playerHasBall: boolean
 }
@@ -12,7 +12,7 @@ export interface RelocationActionMeta extends ActionMeta {
 export function IsRelocationActionMeta(actionMeta: ActionMeta): boolean {
     return (
         IsActionMeta(actionMeta) && 
-        'targetHex' in actionMeta && 
-        'reachableHexes' in actionMeta
+        'reachableHexes' in actionMeta &&
+        'targetHex' in actionMeta
     );
 }

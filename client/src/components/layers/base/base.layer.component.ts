@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { GridService } from "../../../services/grid/grid.service";
-import { Grid, Hex } from "honeycomb-grid";
+import { Hex } from "honeycomb-grid";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../services/app/app.service";
 import { FieldComponent } from "../../field/field.component";

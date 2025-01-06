@@ -1,15 +1,16 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Grid, Hex } from "honeycomb-grid";
-import { IndicatorComponent } from "../../indicator/indicator.component";
+import { IndicatorComponent } from "../../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
-import { AppService } from "../../../services/app/app.service";
-import { getCurrentActionMeta } from "../../../stores/action/action.selector";
-import { MovementPathComponent } from "../../movement-path/movement-path.component";
-import { GridService } from "../../../services/grid/grid.service";
-import { IsMovingActionMeta, MovingActionMeta } from "../../../actions/metas/moving.action-meta";
-import { PIXIContextService } from "../../../services/pixi-context/pixi-context.service";
+import { AppService } from "../../../../services/app/app.service";
+import { getCurrentActionMeta } from "../../../../stores/action/action.selector";
+import { MovementPathComponent } from "../../../movement-path/movement-path.component";
+import { GridService } from "../../../../services/grid/grid.service";
+import { IsMovingActionMeta, MovingActionMeta } from "../../../../actions/metas/moving.action-meta";
+import { PIXIContextService } from "../../../../services/pixi-context/pixi-context.service";
 import { filter, tap } from "rxjs";
+
 @Component({
     selector: 'moving-indicator-layer',
     standalone: true,
@@ -17,9 +18,9 @@ import { filter, tap } from "rxjs";
     templateUrl: './moving-indicator.layer.component.html',
 })
 export class MovingIndicatorLayerComponent implements OnInit {
-    indicators!: Grid<Hex>;
-    movingPath!: Grid<Hex>;
-    challengeHexes!: Grid<Hex>;
+    indicators!: Grid<Hex>
+    movingPath!: Grid<Hex>
+    challengeHexes!: Grid<Hex>
 
     movementGraphicsContext!: GraphicsContext
     challengeGraphicsContext!: GraphicsContext
@@ -46,8 +47,7 @@ export class MovingIndicatorLayerComponent implements OnInit {
         .pipe(
             tap(() => this.resetElements()),
             filter(actionMeta => actionMeta != undefined),
-            filter((actionMeta): actionMeta is MovingActionMeta => IsMovingActionMeta(actionMeta))
-            
+            filter((actionMeta): actionMeta is MovingActionMeta => IsMovingActionMeta(actionMeta))            
         )
         .subscribe(actionMeta => { 
             this.handleReachableHexes(actionMeta);

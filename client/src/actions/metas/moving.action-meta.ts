@@ -16,6 +16,6 @@ export function IsMovingActionMeta(actionMeta: ActionMeta): boolean {
     return (
         IsActionMeta(actionMeta) && 
         'finalMovingPath' in actionMeta &&
-        'challengeHexes' in actionMeta
+        'pathPoints' in actionMeta
     );
 }
