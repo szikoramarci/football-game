@@ -1,3 +1,6 @@
 @for (indicator of indicators; track indicator.center) {
     <indicator [hex]="indicator" [graphicsContext]="movementGraphicsContext" (onGraphicsChanged)="handleGraphics($event)"></indicator>
 }
+@if (targetHex && selectedPlayer) {
+    <player-token [player]="selectedPlayer" [position]="targetHex" [opacity]="0.5" (onGraphicsChanged)="handleGraphics($event)"></player-token>
+}

@@ -9,15 +9,20 @@ import { IsRelocationActionMeta, RelocationActionMeta } from "../../../../action
 import { GridService } from "../../../../services/grid/grid.service";
 import { Grid, Hex } from "honeycomb-grid";
 import { PIXIContextService } from "../../../../services/pixi-context/pixi-context.service";
+import { Player } from "../../../../models/player.model";
+import { PlayerTokenComponent } from "../../../player-token/player-token.component";
 
 @Component({
     selector: 'relocation-indicator-layer',
     standalone: true,
-    imports: [IndicatorComponent],
+    imports: [IndicatorComponent, PlayerTokenComponent],
     templateUrl: './relocation-indicator.layer.component.html',
 })
 export class RelocationIndicatorLayerComponent implements OnInit {
     indicators!: Grid<Hex>
+    targetHex!: Hex | undefined
+    selectedPlayer!: Player | undefined
+
     movementGraphicsContext!: GraphicsContext
 
     container: Container = new Container({
@@ -45,11 +50,15 @@ export class RelocationIndicatorLayerComponent implements OnInit {
         )
         .subscribe(actionMeta => {   
             this.handleReachableHexes(actionMeta); 
+            this.handleTargetHex(actionMeta)
+            this.handlePlayer(actionMeta)
         })     
     }
 
     resetElements() {
         this.indicators = this.grid.createGrid();
+        this.selectedPlayer = undefined
+        this.targetHex = undefined
     }
 
     handleReachableHexes(movingActionMeta: RelocationActionMeta) {
@@ -58,7 +67,19 @@ export class RelocationIndicatorLayerComponent implements OnInit {
         }
     }
 
-    handleGraphics(indicatorGraphics: Graphics) {
+    handleTargetHex(movingActionMeta: RelocationActionMeta) {
+        if (movingActionMeta.targetHex) {
+            this.targetHex = movingActionMeta.targetHex
+        }
+    }
+
+    handlePlayer(movingActionMeta: RelocationActionMeta) {
+        if (movingActionMeta.player) {
+            this.selectedPlayer = movingActionMeta.player
+        }
+    }
+
+    handleGraphics(indicatorGraphics: Graphics | Container) {
         this.container.addChild(indicatorGraphics);
     }
 

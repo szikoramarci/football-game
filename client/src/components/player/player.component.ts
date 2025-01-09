@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { Container, Text, Graphics } from "pixi.js";
+import { Component, EventEmitter, Input, OnDestroy, Output } from "@angular/core";
+import { Container } from "pixi.js";
 import { Player } from "../../models/player.model";
 import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
@@ -7,30 +7,25 @@ import { GridService } from "../../services/grid/grid.service";
 import { HexCoordinates } from "honeycomb-grid";
 import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
-import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
-import { Team } from "../../models/team.enum";
 import { TacklingHelperService } from "../../services/action-helper/tackling-helper.service";
+import { PlayerTokenComponent } from "../player-token/player-token.component";
 
 @Component({
     selector: 'player',
     standalone: true,
+    imports: [PlayerTokenComponent],
     templateUrl: './player.component.html',
 })
-export class PlayerComponent implements OnInit, OnDestroy {
+export class PlayerComponent implements OnDestroy {
     
     @Input() player!: Player;
 
     @Output() onGraphicsChanged = new EventEmitter<Container>()
     
-    graphics: Container = new Container();  
+    tokenGraphics!: Container  
 
     playerMovementSubscription!: Subscription;
     tackleTryingEventSubscription!: Subscription;
-
-    mainColor!: string;
-    outlineColor!: string;
-    numberColor!: string;
-    numberOutlineColor!: string;
 
     constructor(
         private store: Store,
@@ -38,32 +33,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
         private animate: AnimateService,
         private tacklingHelper: TacklingHelperService
     ) {}
-
-    ngOnInit(): void { 
-        this.defineKitColors();
-        this.generateToken();
-        this.generateText();
-        this.sendGraphics();        
-        this.initPlayerPositionSubscription();   
-        this.initTackleTryingSubscription();    
-    }
-
-    defineKitColors(){
-        switch(this.player.team) {
-            case Team.TEAM_A:
-                this.mainColor = "#a50044";
-                this.outlineColor = "black"
-                this.numberColor = "#ffed02";
-                this.numberOutlineColor = "#a50044"
-                break;
-            case Team.TEAM_B:
-                this.mainColor = "white";
-                this.outlineColor = "black"
-                this.numberColor = "white";
-                this.numberOutlineColor = "black"
-                break;
-        }
-    }
 
     initPlayerPositionSubscription() {        
         this.playerMovementSubscription = this.store.select(getPlayerPosition(this.player.id))
@@ -75,8 +44,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
     async movePlayer(newCoordinates: HexCoordinates) {
         const hex = this.grid.getHex(newCoordinates);                
         if (hex) {            
-            this.animate.move(this.graphics, hex)
-        }
+            this.animate.move(this.tokenGraphics, hex)
+        }        
     }
 
     initTackleTryingSubscription() {
@@ -89,42 +58,19 @@ export class PlayerComponent implements OnInit, OnDestroy {
     async tacklePlayer(newCoordinates: HexCoordinates) {
         const hex = this.grid.getHex(newCoordinates);                
         if (hex) {            
-            this.animate.bounce(this.graphics, hex)
+            this.animate.bounce(this.tokenGraphics, hex)
         }
-    }
+    }   
 
-    generateText(){
-        const text = new Text({
-            text: this.player.kitNumber,
-            style: {
-                fill: this.numberColor,
-                fontWeight: 'bold',
-                fontSize: PLAYER_KIT_FONT_SIZE,
-                stroke: { color: this.numberOutlineColor, width: PLAYER_TOKEN_RADIUS/6, join: 'round' },
-            }
-            
-        });
-        text.x = 0 - text.bounds.maxX / 2;
-        text.y = 0 - text.bounds.maxY / 2;
-
-        this.graphics.addChild(text);
-    }
-
-    generateToken(){
-        const token = new Graphics().circle(0, 0, PLAYER_TOKEN_RADIUS);  
-        token.fill(this.mainColor);
-        token.stroke( { color: this.outlineColor, width: PLAYER_TOKEN_RADIUS/17 });
-
-        this.graphics.addChild(token);
-    }
-
-
-    sendGraphics() {        
-        this.onGraphicsChanged.emit(this.graphics);
+    handleGraphics(graphics: Container){
+        this.tokenGraphics = graphics
+        this.onGraphicsChanged.emit(this.tokenGraphics)
+        this.initPlayerPositionSubscription();   
+        this.initTackleTryingSubscription(); 
     }
 
     ngOnDestroy(): void {
-        this.graphics.destroy();
+        this.tokenGraphics.destroy();
         this.playerMovementSubscription?.unsubscribe();
         this.tackleTryingEventSubscription?.unsubscribe()
     }
