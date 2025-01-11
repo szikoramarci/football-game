@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from "@angular/core";
 import { Container, Graphics, Text } from "pixi.js";
 import { Player } from "../../models/player.model";
 import { Team } from "../../models/team.enum";
@@ -10,7 +10,7 @@ import { Point } from "honeycomb-grid";
     standalone: true,
     templateUrl: './player-token.component.html',
 })
-export class PlayerTokenComponent implements OnInit, OnDestroy {
+export class PlayerTokenComponent implements OnInit, OnChanges, OnDestroy {
     
     @Input() player!: Player
     @Input() position!: Point
@@ -34,6 +34,12 @@ export class PlayerTokenComponent implements OnInit, OnDestroy {
         this.setPosition()
         this.setOpacity()
         this.sendGraphics()           
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['position']) {
+            this.setPosition()
+        }
     }
 
     defineKitColors(){

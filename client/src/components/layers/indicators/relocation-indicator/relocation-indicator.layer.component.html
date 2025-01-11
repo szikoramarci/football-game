@@ -2,5 +2,5 @@
     <indicator [hex]="indicator" [graphicsContext]="movementGraphicsContext" (onGraphicsChanged)="handleGraphics($event)"></indicator>
 }
 @if (targetHex && selectedPlayer) {
-    <player-token [player]="selectedPlayer" [position]="targetHex" [opacity]="0.5" (onGraphicsChanged)="handleGraphics($event)"></player-token>
+    <player-token [player]="selectedPlayer" [position]="targetHex" [opacity]="0.75" (onGraphicsChanged)="handleGraphics($event)"></player-token>
 }

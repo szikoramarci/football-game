@@ -16,7 +16,7 @@ import { addUsedPlayer, clearScenario, shiftScenarioTurn, unshiftScenarioTurn } 
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { generateAfterTackleRelocation } from "../../../relocation/after-tackle.relocation-turn";
 import { PlayerService } from "../../player/player.service";
-import { Hex } from "honeycomb-grid";
+import { Hex, hexToOffset } from "honeycomb-grid";
 import { GridService } from "../../grid/grid.service";
 
 const playerStepDelay: number = 300
@@ -137,7 +137,7 @@ export class TackleStep extends Step {
                 if (index === movingPath.length - 1) {
                     this.tacklePlayer(position); // Handle the last hex differently 
                     if (this.successfulTackle) {
-                        this.store.dispatch(moveBall(position))
+                        this.store.dispatch(moveBall(hexToOffset(this.context.hex)))
                     }                   
                     this.handleLooseBall()
                     this.generateRelocationTurn()

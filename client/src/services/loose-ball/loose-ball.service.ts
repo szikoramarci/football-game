@@ -82,6 +82,7 @@ export class LooseBallService implements OnDestroy {
             } else {
                 // 1. NOT HIT -> if MP -> then continue -> else start a new MP
                 console.log('FREE')
+                // 1. a) NEXT TO A DEFENDER -> DEFERENDER ROLLS 6 -> GET THE BALL -> ANY OTHER SCENARIO
             }            
         })
             

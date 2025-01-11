@@ -23,11 +23,10 @@ export function generateMovementPhase(attackingTeam: Team): RelocationTurn[] {
 
     // for test
     return [
-        attackingTeamRelocationTurnFirst,
         defendingTeamRelocationTurn,
         defendingTeamRelocationTurn,
-        attackingTeamRelocationTurnSecond,
-        attackingTeamRelocationTurnSecond
+        defendingTeamRelocationTurn,
+        defendingTeamRelocationTurn,
     ]
 
     return [
