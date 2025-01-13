@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialState } from "./action.state";
-import { clearActionMeta, saveActionMeta, setGameContext, setAvailableActions, setCurrentAction, setCurrentStepIndex, setSelectableActions, clearCurrentAction, clearGameContext } from "./action.actions";
+import { clearActionMeta, saveActionMeta, setGameContext, setCurrentAction, setCurrentStepIndex, setSelectableActions, clearCurrentAction, clearGameContext, setLastEvent } from "./action.actions";
 
 export const actionReducer = createReducer(
     initialState,
@@ -20,9 +20,9 @@ export const actionReducer = createReducer(
       ...state,
       currentAction: undefined
     })),
-    on(setAvailableActions, (state, props) => ({
+    on(setLastEvent, (state, props) => ({
       ...state,
-      availableActions: props.actions
+      lastEvent: props.event
     })),
     on(setSelectableActions, (state, props) => ({
       ...state,

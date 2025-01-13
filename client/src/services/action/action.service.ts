@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core"
+import { Injectable, Type } from "@angular/core"
 import { combineLatest, map, Observable } from "rxjs"
 import { RelocationService } from "../relocation/relocation.service"
 import { GridService } from "../grid/grid.service"
@@ -8,6 +8,13 @@ import { TacklingHelperService } from "../action-helper/tackling-helper.service"
 import { Hex } from "honeycomb-grid"
 import { getRelocationState } from "../../stores/relocation/relocation.selector"
 import { Store } from "@ngrx/store"
+import { Event } from "../../enums/event.enum"
+import { RelocationAction } from "../../actions/relocation.action"
+import { MovingAction } from "../../actions/moving.action"
+import { TacklingAction } from "../../actions/tackling.action"
+import { StandardPassAction } from "../../actions/standard-pass.action"
+import { HighPassAction } from "../../actions/high-pass.action"
+import { Action } from "../../actions/classes/action.class"
 
 @Injectable({
     providedIn: 'root'
@@ -63,6 +70,17 @@ export class ActionService {
                 })
             })
         )
+    }
+
+    getAvailableActions(lastEvent: Event | undefined): Type<Action>[] {
+        switch(lastEvent) {
+            case Event.SUCCESSFUL_TACKLE: 
+                return [RelocationAction, MovingAction, TacklingAction, StandardPassAction, HighPassAction]
+            case Event.ANY_OTHER_SCENARIO:
+                return [RelocationAction, MovingAction, TacklingAction]
+            default:
+                return [RelocationAction, MovingAction, TacklingAction, StandardPassAction, HighPassAction]
+        }
     }
 
 }

@@ -3,6 +3,7 @@ import { ActionMeta } from "../../actions/classes/action-meta.interface";
 import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
 import { Type } from "@angular/core";
+import { Event } from "../../enums/event.enum";
 
 export const saveActionMeta = createAction(
     '[Action] Save Action Meta',
@@ -11,9 +12,9 @@ export const saveActionMeta = createAction(
 
 export const clearActionMeta = createAction('[Step] Clear Action Meta');
 
-export const setAvailableActions = createAction(
-    '[Action] Set Available Actions',
-    props<{ actions: Type<Action>[] }>()
+export const setLastEvent = createAction(
+    '[Action] Set Last Event',
+    props<{ event: Event }>()
 );
 
 export const setSelectableActions = createAction(

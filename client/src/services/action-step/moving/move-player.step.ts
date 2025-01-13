@@ -7,16 +7,17 @@ import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { equals, Hex,  hexToOffset,  OffsetCoordinates } from "honeycomb-grid";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
-import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
+import { clearActionMeta, clearCurrentAction, clearGameContext, setLastEvent, setSelectableActions } from "../../../stores/action/action.actions";
 import { concatMap, delay, from, of, takeWhile } from "rxjs";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";
 import { getRelocationState } from "../../../stores/relocation/relocation.selector";
 import { RelocationTurn } from "../../../relocation/relocation-turn.interface";
-import { addUsedPlayer, initScenario, shiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
+import { addUsedPlayer, clearScenario, initScenario, shiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
 import { generateMovementPhase } from "../../../relocation/movement-phase.relocation";
 import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
+import { Event } from "../../../enums/event.enum";
 
 const playerStepDelay: number = 300
 
@@ -112,12 +113,31 @@ export class MovePlayerStep extends Step {
         const playerID = this.actionMeta.player?.id || ""
         const playerTeam = this.actionMeta.player?.team || "" as Team
 
-        if (this.scenarioTurns.length > 0) {
-            this.store.dispatch(shiftScenarioTurn())
-        } else {
-            const movementPhase = generateMovementPhase(playerTeam)            
-            this.store.dispatch(initScenario({ turns: movementPhase }))
+        if (this.scenarioTurns.length == 0) {
+            this.handleNoScenarioTurns(playerTeam, playerID)
+            return
         }
+
+        if (this.scenarioTurns.length == 1) {
+            this.handleSingleScenarioTurns()
+        } else {
+            this.handleMultipleScenarioTurns(playerID)
+        }                
+    }
+
+    handleNoScenarioTurns(playerTeam: Team, playerID: string) {
+        const movementPhase = generateMovementPhase(playerTeam)            
+        this.store.dispatch(initScenario({ turns: movementPhase }))
+        this.store.dispatch(addUsedPlayer({ playerID }))
+    }
+
+    handleSingleScenarioTurns() {
+        this.store.dispatch(clearScenario())
+        this.store.dispatch(setLastEvent({ event: Event.MOVEMENT_PHASE }))
+    }
+
+    handleMultipleScenarioTurns(playerID: string) {
+        this.store.dispatch(shiftScenarioTurn())
         this.store.dispatch(addUsedPlayer({ playerID }))
     }
 
@@ -126,7 +146,7 @@ export class MovePlayerStep extends Step {
         this.store.dispatch(setSelectableActions({ actions: [] }))
         this.store.dispatch(clearActionMeta())                                
         this.store.dispatch(clearCurrentAction())      
-        this.store.dispatch(clearGameContext()) 
+        this.store.dispatch(clearGameContext())         
 
         this.countMovementStep()      
      

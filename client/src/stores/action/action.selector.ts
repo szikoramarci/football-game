@@ -6,8 +6,8 @@ export const getActionState = createFeatureSelector<ActionState>('action');
 export const getCurrentActionMeta = () =>
     createSelector(getActionState, (state) => state.currentActionMeta);
 
-export const getAvailableActions = () => 
-    createSelector(getActionState, (state) => state.availableActions)
+export const getLastEvent = () => 
+    createSelector(getActionState, (state) => state.lastEvent)
 
 export const getSelectableActions = () => 
     createSelector(getActionState, (state) => state.selectableActions)

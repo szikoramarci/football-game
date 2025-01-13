@@ -2,13 +2,15 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { ChallengeService } from "../challenge/challenge.service";
 import { Direction, equals, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
 import { TraverserService } from "../traverser/traverser.service";
-import { concatMap, concatMapTo, delay, from, last, of, partition, skip, Subscription, takeWhile, tap, toArray } from "rxjs";
+import { concatMap, delay, from, last, of, skip, Subscription, takeWhile, tap } from "rxjs";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
 import { PlayerService } from "../player/player.service";
 import { Store } from "@ngrx/store";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { moveBall } from "../../stores/ball-position/ball-position.actions";
 import { Player } from "../../models/player.model";
+import { RelocationService } from "../relocation/relocation.service";
+import { clearScenario } from "../../stores/relocation/relocation.actions";
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +27,7 @@ export class LooseBallService implements OnDestroy {
         private challange: ChallengeService,
         private traverser: TraverserService,
         private player: PlayerService,
+        private relocation: RelocationService,
         private store: Store
     ) {
         this.initSubscriptions()
@@ -61,6 +64,12 @@ export class LooseBallService implements OnDestroy {
         const direction: Direction = this.generateDirection()
         const distance: number = this.generateDistance()
 
+        console.log('LOOSING BALL')
+
+        // TODO -> HIGH PASS és LONG BALL -> a végső landolási pont változik meg, ezt kezelni kell
+        // VONALAK KEZELÉSE (alapvonal, oldalvonal, gólvonal)
+        // GÓL kezelése -> kapus próbálkozhat védéssel 5-6-os dobás, vagy saving 10+
+
         const directLineGrid = this.traverser.getDirectLine(position, direction, distance)
 
         from(directLineGrid.toArray()).pipe(
@@ -73,17 +82,26 @@ export class LooseBallService implements OnDestroy {
             if (this.playerHitHappening(lastHex)) {
                 const player = this.getPlayerOnHex(lastHex)
                 if (player && player.team == this.attackingTeam) {
-                    // 2. HITS ATTACKER -> if MP -> then continue -> else start ne MP or SNAPSHOT
                     console.log('ATTACKING')
-                } else {
-                    // 3. HITS DEFENDER -> stops MP -> Any other scenario
+                    // 1. IF MP is active -> continue
+                    // 2. ELSE IF MP is not active -> new MP or SNAPSHOT (lehet, hogy ez any other scenario?)
+                    if (!this.relocation.isRelocationScenarioActive()) {
+                       // NEW MP or SNAPSHOT
+                    }   
+                } else {                    
                     console.log('DEFENDING')
+                    // 1. HITS DEFENDER -> stops MP -> Any other scenario   
+                    if (this.relocation.isRelocationScenarioActive()) {
+                        this.store.dispatch(clearScenario())
+                    }                 
                 }                                    
-            } else {
-                // 1. NOT HIT -> if MP -> then continue -> else start a new MP
+            } else {                
                 console.log('FREE')
-                // 1. a) NEXT TO A DEFENDER -> DEFERENDER ROLLS 6 -> GET THE BALL -> ANY OTHER SCENARIO
-            }            
+                // 1. NEXT TO A DEFENDER -> DEFERENDER ROLLS 6 -> GET THE BALL -> ANY OTHER SCENARIO
+                // 2. ELSE IF MP is active -> continue
+                // 3. ELSE IF MP is not active -> MOVEMENT PHASE with ATTACKER (igazából magától fog menni, mert labda nélkül csak azt lehet választani)           }            
+                // +1 ha a labda szabad és védő megy majd rá, akkor ott le kell állítani az MP-t, és ANY OTHER SCENARIO -> ezt majd a move-ba kell betenni
+            }
         })
             
     }

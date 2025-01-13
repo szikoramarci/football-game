@@ -13,6 +13,7 @@ import { PlayerService } from "../player/player.service";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../stores/action/action.actions";
 import { clearScenario } from "../../stores/relocation/relocation.actions";
 import { Player } from "../../models/player.model";
+import { TackleOutcome } from "../../enums/tackle-outcome.enum";
 
 @Injectable({
     providedIn: 'root'
@@ -47,7 +48,7 @@ export class ChallengeService implements OnDestroy {
         return diceValue
     }
 
-    tacklingChallange(tackler: Player, dribbler: Player): boolean | null {
+    tacklingChallange(tackler: Player, dribbler: Player): TackleOutcome{
         const tacklingRoll = this.rollDice()
         const dribblingRoll = this.rollDice()  
         const tacklingResult = tackler.tackling + tacklingRoll
@@ -56,16 +57,19 @@ export class ChallengeService implements OnDestroy {
         console.log('TACKLING: ' + tackler.tackling + ' + ' + tacklingRoll + ' = ' + tacklingResult)
         console.log('DRIBBLING: ' + dribbler.dribbling + ' + ' + dribblingRoll + ' = ' + dribblingResult)
 
-        if (tacklingResult == 1) {
-            // FOUL
-            return null
-        }
-
-        if (tacklingResult == dribblingResult) {
-            return null
-        }
-
-        return tacklingResult > dribblingResult
+        switch (true) {
+            case tacklingResult === 1:
+                return TackleOutcome.FOUL;
+    
+            case tacklingResult === dribblingResult:
+                return TackleOutcome.LOOSING_BALL;
+    
+            case tacklingResult > dribblingResult:
+                return TackleOutcome.TACKLER_WINS;
+    
+            default:
+                return TackleOutcome.DRIBBLER_WINS;
+        }  
     }
 
 

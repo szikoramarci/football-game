@@ -5,25 +5,26 @@ import { ActionMeta } from "../../actions/classes/action-meta.interface";
 import { PlayerService } from "../player/player.service";
 import { getAttackingTeam } from "../../stores/gameplay/gameplay.selector";
 import { Store } from "@ngrx/store";
-import { getAvailableActions, getCurrentActionMeta } from "../../stores/action/action.selector";
+import { getCurrentActionMeta, getLastEvent } from "../../stores/action/action.selector";
 import { GameContext } from "../../actions/classes/game-context.interface";
 import { Action } from "../../actions/classes/action.class";
 import { RelocationService } from "../relocation/relocation.service";
 import { TacklingHelperService } from "../action-helper/tackling-helper.service";
 import { ActionService } from "../action/action.service";
+import { Event } from "../../enums/event.enum";
 
 @Injectable({
     providedIn: 'root'
 })
 export class GameContextService implements OnDestroy {
     
-    availableActions!: Type<Action>[]
+    lastEvent!: Event | undefined 
     currentAction!: Type<Action>
     currentActionMeta!: ActionMeta | undefined    
     selectablePlayers!: Set<string>
 
     currentActionMetaSubscription!: Subscription
-    availableActionsSubscription!: Subscription    
+    lastEventSubscription!: Subscription    
     selectablePlayersSubscription!: Subscription 
 
     constructor(
@@ -40,8 +41,8 @@ export class GameContextService implements OnDestroy {
         this.currentActionMetaSubscription = this.store.select(getCurrentActionMeta()).subscribe(currentActionMeta => {
             this.currentActionMeta = currentActionMeta
         })
-        this.availableActionsSubscription = this.store.select(getAvailableActions()).subscribe(availableActions => {
-            this.availableActions = availableActions
+        this.lastEventSubscription = this.store.select(getLastEvent()).subscribe(lastEvent => {
+            this.lastEvent = lastEvent
         })
         this.selectablePlayersSubscription = this.action.getSelectablePlayersIds().subscribe(selectablePlayers => {
             this.selectablePlayers = selectablePlayers
@@ -66,7 +67,7 @@ export class GameContextService implements OnDestroy {
                     player: player,  
                     playerHasBall: playerHasBall,                    
                     actionMeta: this.currentActionMeta,
-                    availableActions: this.availableActions,
+                    availableActions: this.action.getAvailableActions(this.lastEvent),
                     selectablePlayers: this.selectablePlayers,
                     playerIsMovable: this.relocation.isPlayerMovable(player!),
                     playerIsRelocatable: this.relocation.isPlayerRelocatable(player!),
@@ -78,7 +79,7 @@ export class GameContextService implements OnDestroy {
 
     ngOnDestroy(): void {
         this.currentActionMetaSubscription.unsubscribe()
-        this.availableActionsSubscription.unsubscribe()
+        this.lastEventSubscription.unsubscribe()
     }
 
 }
