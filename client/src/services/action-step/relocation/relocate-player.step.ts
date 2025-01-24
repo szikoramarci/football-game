@@ -7,7 +7,7 @@ import { RelocationActionMeta } from "../../../actions/metas/relocation.action-m
 import { Store } from "@ngrx/store";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setSelectableActions } from "../../../stores/action/action.actions";
 import { shiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
-import { Hex, hexToOffset } from "honeycomb-grid";
+import { Hex, hexToOffset } from "@szikoramarci/honeycomb-grid";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 

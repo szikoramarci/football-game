@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
 import { Assets, Container, Graphics, Sprite } from "pixi.js";
 import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { GridService } from "../../services/grid/grid.service";
-import { HexCoordinates } from "honeycomb-grid";
+import { HexCoordinates } from "@szikoramarci/honeycomb-grid";
 import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
 import { BALL_TOKEN_RADIUS } from "../../constants";

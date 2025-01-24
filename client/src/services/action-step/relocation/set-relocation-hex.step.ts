@@ -5,7 +5,7 @@ import { Step } from "../../../actions/classes/step.class";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { Store } from "@ngrx/store";
 import { saveActionMeta } from "../../../stores/action/action.actions";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { RelocatePlayerStep } from "./relocate-player.step";
 
 @Injectable({

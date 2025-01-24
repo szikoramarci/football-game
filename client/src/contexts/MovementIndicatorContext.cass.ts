@@ -1,5 +1,5 @@
 import FieldContext from "./FieldContext.class";
-import { Point } from "honeycomb-grid";
+import { Point } from "@szikoramarci/honeycomb-grid";
 
 export default class MovementIndicatorContext extends FieldContext {
     constructor(corners: Point[]){

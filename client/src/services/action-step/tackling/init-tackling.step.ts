@@ -3,7 +3,7 @@ import { Step } from "../../../actions/classes/step.class";
 import { AreAvailableNextStepsEmpty } from "../../../actions/rules/is-available-next-actions-empty.rule";
 import { TacklingActionMeta } from "../../../actions/metas/tackling.action-meta";
 import { saveActionMeta } from "../../../stores/action/action.actions";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { Store } from "@ngrx/store";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { PlayerWithPosition } from "../../../interfaces/player-with-position.interface";

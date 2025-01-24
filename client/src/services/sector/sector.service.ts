@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Sector } from "../../interfaces/sector.interface";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { GeometryService } from "../geometry/geometry.service";
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { delay, Subscription, take } from "rxjs";
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 import { TraverserService } from "../traverser/traverser.service";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
 import { HexRelatedPlayers } from "../../interfaces/hex-related-players.interface";

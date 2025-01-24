@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../../services/app/app.service";
 import { getCurrentActionMeta } from "../../../../stores/action/action.selector";

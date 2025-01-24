@@ -13,10 +13,10 @@ import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { LooseBallService } from "../../loose-ball/loose-ball.service";
 import { setAttackingTeam } from "../../../stores/gameplay/gameplay.actions";
 import { addUsedPlayer, clearScenario, shiftScenarioTurn, unshiftScenarioTurn } from "../../../stores/relocation/relocation.actions";
-import { clearActionMeta, clearCurrentAction, clearGameContext, setLastEvent, setSelectableActions } from "../../../stores/action/action.actions";
+import { clearActionMeta, clearCurrentAction, clearGameContext, clearSelectableActions, setLastEvent } from "../../../stores/action/action.actions";
 import { generateAfterTackleRelocation } from "../../../relocation/after-tackle.relocation-turn";
 import { PlayerService } from "../../player/player.service";
-import { Hex, hexToOffset } from "honeycomb-grid";
+import { Hex, hexToOffset } from "@szikoramarci/honeycomb-grid";
 import { TackleOutcome } from "../../../enums/tackle-outcome.enum";
 import { Event } from "../../../enums/event.enum";
 
@@ -139,7 +139,7 @@ export class TackleStep extends Step {
         this.handleTacklerWins()
         this.handleDribblerWins()
 
-        this.store.dispatch(setSelectableActions({ actions: [] }))                                   
+        this.store.dispatch(clearSelectableActions())                                   
         this.store.dispatch(clearCurrentAction())      
         this.store.dispatch(clearGameContext()) 
         this.store.dispatch(clearActionMeta())                  

@@ -1,6 +1,6 @@
 import { Type } from "@angular/core";
 import { Step } from "./step.class";
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 
 export interface ActionMeta {
     playerHex: Hex

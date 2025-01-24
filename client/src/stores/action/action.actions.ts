@@ -20,7 +20,9 @@ export const setLastEvent = createAction(
 export const setSelectableActions = createAction(
     '[Action] Set Selectable Actions',
     props<{ actions: Type<Action>[] }>()
-);
+)
+
+export const clearSelectableActions = createAction('[Action] Clear Selectable Actions')
 
 export const setCurrentAction = createAction(
     '[Action] Set Current Action',

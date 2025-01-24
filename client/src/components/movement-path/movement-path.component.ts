@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from "@angular/core";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { Graphics, Point } from "pixi.js";
 import { DrawService } from "../../services/draw/draw.service";
 

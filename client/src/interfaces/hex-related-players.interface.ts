@@ -1,4 +1,4 @@
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../models/player.model";
 
 export interface HexRelatedPlayers {

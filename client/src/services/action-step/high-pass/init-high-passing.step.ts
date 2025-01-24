@@ -1,6 +1,6 @@
 import { Injectable, Type } from "@angular/core";
 import { Step } from "../../../actions/classes/step.class";
-import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates, reachable, spiral } from "@szikoramarci/honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { TraverserService } from "../../traverser/traverser.service";
 import { HIGH_PASS_HEX_DISTANCE, HIGH_PASS_PIXEL_DISTANCE } from "../../../constants";

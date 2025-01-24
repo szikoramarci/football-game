@@ -1,4 +1,4 @@
-import { OffsetCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../models/player.model";
 
 export interface PlayerWithPosition {

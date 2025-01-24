@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { TraverserService } from "../traverser/traverser.service";
 import { getPlayerPositions } from "../../stores/player-position/player-position.selector";
 import { Store } from "@ngrx/store";

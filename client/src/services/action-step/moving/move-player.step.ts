@@ -4,7 +4,7 @@ import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { Store } from "@ngrx/store";
 import { ChallengeService } from "../../challenge/challenge.service";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
-import { equals, Hex,  hexToOffset,  OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex,  hexToOffset,  OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { movePlayer } from "../../../stores/player-position/player-position.actions";
 import { moveBall } from "../../../stores/ball-position/ball-position.actions";
 import { clearActionMeta, clearCurrentAction, clearGameContext, setLastEvent, setSelectableActions } from "../../../stores/action/action.actions";
@@ -18,6 +18,8 @@ import { Team } from "../../../models/team.enum";
 import { IsLeftClick } from "../../../actions/rules/is-left-click.rule";
 import { TacklingHelperService } from "../../action-helper/tackling-helper.service";
 import { Event } from "../../../enums/event.enum";
+import { PlayerService } from "../../player/player.service";
+import { Player } from "../../../models/player.model";
 
 const playerStepDelay: number = 300
 
@@ -28,11 +30,13 @@ export class MovePlayerStep extends Step {
     actionMeta!: MovingActionMeta
     ballPosition!: OffsetCoordinates
     scenarioTurns!: RelocationTurn[]
+    defendingPlayers!: Player[]
 
     constructor(
             private store: Store,
             private challenge: ChallengeService,
-            private tackleHelper: TacklingHelperService
+            private tackleHelper: TacklingHelperService,
+            private player: PlayerService
         ) {
         super()
         this.initRuleSet()  
@@ -51,8 +55,12 @@ export class MovePlayerStep extends Step {
         const relocationSubscriptions = this.store.select(getRelocationState).subscribe(scenario => {                        
             this.scenarioTurns = scenario.relocationTurns
         })
+        const defendingPlayerSubscriptions = this.player.getDefendingPlayersWithPositions().subscribe(defendingPlayersWithPositions => {
+            this.defendingPlayers = defendingPlayersWithPositions.map(playerWithPosition => playerWithPosition.player)
+        })
         this.addSubscription(relocationSubscriptions)
         this.addSubscription(ballPositionSubscriptions)
+        this.addSubscription(defendingPlayerSubscriptions)
     }
 
     calculation(): void {
@@ -82,7 +90,21 @@ export class MovePlayerStep extends Step {
         }
         
         return true;
-    }     
+    }   
+    
+    isBallPickUpHappened(position: OffsetCoordinates) {
+        if (!this.actionMeta.playerHasBall && equals(position, this.ballPosition)) {
+            this.actionMeta.playerHasBall = true    
+
+            if (this.isPlayerDefender()) {
+                this.challenge.switchActiveTeam(this.actionMeta.player.id)
+                this.store.dispatch(setLastEvent({ event: Event.ANY_OTHER_SCENARIO }))
+                return false
+            }
+        }
+
+        return true
+    }
 
     movePlayer(coordinates: Hex) {
         this.store.dispatch(movePlayer({
@@ -90,11 +112,9 @@ export class MovePlayerStep extends Step {
             position: hexToOffset(coordinates)
         }));  
     }
-    
-    checkAndPickUpBall(coordinates: Hex) {
-        if (!this.actionMeta.playerHasBall && equals(coordinates, this.ballPosition)) {
-            this.actionMeta.playerHasBall = true
-        }
+
+    isPlayerDefender(): boolean {
+        return this.defendingPlayers.some(defendigPlayer => defendigPlayer.id == this.actionMeta.player.id)
     }
 
     moveBall(coordinates: Hex) {
@@ -105,7 +125,6 @@ export class MovePlayerStep extends Step {
 
     playerStepsAhead(nextHex: Hex) {                            
         this.movePlayer(nextHex)
-        this.checkAndPickUpBall(nextHex)
         this.moveBall(nextHex)
     }
 
@@ -157,7 +176,9 @@ export class MovePlayerStep extends Step {
                         ? of(position)  // No delay for the first action
                         : of(position).pipe(delay(playerStepDelay)) // Delay for the rest
                 ),
-                takeWhile(newPosition => this.isBallStealSuccessfully(newPosition), true),            
+                takeWhile(newPosition => this.isBallStealSuccessfully(newPosition), true),   
+                takeWhile(newPosition => this.isBallPickUpHappened(newPosition), true),  
+                // LEHET HOGY IDE KELLENE RAKNI A LABDAFELVÉTELT?         
             )
             .subscribe(nextHex => this.playerStepsAhead(nextHex))                     
     }    

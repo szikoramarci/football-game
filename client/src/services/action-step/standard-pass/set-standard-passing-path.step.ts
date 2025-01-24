@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { equals, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Step } from "../../../actions/classes/step.class";
 import { GridService } from "../../grid/grid.service";
 import { GeometryService } from "../../geometry/geometry.service";

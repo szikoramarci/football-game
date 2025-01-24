@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { GridService } from "../grid/grid.service";
 import { distinctUntilChanged, fromEvent, merge, Observable, Subject, tap, throttleTime } from "rxjs";
 import { MouseTriggerEvent, MouseTriggerEventType } from "./mouse-event.interface";
-import { equals, Hex } from "honeycomb-grid";
+import { equals, Hex } from "@szikoramarci/honeycomb-grid";
 import { Point } from "pixi.js";
 
 @Injectable({

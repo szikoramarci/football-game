@@ -1,5 +1,5 @@
 
-import { equals } from "honeycomb-grid";
+import { equals } from "@szikoramarci/honeycomb-grid";
 import { GameContext } from "../../classes/game-context.interface";
 import { Rule } from "../../classes/rule";
 import { MovingActionMeta } from "../../metas/moving.action-meta";

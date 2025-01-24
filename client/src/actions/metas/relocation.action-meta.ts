@@ -1,4 +1,4 @@
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../../models/player.model";
 import { ActionMeta, IsActionMeta } from "../classes/action-meta.interface";
 

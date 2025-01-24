@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 import { Container, Graphics } from "pixi.js";
 import { AppService } from "../../../../services/app/app.service";
 import { PlayerStrokeComponent } from "../../../player-stroke/player-stroke.component";

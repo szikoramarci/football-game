@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { Graphics } from "pixi.js";
 import { GridService } from "../../services/grid/grid.service";
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 import { PLAYER_TOKEN_RADIUS } from "../../constants";
 
 @Component({

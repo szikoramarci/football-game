@@ -4,7 +4,7 @@ import { filter, map, Observable, Subject, Subscription } from "rxjs";
 import { PlayerService } from "../player/player.service";
 import { Store } from "@ngrx/store";
 import { getBallPosition } from "../../stores/ball-position/ball-position.selector";
-import { equals, Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Grid, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../../models/player.model";
 import { GridService } from "../grid/grid.service";
 import { MovingHelperService } from "./moving-helper.service";

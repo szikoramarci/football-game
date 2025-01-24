@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { equals, OffsetCoordinates } from "honeycomb-grid";
+import { equals, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Step } from "../../../actions/classes/step.class";
 import { GridService } from "../../grid/grid.service";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";

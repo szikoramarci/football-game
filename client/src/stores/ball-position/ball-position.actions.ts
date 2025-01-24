@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 
 export const moveBall = createAction(
     '[Ball Position] Update Ball Position',

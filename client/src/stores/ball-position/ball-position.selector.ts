@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { BallPositionState } from './ball-position.state';
-import { equals, OffsetCoordinates } from 'honeycomb-grid';
+import { equals, OffsetCoordinates } from '@szikoramarci/honeycomb-grid';
 
 export const ballPosition = createFeatureSelector<BallPositionState>('ballPosition');
 

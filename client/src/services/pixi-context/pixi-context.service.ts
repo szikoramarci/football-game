@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import LightFieldContext from "../../contexts/LightFieldContext.class";
 import DarkFieldContext from "../../contexts/DarkFieldContext.class";
-import { Point } from "honeycomb-grid";
+import { Point } from "@szikoramarci/honeycomb-grid";
 import MovementIndicatorContext from "../../contexts/MovementIndicatorContext.cass";
 import PassingIndicatorContext from "../../contexts/PassingIndicatorContext.class";
 import ChallengeIndicatorContext from "../../contexts/ChallengeIndicatorContext.class";

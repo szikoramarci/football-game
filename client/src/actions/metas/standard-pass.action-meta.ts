@@ -1,4 +1,4 @@
-import {  Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import {  Grid, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { ActionMeta, IsActionMeta } from "../classes/action-meta.interface";
 
 export interface StandardPassActionMeta extends ActionMeta {    

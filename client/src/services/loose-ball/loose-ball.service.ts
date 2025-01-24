@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { ChallengeService } from "../challenge/challenge.service";
-import { Direction, equals, Hex, hexToOffset, OffsetCoordinates } from "honeycomb-grid";
+import { Direction, equals, Hex, hexToOffset, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { TraverserService } from "../traverser/traverser.service";
 import { concatMap, delay, from, last, of, skip, Subscription, takeWhile, tap } from "rxjs";
 import { PlayerWithPosition } from "../../interfaces/player-with-position.interface";
@@ -11,6 +11,8 @@ import { moveBall } from "../../stores/ball-position/ball-position.actions";
 import { Player } from "../../models/player.model";
 import { RelocationService } from "../relocation/relocation.service";
 import { clearScenario } from "../../stores/relocation/relocation.actions";
+import { Event } from "../../enums/event.enum";
+import { setLastEvent } from "../../stores/action/action.actions";
 
 @Injectable({
     providedIn: 'root'
@@ -86,6 +88,7 @@ export class LooseBallService implements OnDestroy {
                     // 1. IF MP is active -> continue
                     // 2. ELSE IF MP is not active -> new MP or SNAPSHOT (lehet, hogy ez any other scenario?)
                     if (!this.relocation.isRelocationScenarioActive()) {
+                        this.store.dispatch(setLastEvent({ event: Event.ANY_OTHER_SCENARIO }))
                        // NEW MP or SNAPSHOT
                     }   
                 } else {                    
@@ -93,6 +96,7 @@ export class LooseBallService implements OnDestroy {
                     // 1. HITS DEFENDER -> stops MP -> Any other scenario   
                     if (this.relocation.isRelocationScenarioActive()) {
                         this.store.dispatch(clearScenario())
+                        this.store.dispatch(setLastEvent({ event: Event.ANY_OTHER_SCENARIO }))
                     }                 
                 }                                    
             } else {                

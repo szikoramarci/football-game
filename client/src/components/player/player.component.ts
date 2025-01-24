@@ -4,7 +4,7 @@ import { Player } from "../../models/player.model";
 import { Store } from "@ngrx/store";
 import { Subscription } from "rxjs";
 import { GridService } from "../../services/grid/grid.service";
-import { HexCoordinates } from "honeycomb-grid";
+import { HexCoordinates } from "@szikoramarci/honeycomb-grid";
 import { getPlayerPosition } from "../../stores/player-position/player-position.selector";
 import { AnimateService } from "../../services/animate/animate.service";
 import { TacklingHelperService } from "../../services/action-helper/tackling-helper.service";

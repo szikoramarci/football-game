@@ -3,7 +3,7 @@ import { Step } from "../../../actions/classes/step.class";
 import { Store } from "@ngrx/store";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { GridService } from "../../grid/grid.service";
-import { OffsetCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";

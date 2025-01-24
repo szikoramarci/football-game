@@ -1,4 +1,4 @@
-import { OffsetCoordinates } from "honeycomb-grid";
+import { OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 
 export interface PlayerPositionState {
   [playerID: string]: OffsetCoordinates

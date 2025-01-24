@@ -1,6 +1,6 @@
 import { Injectable, Type } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { Step } from "../../../actions/classes/step.class";
 import { GridService } from "../../grid/grid.service";
 import { TraverserService } from "../../traverser/traverser.service";

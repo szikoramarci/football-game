@@ -4,7 +4,7 @@ import { Store } from "@ngrx/store";
 import { AreAvailableNextStepsEmpty } from "../../../actions/rules/is-available-next-actions-empty.rule";
 import { saveActionMeta } from "../../../stores/action/action.actions";
 import { GridService } from "../../grid/grid.service";
-import { Grid, Hex, OffsetCoordinates } from "honeycomb-grid";
+import { Grid, Hex, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { MovingActionMeta } from "../../../actions/metas/moving.action-meta";
 import { FindMovingPathStep } from "./find-moving-path.step";
 import { getBallPosition } from "../../../stores/ball-position/ball-position.selector";

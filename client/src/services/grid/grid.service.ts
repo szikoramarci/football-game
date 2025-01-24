@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Grid, Hex, defineHex, rectangle, Orientation, HexCoordinates, line, Traverser, Direction, neighborOf, OffsetCoordinates } from 'honeycomb-grid';
+import { Grid, Hex, defineHex, rectangle, Orientation, HexCoordinates, line, Traverser, Direction, neighborOf, OffsetCoordinates } from '@szikoramarci/honeycomb-grid';
 import { PIXIContextService } from '../pixi-context/pixi-context.service';
 import { HEXA_RADIUS, PITCH_LENGTH, PITCH_WIDTH } from '../../constants';
 import { Point } from 'pixi.js';

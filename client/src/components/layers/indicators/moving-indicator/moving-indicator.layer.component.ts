@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { IndicatorComponent } from "../../../indicator/indicator.component";
 import { Container, Graphics, GraphicsContext } from "pixi.js";
 import { AppService } from "../../../../services/app/app.service";

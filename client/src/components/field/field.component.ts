@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
-import { Hex } from "honeycomb-grid";
+import { Hex } from "@szikoramarci/honeycomb-grid";
 import { Graphics } from "pixi.js";
 import { PIXIContextService } from "../../services/pixi-context/pixi-context.service";
 

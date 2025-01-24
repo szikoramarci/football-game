@@ -7,7 +7,7 @@ import { IsMouseOver } from "../../../actions/rules/is-mouse-over.rule";
 import { IsTheNextStep } from "../../../actions/rules/is-the-next-step.rule";
 import { getPlayerPositions } from "../../../stores/player-position/player-position.selector";
 import { take } from "rxjs";
-import { equals, OffsetCoordinates } from "honeycomb-grid";
+import { equals, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { GridService } from "../../grid/grid.service";
 import { TraverserService } from "../../traverser/traverser.service";
 import { TackleStep } from "./tackle.step";

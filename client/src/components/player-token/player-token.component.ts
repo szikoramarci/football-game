@@ -3,7 +3,7 @@ import { Container, Graphics, Text } from "pixi.js";
 import { Player } from "../../models/player.model";
 import { Team } from "../../models/team.enum";
 import { PLAYER_KIT_FONT_SIZE, PLAYER_TOKEN_RADIUS } from "../../constants";
-import { Point } from "honeycomb-grid";
+import { Point } from "@szikoramarci/honeycomb-grid";
 
 @Component({
     selector: 'player-token',

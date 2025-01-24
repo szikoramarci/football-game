@@ -7,7 +7,7 @@ import { getCurrentActionMeta } from "../../../../stores/action/action.selector"
 import { filter, tap } from "rxjs";
 import { IsRelocationActionMeta, RelocationActionMeta } from "../../../../actions/metas/relocation.action-meta";
 import { GridService } from "../../../../services/grid/grid.service";
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { PIXIContextService } from "../../../../services/pixi-context/pixi-context.service";
 import { Player } from "../../../../models/player.model";
 import { PlayerTokenComponent } from "../../../player-token/player-token.component";

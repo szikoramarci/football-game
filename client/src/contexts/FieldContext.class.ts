@@ -1,5 +1,5 @@
 import { GraphicsContext } from "pixi.js";
-import { Point } from "honeycomb-grid";
+import { Point } from "@szikoramarci/honeycomb-grid";
 
 export default class FieldContext {
     context;

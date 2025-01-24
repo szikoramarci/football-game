@@ -1,6 +1,6 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { PlayerPositionState } from './player-position.state';
-import { equals, Grid, Hex, OffsetCoordinates } from 'honeycomb-grid';
+import { equals, Grid, Hex, OffsetCoordinates } from '@szikoramarci/honeycomb-grid';
 
 export const getPlayerPositions = createFeatureSelector<PlayerPositionState>('playerPosition');
 

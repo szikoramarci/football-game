@@ -1,5 +1,5 @@
 import { Store } from "@ngrx/store";
-import { equals, Grid, Hex, HexCoordinates, OffsetCoordinates } from "honeycomb-grid";
+import { equals, Grid, Hex, HexCoordinates, OffsetCoordinates } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../../models/player.model";
 import { getPlayerByPosition, getPlayerPositions } from "../../stores/player-position/player-position.selector";
 import { combineLatest, map, Observable, of, switchMap, take } from "rxjs";

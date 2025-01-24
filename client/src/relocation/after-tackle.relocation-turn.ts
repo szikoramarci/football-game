@@ -1,4 +1,4 @@
-import { Grid, Hex } from "honeycomb-grid";
+import { Grid, Hex } from "@szikoramarci/honeycomb-grid";
 import { Player } from "../models/player.model";
 import { RelocationTurn } from "./relocation-turn.interface";
 

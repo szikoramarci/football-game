@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Point } from "honeycomb-grid";
+import { Point } from "@szikoramarci/honeycomb-grid";
 import { Sector } from "../../interfaces/sector.interface";
 
 @Injectable({
