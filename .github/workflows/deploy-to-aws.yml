@@ -60,5 +60,5 @@ jobs:
 
       # Perform the deployment to AWS
       - name: Deploy static site to S3 bucket
-        working-directory: client/dist
+        working-directory: client/dist/football-game-client/browser
         run: aws s3 sync . s3://counter-attack --delete
