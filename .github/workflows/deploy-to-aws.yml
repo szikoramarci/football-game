@@ -33,6 +33,13 @@ jobs:
         with:
           node-version: 22
 
+      # Configure .npmrc
+      - name: Configure .npmrc
+        working-directory: client
+        run: |
+          echo "@szikoramarci:registry=https://npm.pkg.github.com/" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
       # Install npm dependencies
       - name: Install dependencies
         working-directory: client
