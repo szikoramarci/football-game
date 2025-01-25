@@ -10,7 +10,7 @@ The goal of the project is to recreate the gameplay experience of the board game
 
 The project is currently in a prototype phase, and a playable version is available for testing.
 
-You can try it out here: [Counter-Attack Game Prototype](http://counter-attack.s3-website-us-east-1.amazonaws.com/)
+You can try it out here: [Counter-Attack Game Prototype](https://de0oi6abjzu79.cloudfront.net/)
 
 ## Features
 
