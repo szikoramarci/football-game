@@ -11,6 +11,10 @@ export abstract class Action extends RuleEvaluator {
         this.name = name
     }
 
+    getName(): string {
+        return this.name
+    }
+
     addStep(step: Type<Step>) {
         this.steps.push(step)
     }

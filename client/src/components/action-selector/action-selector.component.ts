@@ -36,4 +36,9 @@ export class ActionSelectorComponent implements OnInit {
         this.store.dispatch(setCurrentAction({ action }))
     }
 
+    getActionName(action: Type<Action>) {
+        const actionInstance = new action()
+        return actionInstance.getName()
+    }
+
 }

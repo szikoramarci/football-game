@@ -53,7 +53,7 @@ export class BallComponent implements OnInit, OnDestroy {
         ballBase.fill('white');
         this.graphics.addChild(ballBase);
 
-        const texture = await Assets.load('http://localhost:4200/football.png');
+        const texture = await Assets.load('/football.png');
         const ballTexture = new Sprite(texture);
         ballTexture.width = BALL_TOKEN_RADIUS * 2;
         ballTexture.height = BALL_TOKEN_RADIUS * 2;
